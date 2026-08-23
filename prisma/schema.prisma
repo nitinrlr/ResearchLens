@@ -24,6 +24,12 @@ enum ReadingStatus {
   COMPLETED
 }
 
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
 model User {
   id              String          @id @default(uuid())
   name            String
@@ -32,4 +38,121 @@ model User {
   experienceLevel ExperienceLevel @default(BEGINNER)
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
+  goals           Goal[]
+  collections     Collection[]
+  savedPapers     SavedPaper[]
+}
+
+model Paper {
+  id               String            @id @default(uuid())
+  title            String
+  abstract         String
+  publishedDate    DateTime
+  difficulty       Int
+  readingTime      Int
+  paperUrl         String            @unique
+  pdfUrl           String?
+  thumbnailUrl     String?
+  externalId       String?           @unique
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  paperTopics      PaperTopic[]
+  collectionPapers CollectionPaper[]
+  savedPapers      SavedPaper[]
+  paperAuthors     PaperAuthor[]
+}
+
+model Goal {
+  id          String     @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  status      GoalStatus @default(ACTIVE)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalTopics GoalTopic[]
+}
+
+model Topic {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+
+  goalTopics  GoalTopic[]
+  paperTopics PaperTopic[]
+}
+
+model GoalTopic {
+  goalId  String
+  topicId String
+
+  goal  Goal  @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([goalId, topicId])
+}
+
+model PaperTopic {
+  paperId String
+  topicId String
+
+  paper Paper @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([paperId, topicId])
+}
+
+model Collection {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collectionPapers CollectionPaper[]
+}
+
+model CollectionPaper {
+  collectionId String
+  paperId      String
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  paper      Paper      @relation(fields: [paperId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, paperId])
+}
+
+model SavedPaper {
+  userId        String
+  paperId       String
+  savedAt       DateTime      @default(now())
+  readingStatus ReadingStatus @default(WANT_TO_READ)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paper Paper @relation(fields: [paperId], references: [id], onDelete: Cascade)
+
+  @@id([userId, paperId])
+}
+
+model Author {
+  id          String  @id @default(uuid())
+  name        String
+  institution String?
+
+  paperAuthors PaperAuthor[]
+}
+
+model PaperAuthor {
+  paperId     String
+  authorId    String
+  authorOrder Int
+
+  paper  Paper  @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@id([paperId, authorId])
 }
