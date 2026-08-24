@@ -138,7 +138,8 @@ model SavedPaper {
 }
 
 model Author {
-  id          String  @id @default(uuid())
+  id          String @id @default(uuid())
+  openAlexId  String @unique
   name        String
   institution String?
 

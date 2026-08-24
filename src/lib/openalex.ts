@@ -29,13 +29,20 @@ export async function searchWorks(
 
         pdfUrl: paper.primary_location?.pdf_url ?? null,
 
-        authors: paper.authorships.map(
-            (author: any) => author.author.display_name
-        ),
+        authors: paper.authorships.map((authorship: any) => ({
+            openAlexId: authorship.author.id,
 
-        topics: paper.topics.map(
-            (topic: any) => topic.display_name
-        ),
+            name: authorship.author.display_name,
+
+            institution:
+                authorship.institutions.length > 0
+                    ? authorship.institutions[0].display_name
+                    : null,
+        })),
+
+        topics: paper.topics.map((topic: any) => ({
+            name: topic.display_name,
+        })),
         }));
 
 }
