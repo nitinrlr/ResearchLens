@@ -33,6 +33,7 @@ model User {
   id              String          @id @default(uuid())
   name            String
   email           String          @unique
+  passwordHash    String
   image           String?
   experienceLevel ExperienceLevel @default(BEGINNER)
   createdAt       DateTime        @default(now())
