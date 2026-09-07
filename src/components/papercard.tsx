@@ -1,4 +1,6 @@
-import { Bookmark, Calendar, Clock3, Star } from "lucide-react";
+"use client";
+import { Bookmark, BookMarked, Calendar, Clock3, Star } from "lucide-react";
+import { useState } from "react";
 
 type PaperCardProps = {
   paper: {
@@ -7,28 +9,49 @@ type PaperCardProps = {
     publishedDate: string;
     readingTime: number;
     difficulty: number;
+    saved: boolean;
     authors: string[];
     topics: string[];
   };
 };
 
 export default function PaperCard({ paper }: PaperCardProps) {
-  return (
+
+const [saved, setSaved] = useState(paper.saved);
+
+    async function toggleSaved() {
+        const endpoint = saved
+            ? `/api/papers/${paper.id}/unsave`
+            : `/api/papers/${paper.id}/save`;
+
+        const response = await fetch(endpoint, {
+            method: "POST",
+        });
+
+        if (!response.ok) {
+            console.error("Failed");
+            return;
+        }
+
+        setSaved(!saved);
+    }
+  
+    return (
     <div className="flex h-min-h-[320px] flex-col rounded-xl border border-zinc-700 bg-zinc-900 p-4 shadow transition hover:border-zinc-500 hover:shadow-lg">
         <div className="flex items-start justify-between">
             <h2 className="text-lg font-semibold leading-snug text-white">
                 {paper.title}
             </h2>
             <button
-                className="
-                rounded-full
-                p-2
-                text-zinc-400
-                transition
-                hover:bg-zinc-800
-                hover:text-white"
-            >
-                <Bookmark size={20} />
+                onClick={toggleSaved}
+                className="rounded-full p-2 transition hover:bg-zinc-800"
+                >
+                <Bookmark
+                    size={20}
+                    fill={saved ? "currentColor" : "none"}
+                    strokeWidth={saved ? 0 : 2}
+                    className={saved ? "text-blue-500" : "text-zinc-400"}
+                />
             </button>
         </div>
             <p className="mt-2 text-sm text-zinc-400">

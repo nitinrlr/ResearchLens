@@ -1,4 +1,23 @@
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
+
+function mapPaper(paper: any) {
+  return {
+    id: paper.id,
+    title: paper.title,
+    publishedDate: paper.publishedDate,
+    readingTime: paper.readingTime,
+    difficulty: paper.difficulty,
+    saved: paper.savedPapers.length > 0,
+    authors: paper.paperAuthors.map(
+      (pa: any) => pa.author.name
+    ),
+
+    topics: paper.paperTopics.map(
+      (pt: any) => pt.topic.name
+    ),
+  };
+}
 
 export async function getAllPapers() {
     const papers = await prisma.paper.findMany({
@@ -7,6 +26,8 @@ export async function getAllPapers() {
         },
 
         include: {
+            savedPapers: true,
+
             paperAuthors: {
             include: {
                 author: true,
@@ -21,23 +42,55 @@ export async function getAllPapers() {
         },
     });
 
-    return papers.map((paper) => ({
-        id: paper.id,
+    return papers.map(mapPaper);
+}
 
-        title: paper.title,
+export async function getSavedPapers() {
+  const session = await auth();
 
-        publishedDate: paper.publishedDate,
+  if (!session?.user?.email) {
+    return [];
+  }
 
-        readingTime: paper.readingTime,
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user.email,
+    },
+  });
 
-        difficulty: paper.difficulty,
+  if (!user) {
+    return [];
+  }
 
-        authors: paper.paperAuthors.map(
-            (pa) => pa.author.name
-        ),
+  const papers = await prisma.paper.findMany({
+    where: {
+      savedPapers: {
+        some: {
+          userId: user.id,
+        },
+      },
+    },
 
-        topics: paper.paperTopics.map(
-            (pt) => pt.topic.name
-        ),
-    }));
+    orderBy: {
+      publishedDate: "desc",
+    },
+
+    include: {
+        savedPapers: true,
+
+        paperAuthors: {
+        include: {
+            author: true,
+        },
+      },
+
+        paperTopics: {
+        include: {
+            topic: true,
+        },
+      },
+    },
+  });
+
+  return papers.map(mapPaper);
 }
