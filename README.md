@@ -22,4 +22,3 @@ Object Relational Mapping: Prisma
 Authentication: Auth.js
 AI: OpenAI API
 Deployment: Vercel, Neon (Postgres)
-

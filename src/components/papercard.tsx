@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { Bookmark, BookMarked, Calendar, Clock3, Star } from "lucide-react";
 import { useState } from "react";
 
@@ -37,15 +38,18 @@ const [saved, setSaved] = useState(paper.saved);
     }
   
     return (
-    <div className="flex h-min-h-[320px] flex-col rounded-xl border border-zinc-700 bg-zinc-900 p-4 shadow transition hover:border-zinc-500 hover:shadow-lg">
+    <Link href={`/papers/${paper.id}`} className="block rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-all duration-200 hover:border-zinc-600 hover:shadow-lg">
         <div className="flex items-start justify-between">
             <h2 className="text-lg font-semibold leading-snug text-white">
                 {paper.title}
             </h2>
             <button
-                onClick={toggleSaved}
-                className="rounded-full p-2 transition hover:bg-zinc-800"
-                >
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSaved();
+                }}
+            >
                 <Bookmark
                     size={20}
                     fill={saved ? "currentColor" : "none"}
@@ -93,6 +97,6 @@ const [saved, setSaved] = useState(paper.saved);
                 </div>
             </div>
         </div>
-    </div>
+    </Link>
   );
 }
