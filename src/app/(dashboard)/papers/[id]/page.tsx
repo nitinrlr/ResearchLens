@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPaperById } from "@/services/paper.service";
+import SavePaperButton from "@/components/save-paper-button";
 
 type Props = {
   params: Promise<{
@@ -19,18 +20,25 @@ export default async function PaperDetailsPage({ params }: Props) {
   return (
     <main className="p-10 text-white">
       <div className="mx-auto max-w-4xl">
-        <div className="mb-8">
-          <p className="text-sm text-zinc-500">
-            Paper Details
-          </p>
-          <h1 className="mt-2 text-4xl font-bold leading-tight">
-            {paper.title}
-          </h1>
-          <p className="mt-4 text-zinc-400">
-            {paper.authors.length > 0
-              ? paper.authors.join(", ")
-              : "Unknown authors"}
-          </p>
+        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-sm text-zinc-500">
+              Paper Details
+            </p>
+            <h1 className="mt-2 text-4xl font-bold leading-tight">
+              {paper.title}
+            </h1>
+            <p className="mt-4 text-zinc-400">
+              {paper.authors.length > 0
+                ? paper.authors.join(", ")
+                : "Unknown authors"}
+            </p>
+          </div>
+
+          <SavePaperButton
+            paperId={paper.id}
+            initialSaved={paper.saved}
+          />
         </div>
         <div className="mb-8 flex flex-wrap gap-2">
           {paper.topics.map((topic) => (
@@ -80,6 +88,7 @@ export default async function PaperDetailsPage({ params }: Props) {
                 </h2>
                 <p className="mt-1 text-sm text-zinc-400">
                   Embedded from the open-access PDF link provided by OpenAlex.
+                  If the publisher blocks embedding, open the PDF in a new tab.
                 </p>
               </div>
 

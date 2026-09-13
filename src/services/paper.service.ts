@@ -1,7 +1,118 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { Prisma } from "@prisma/client";
 
-function mapPaper(paper: any) {
+type PaperWithRelations = Prisma.PaperGetPayload<{
+  include: {
+    savedPapers: true;
+    paperAuthors: {
+      include: {
+        author: true;
+      };
+    };
+    paperTopics: {
+      include: {
+        topic: true;
+      };
+    };
+  };
+}>;
+
+async function getCurrentUserId() {
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    return null;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user.email,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return user?.id ?? null;
+}
+
+function paperInclude(userId: string | null) {
+  return {
+    savedPapers: {
+      where: userId
+        ? {
+            userId,
+          }
+        : {
+            userId: "__no_user__",
+          },
+    },
+
+    paperAuthors: {
+      include: {
+        author: true,
+      },
+    },
+
+    paperTopics: {
+      include: {
+        topic: true,
+      },
+    },
+  };
+}
+
+function searchWhere(query: string): Prisma.PaperWhereInput {
+  const trimmedQuery = query.trim();
+
+  if (!trimmedQuery) {
+    return {};
+  }
+
+  return {
+    OR: [
+      {
+        title: {
+          contains: trimmedQuery,
+          mode: "insensitive",
+        },
+      },
+      {
+        abstract: {
+          contains: trimmedQuery,
+          mode: "insensitive",
+        },
+      },
+      {
+        paperAuthors: {
+          some: {
+            author: {
+              name: {
+                contains: trimmedQuery,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      },
+      {
+        paperTopics: {
+          some: {
+            topic: {
+              name: {
+                contains: trimmedQuery,
+                mode: "insensitive",
+              },
+            },
+          },
+        },
+      },
+    ],
+  };
+}
+
+function mapPaper(paper: PaperWithRelations) {
   return {
     id: paper.id,
     title: paper.title,
@@ -9,64 +120,41 @@ function mapPaper(paper: any) {
     readingTime: paper.readingTime,
     difficulty: paper.difficulty,
     saved: paper.savedPapers.length > 0,
-    authors: paper.paperAuthors.map(
-      (pa: any) => pa.author.name
-    ),
+    authors: paper.paperAuthors.map((pa) => pa.author.name),
 
-    topics: paper.paperTopics.map(
-      (pt: any) => pt.topic.name
-    ),
+    topics: paper.paperTopics.map((pt) => pt.topic.name),
   };
 }
 
-export async function getAllPapers() {
-    const papers = await prisma.paper.findMany({
-        orderBy: {
-            publishedDate: "desc",
-        },
+export async function getAllPapers(query = "") {
+  const userId = await getCurrentUserId();
 
-        include: {
-            savedPapers: true,
+  const papers = await prisma.paper.findMany({
+    where: searchWhere(query),
 
-            paperAuthors: {
-            include: {
-                author: true,
-            },
-            },
-
-            paperTopics: {
-            include: {
-                topic: true,
-            },
-            },
-        },
-    });
-
-    return papers.map(mapPaper);
-}
-
-export async function getSavedPapers() {
-  const session = await auth();
-
-  if (!session?.user?.email) {
-    return [];
-  }
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session.user.email,
+    orderBy: {
+      publishedDate: "desc",
     },
+
+    include: paperInclude(userId),
   });
 
-  if (!user) {
+  return papers.map(mapPaper);
+}
+
+export async function getSavedPapers(query = "") {
+  const userId = await getCurrentUserId();
+
+  if (!userId) {
     return [];
   }
 
   const papers = await prisma.paper.findMany({
     where: {
+      ...searchWhere(query),
       savedPapers: {
         some: {
-          userId: user.id,
+          userId,
         },
       },
     },
@@ -76,19 +164,7 @@ export async function getSavedPapers() {
     },
 
     include: {
-        savedPapers: true,
-
-        paperAuthors: {
-        include: {
-            author: true,
-        },
-      },
-
-        paperTopics: {
-        include: {
-            topic: true,
-        },
-      },
+      ...paperInclude(userId),
     },
   });
 
@@ -96,26 +172,14 @@ export async function getSavedPapers() {
 }
 
 export async function getPaperById(id: string) {
+  const userId = await getCurrentUserId();
+
   const paper = await prisma.paper.findUnique({
     where: {
       id,
     },
 
-    include: {
-      savedPapers: true,
-
-      paperAuthors: {
-        include: {
-          author: true,
-        },
-      },
-
-      paperTopics: {
-        include: {
-          topic: true,
-        },
-      },
-    },
+    include: paperInclude(userId),
   });
 
   if (!paper) {

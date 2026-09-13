@@ -36,14 +36,10 @@ export async function POST(
 
   await prisma.savedPaper.deleteMany({
     where: {
-        userId: user.id,
-        paperId,
+      userId: user.id,
+      paperId,
     },
-});
-
-    return NextResponse.json({
-    success: true,
-});
+  });
 
   return NextResponse.json({
     success: true,

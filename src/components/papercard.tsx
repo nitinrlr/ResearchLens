@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
-import { Bookmark, BookMarked, Calendar, Clock3, Star } from "lucide-react";
+import { Bookmark, Calendar, Clock3, Star } from "lucide-react";
 import { useState } from "react";
 
 type PaperCardProps = {
   paper: {
     id: string;
     title: string;
-    publishedDate: string;
+    publishedDate: Date | string;
     readingTime: number;
     difficulty: number;
     saved: boolean;

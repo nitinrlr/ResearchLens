@@ -1,57 +1,61 @@
 import PaperCard from "@/components/papercard";
+import { getAllPapers } from "@/services/paper.service";
 
 type Paper = {
   id: string;
   title: string;
-  publishedDate: string;
+  publishedDate: Date | string;
   readingTime: number;
   difficulty: number;
+  saved: boolean;
   authors: string[];
   topics: string[];
 };
 
-async function getPapers(): Promise<Paper[]> {
-  const res = await fetch("http://localhost:3000/api/papers", {
-    cache: "no-store",
-  });
+type Props = {
+  searchParams: Promise<{
+    q?: string;
+  }>;
+};
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch papers");
-  }
-
-  return res.json();
-}
-
-export default async function ExplorePage() {
-  const papers = await getPapers();
+export default async function ExplorePage({ searchParams }: Props) {
+  const query = (await searchParams).q ?? "";
+  const papers: Paper[] = await getAllPapers(query);
 
   return (
     <main className="p-10">
-      <h1 className="text-3xl font-bold mb-6">
+      <h1 className="mb-6 text-3xl font-bold">
         Explore Papers
       </h1>
+      <form action="/explore">
         <input
-            type="text"
-            placeholder="Search papers..."
-            className="
-                mb-8
-                w-full
-                rounded-lg
-                border
-                border-zinc-700
-                bg-zinc-900
-                p-3
-                outline-none
-                focus:border-blue-500"
-            />
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {papers.map((paper) => (
-                <PaperCard
-                key={paper.id}
-                paper={paper}
-                />
-            ))}
+          type="text"
+          name="q"
+          defaultValue={query}
+          placeholder="Search by title, author, or topic..."
+          className="mb-8 w-full rounded-lg border border-zinc-700 bg-zinc-900 p-3 outline-none focus:border-blue-500"
+        />
+      </form>
+
+      {papers.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-zinc-700 p-12 text-center">
+          <h2 className="text-xl font-semibold">
+            No papers found
+          </h2>
+          <p className="mt-2 text-zinc-500">
+            Try searching for another title, author, or topic.
+          </p>
         </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {papers.map((paper) => (
+            <PaperCard
+              key={paper.id}
+              paper={paper}
+            />
+          ))}
+        </div>
+      )}
     </main>
   );
 }
