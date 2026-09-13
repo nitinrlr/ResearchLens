@@ -25,9 +25,9 @@ export async function searchWorks(
 
         publishedDate: new Date(paper.publication_date),
 
-        paperUrl: paper.primary_location?.landing_page_url ?? paper.id,
+        paperUrl: paper.primary_location?.landing_page_url || paper.best_oa_location?.landing_page_url || paper.doi || paper.id,
 
-        pdfUrl: paper.primary_location?.pdf_url ?? null,
+        pdfUrl: paper.best_oa_location?.pdf_url || paper.primary_location?.pdf_url || paper.open_access?.oa_url || null,
 
         authors: paper.authorships.map((authorship: any) => ({
             openAlexId: authorship.author.id,

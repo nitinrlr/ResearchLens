@@ -94,3 +94,47 @@ export async function getSavedPapers() {
 
   return papers.map(mapPaper);
 }
+
+export async function getPaperById(id: string) {
+  const paper = await prisma.paper.findUnique({
+    where: {
+      id,
+    },
+
+    include: {
+      savedPapers: true,
+
+      paperAuthors: {
+        include: {
+          author: true,
+        },
+      },
+
+      paperTopics: {
+        include: {
+          topic: true,
+        },
+      },
+    },
+  });
+
+  if (!paper) {
+    return null;
+  }
+
+  return {
+    id: paper.id,
+    title: paper.title,
+    abstract: paper.abstract,
+    publishedDate: paper.publishedDate,
+    readingTime: paper.readingTime,
+    difficulty: paper.difficulty,
+    paperUrl: paper.paperUrl,
+    pdfUrl: paper.pdfUrl,
+    saved: paper.savedPapers.length > 0,
+
+    authors: paper.paperAuthors.map((pa) => pa.author.name),
+
+    topics: paper.paperTopics.map((pt) => pt.topic.name),
+  };
+}
