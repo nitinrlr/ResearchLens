@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUserId } from "@/lib/session";
 
 export async function POST(
   request: Request,
@@ -10,25 +10,12 @@ export async function POST(
     params: Promise<{ id: string }>;
   }
 ) {
-  const session = await auth();
+  const userId = await getCurrentUserId();
 
-  if (!session?.user?.email) {
+  if (!userId) {
     return NextResponse.json(
       { error: "Unauthorized" },
       { status: 401 }
-    );
-  }
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session.user.email,
-    },
-  });
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "User not found" },
-      { status: 404 }
     );
   }
 
@@ -37,7 +24,7 @@ export async function POST(
   await prisma.savedPaper.upsert({
     where: {
       userId_paperId: {
-        userId: user.id,
+        userId,
         paperId,
       },
     },
@@ -45,7 +32,7 @@ export async function POST(
     update: {},
 
     create: {
-      userId: user.id,
+      userId,
       paperId,
     },
   });

@@ -1,8 +1,16 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import UserMenu from "@/components/user-menu";
 
-export default function Sidebar() {
+type SidebarProps = {
+  user: {
+    name: string;
+    email: string;
+  };
+};
+
+export default function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
 
   const navClass = (href: string) =>
@@ -13,7 +21,7 @@ export default function Sidebar() {
   }`;
 
   return (
-    <aside className="w-56 border-r border-zinc-800 bg-zinc-950 p-6">
+    <aside className="flex w-56 flex-col border-r border-zinc-800 bg-zinc-950 p-6">
       <h1 className="mb-10 text-2xl font-bold">
         ResearchLens
       </h1>
@@ -46,6 +54,10 @@ export default function Sidebar() {
           🎯 Goals
         </Link>
       </nav>
+
+      <div className="mt-auto pt-6">
+        <UserMenu user={user} />
+      </div>
     </aside>
   );
 }

@@ -49,6 +49,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
 
+  callbacks: {
+    // `user` is only present on the first call, right after a successful
+    // sign in. After that the id is already baked into the token.
+    jwt({ token, user }) {
+      if (user?.id) {
+        token.id = user.id;
+      }
+
+      return token;
+    },
+
+    // Copies the id off the token so server components and route handlers can
+    // read `session.user.id` without another database lookup.
+    session({ session, token }) {
+      session.user.id = token.id;
+
+      return session;
+    },
+  },
+
   session: {
     strategy: "jwt",
   },
