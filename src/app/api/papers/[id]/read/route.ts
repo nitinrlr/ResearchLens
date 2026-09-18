@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
-import { getDefaultCollectionId } from "@/services/collection.service";
+import { recordPaperRead } from "@/services/reading.service";
 
-/** Removes a paper from the user's default "Saved" collection. */
+/**
+ * Called once from the paper detail page after it mounts.
+ *
+ * This is deliberately a POST from the client rather than a write inside the
+ * page's server render: Next.js prefetches links, so rendering the page would
+ * mark papers as read merely because the user hovered a card.
+ */
 export async function POST(
   request: Request,
   {
@@ -22,14 +27,8 @@ export async function POST(
   }
 
   const { id: paperId } = await params;
-  const collectionId = await getDefaultCollectionId(userId);
 
-  await prisma.collectionPaper.deleteMany({
-    where: {
-      collectionId,
-      paperId,
-    },
-  });
+  await recordPaperRead(userId, paperId);
 
   return NextResponse.json({
     success: true,

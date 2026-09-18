@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:openalex": "tsx src/scripts/test-openalex.ts",
     "import:papers": "tsx src/scripts/import-papers.ts"
   },
   "dependencies": {

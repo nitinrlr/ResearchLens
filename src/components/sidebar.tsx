@@ -21,7 +21,7 @@ export default function Sidebar({ user }: SidebarProps) {
   }`;
 
   return (
-    <aside className="flex w-56 flex-col border-r border-zinc-800 bg-zinc-950 p-6">
+    <aside className="flex w-60 flex-col border-r border-zinc-800 bg-zinc-950 p-6">
       <h1 className="mb-10 text-2xl font-bold">
         ResearchLens
       </h1>
@@ -34,10 +34,10 @@ export default function Sidebar({ user }: SidebarProps) {
         </Link>
 
         <Link
-          href="/saved"
-          className={navClass("/saved")}
+          href="/reading"
+          className={navClass("/reading")}
         >
-          📌 Saved
+          📖 Continue Reading
         </Link>
 
         <Link

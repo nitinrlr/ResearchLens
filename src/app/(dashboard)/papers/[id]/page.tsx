@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getPaperById } from "@/services/paper.service";
 import SavePaperButton from "@/components/save-paper-button";
+import RecordPaperRead from "@/components/record-paper-read";
 
 type Props = {
   params: Promise<{
@@ -19,6 +20,8 @@ export default async function PaperDetailsPage({ params }: Props) {
 
   return (
     <main className="p-10 text-white">
+      <RecordPaperRead paperId={paper.id} />
+
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>

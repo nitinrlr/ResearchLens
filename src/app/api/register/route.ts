@@ -3,6 +3,10 @@ import bcrypt from "bcrypt";
 import { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import {
+  DEFAULT_COLLECTION_DESCRIPTION,
+  DEFAULT_COLLECTION_TITLE,
+} from "@/services/collection.service";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MIN_PASSWORD_LENGTH = 8;
@@ -73,11 +77,21 @@ export async function POST(request: Request) {
   const passwordHash = await bcrypt.hash(password, 10);
 
   try {
+    // A nested create runs in the same transaction as the user insert, so an
+    // account can never exist without its default "Saved" collection.
     const user = await prisma.user.create({
       data: {
         name: trimmedName,
         email: trimmedEmail,
         passwordHash,
+
+        collections: {
+          create: {
+            title: DEFAULT_COLLECTION_TITLE,
+            description: DEFAULT_COLLECTION_DESCRIPTION,
+            isDefault: true,
+          },
+        },
       },
     });
 

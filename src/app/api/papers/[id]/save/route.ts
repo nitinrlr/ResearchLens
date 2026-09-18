@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
+import { getDefaultCollectionId } from "@/services/collection.service";
 
+/** Adds a paper to the user's default "Saved" collection. */
 export async function POST(
   request: Request,
   {
@@ -20,11 +22,12 @@ export async function POST(
   }
 
   const { id: paperId } = await params;
+  const collectionId = await getDefaultCollectionId(userId);
 
-  await prisma.savedPaper.upsert({
+  await prisma.collectionPaper.upsert({
     where: {
-      userId_paperId: {
-        userId,
+      collectionId_paperId: {
+        collectionId,
         paperId,
       },
     },
@@ -32,7 +35,7 @@ export async function POST(
     update: {},
 
     create: {
-      userId,
+      collectionId,
       paperId,
     },
   });

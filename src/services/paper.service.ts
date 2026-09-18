@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 
 type PaperWithRelations = Prisma.PaperGetPayload<{
   include: {
-    savedPapers: true;
+    collectionPapers: true;
     paperAuthors: {
       include: {
         author: true;
@@ -18,15 +18,22 @@ type PaperWithRelations = Prisma.PaperGetPayload<{
   };
 }>;
 
+/**
+ * "Saved" now means "in the user's default collection", so the bookmark state
+ * comes from CollectionPaper rather than a dedicated table.
+ */
 function paperInclude(userId: string | null) {
   return {
-    savedPapers: {
+    collectionPapers: {
       where: userId
         ? {
-            userId,
+            collection: {
+              userId,
+              isDefault: true,
+            },
           }
         : {
-            userId: "__no_user__",
+            collectionId: "__no_user__",
           },
     },
 
@@ -44,7 +51,7 @@ function paperInclude(userId: string | null) {
   };
 }
 
-function searchWhere(query: string): Prisma.PaperWhereInput {
+export function searchWhere(query: string): Prisma.PaperWhereInput {
   const trimmedQuery = query.trim();
 
   if (!trimmedQuery) {
@@ -100,7 +107,7 @@ function mapPaper(paper: PaperWithRelations) {
     publishedDate: paper.publishedDate,
     readingTime: paper.readingTime,
     difficulty: paper.difficulty,
-    saved: paper.savedPapers.length > 0,
+    saved: paper.collectionPapers.length > 0,
     authors: paper.paperAuthors.map((pa) => pa.author.name),
 
     topics: paper.paperTopics.map((pt) => pt.topic.name),
@@ -118,35 +125,6 @@ export async function getAllPapers(query = "") {
     },
 
     include: paperInclude(userId),
-  });
-
-  return papers.map(mapPaper);
-}
-
-export async function getSavedPapers(query = "") {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    return [];
-  }
-
-  const papers = await prisma.paper.findMany({
-    where: {
-      ...searchWhere(query),
-      savedPapers: {
-        some: {
-          userId,
-        },
-      },
-    },
-
-    orderBy: {
-      publishedDate: "desc",
-    },
-
-    include: {
-      ...paperInclude(userId),
-    },
   });
 
   return papers.map(mapPaper);
@@ -176,7 +154,7 @@ export async function getPaperById(id: string) {
     difficulty: paper.difficulty,
     paperUrl: paper.paperUrl,
     pdfUrl: paper.pdfUrl,
-    saved: paper.savedPapers.length > 0,
+    saved: paper.collectionPapers.length > 0,
 
     authors: paper.paperAuthors.map((pa) => pa.author.name),
 

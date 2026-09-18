@@ -5,9 +5,9 @@ A platform that helps students and researchers discover, organize, and understan
 # Features
 
 - Research paper discovery
+- Continue Reading (papers are tracked automatically when you open them)
+- Collections, including a default "Saved" collection every account starts with
 - Personalized learning goals
-- Collections
-- Saved papers
 - Semantic search (planned)
 - AI summaries (planned)
 - Paper comparison (planned)
