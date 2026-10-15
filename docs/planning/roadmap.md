@@ -1,0 +1,79 @@
+# ResearchLens Roadmap
+
+Last updated: 2026-10-14
+
+## Goal
+
+**v1** is a deployed app that works end to end: Phases 1–4 below.
+**v2** adds the AI features: Phase 5.
+
+A working live link is worth more than a half-built AI feature on localhost, so v1 ships first.
+
+## Where things stand
+
+**Built**
+
+- Register, login and logout, with the user id stored in the session and a profile menu
+- Explore, which searches title, abstract, author and topic
+- Paper detail page with an embedded PDF where one is available
+- Continue Reading, which tracks papers automatically when you open them
+- Collections: a default "Saved" collection plus custom ones you can create and delete, and remove papers from
+- Landing page (light theme) that sends signed-in users to `/explore`
+- OpenAlex import script: 410 papers across 17 CS topics
+
+**Gaps**
+
+- Custom collections can't be filled: the bookmark only adds to Saved
+- Goals is a static stub; Settings is a placeholder
+- Difficulty is a placeholder: OpenAlex has no difficulty data, so every paper shows 1/5
+- Split theme: the landing page is light, everything else is dark
+- No loading, error or 404 pages
+- No tests
+- Not deployed
+- README lists shadcn/ui and the OpenAI API, and neither is in the project
+
+## Phase 1: Make what exists real
+
+- [x] **1. Import a few hundred papers.** Done: 410 papers across 17 topics, with abstracts and page-based reading times. See `src/scripts/README.md`.
+- [x] **1a. Paginate Explore.** Done: 25 per page with numbered links. Page loads went from about 1–1.8s to about 0.4s.
+- [ ] **2. Add papers to custom collections.** Replace the bookmark with a popover that lists your collections as checkboxes.
+- [ ] **3. Decide what to do with Goals.** Build it (the schema already supports it) or hide it from the sidebar until it's built.
+- [ ] **4. Fix unsave on the collection page.** Unsaving while viewing Saved leaves the card on screen until a refresh.
+
+## Phase 2: Light theme conversion
+
+- [ ] **5. Convert the dashboard and auth screens to white and blue.** Define color tokens once (background, surface, border, muted, accent) so the theme lives in one place. Delete the `prefers-color-scheme: dark` block in `globals.css`.
+- [ ] **6. Decide on shadcn/ui.** Adopt it here, since every component is being touched anyway, or remove it from the README.
+
+Phase 2 comes before Phase 3 so the loading and error pages are only built once.
+
+## Phase 3: Polish
+
+- [ ] **7. Add `loading.tsx`, `error.tsx` and `not-found.tsx`.** Neon can be slow on a cold start.
+- [ ] **8. Show save failures to the user.** The bookmark only logs failures to the console. Add a toast.
+- [ ] **9. Give each page its own title.** The `%s | ResearchLens` template is already in place.
+- [ ] **10. Add experience level to Settings.** `User.experienceLevel` already exists and nothing uses it yet.
+- [ ] **11. Write a few real tests.** Vitest on the service layer, starting with the collection ownership checks.
+- [ ] **12. Final pass on the landing page.** Revisit once Explore has real data.
+
+## Phase 4: Ship v1
+
+- [ ] **13. Deploy to Vercel.** Set `DATABASE_URL`, `AUTH_SECRET` and `OPENALEX_API_KEY`, run `prisma migrate deploy` during the build, and fix the SSL-mode warning in the connection string.
+- [ ] **14. Rate-limit login and register.**
+- [ ] **15. Make the docs match reality.** Fix the README's stack list and fill in `docs/planning/`.
+
+## Phase 5: AI features (v2)
+
+In order of difficulty; each builds on the one before.
+
+- [ ] **16. AI summaries.** Explain a paper at the user's experience level and cache the result in the database. The provider is still open; the README says OpenAI, but nothing is wired up.
+- [ ] **17. Semantic search.** Embeddings stored with pgvector on Neon.
+- [ ] **18. Q&A over a paper (RAG).** Extract PDF text, split it into chunks, retrieve the relevant ones, answer from them.
+- [ ] **19. Paper comparison.** Easy once summaries exist.
+
+## Open decisions
+
+- **Goals:** build it in v1, or hide it until later?
+- **shadcn/ui:** adopt it during the theme conversion, or keep hand-written components and update the README?
+- **v1 scope:** confirm Phases 1–4 for v1, with AI as v2.
+- **Difficulty:** hide the score until it means something, or estimate it, for example alongside the AI summaries in step 16?

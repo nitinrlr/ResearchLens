@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { PAGE_SIZE } from "@/lib/pagination";
 import { getCurrentUserId } from "@/lib/session";
 import { Prisma } from "@prisma/client";
 
@@ -114,20 +115,48 @@ function mapPaper(paper: PaperWithRelations) {
   };
 }
 
-export async function getAllPapers(query = "") {
-  const userId = await getCurrentUserId();
+/**
+ * One page of papers matching `query`, newest first.
+ *
+ * A page past the end is clamped to the last page, and the returned `page` says
+ * which page was actually loaded so the caller can fix the URL.
+ */
+export async function getPapersPage(query = "", page = 1) {
+  const where = searchWhere(query);
+
+  // Counting first lets us clamp the page before querying, so an out-of-range
+  // ?page= never turns into a huge OFFSET.
+  const [userId, total] = await Promise.all([
+    getCurrentUserId(),
+    prisma.paper.count({ where }),
+  ]);
+
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
 
   const papers = await prisma.paper.findMany({
-    where: searchWhere(query),
+    where,
 
-    orderBy: {
-      publishedDate: "desc",
-    },
+    // Many papers share a publication date. Without a unique tiebreaker the
+    // database may order those differently on each query, so a paper could
+    // show up on two pages, or on none.
+    orderBy: [
+      { publishedDate: "desc" },
+      { id: "asc" },
+    ],
+
+    skip: (currentPage - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
 
     include: paperInclude(userId),
   });
 
-  return papers.map(mapPaper);
+  return {
+    papers: papers.map(mapPaper),
+    total,
+    page: currentPage,
+    totalPages,
+  };
 }
 
 export async function getPaperById(id: string) {
