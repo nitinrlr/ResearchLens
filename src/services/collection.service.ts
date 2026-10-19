@@ -6,7 +6,7 @@ export const DEFAULT_COLLECTION_DESCRIPTION =
   "Papers you bookmarked for later.";
 
 /** The id of the user's default ("Saved") collection, or null if they have none. */
-export async function findDefaultCollectionId(userId: string) {
+async function findDefaultCollectionId(userId: string) {
   const collection = await prisma.collection.findFirst({
     where: {
       userId,
@@ -102,10 +102,6 @@ export async function getCollectionById(collectionId: string) {
     return null;
   }
 
-  // The bookmark icon reflects the default collection specifically, so we need
-  // its id even when viewing some other collection.
-  const defaultCollectionId = await findDefaultCollectionId(userId);
-
   const collection = await prisma.collection.findFirst({
     where: {
       id: collectionId,
@@ -133,14 +129,6 @@ export async function getCollectionById(collectionId: string) {
                   topic: true,
                 },
               },
-              collectionPapers: {
-                where: {
-                  collectionId: defaultCollectionId ?? "__none__",
-                },
-                select: {
-                  collectionId: true,
-                },
-              },
             },
           },
         },
@@ -164,11 +152,54 @@ export async function getCollectionById(collectionId: string) {
       publishedDate: paper.publishedDate,
       readingTime: paper.readingTime,
       difficulty: paper.difficulty,
-      saved: paper.collectionPapers.length > 0,
+      // It is in this collection, so it is saved.
+      saved: true,
       authors: paper.paperAuthors.map((pa) => pa.author.name),
       topics: paper.paperTopics.map((pt) => pt.topic.name),
     })),
   };
+}
+
+/**
+ * Every collection the user owns, with whether `paperId` is already in it.
+ * Feeds the bookmark's "Save to collection" picker. Default collection first,
+ * then newest, matching the Collections page.
+ */
+export async function getCollectionsForPaper(userId: string, paperId: string) {
+  // Self-heal: the picker must always offer "Saved".
+  await getDefaultCollectionId(userId);
+
+  const collections = await prisma.collection.findMany({
+    where: {
+      userId,
+    },
+
+    orderBy: [
+      { isDefault: "desc" },
+      { createdAt: "desc" },
+    ],
+
+    select: {
+      id: true,
+      title: true,
+      isDefault: true,
+      collectionPapers: {
+        where: {
+          paperId,
+        },
+        select: {
+          paperId: true,
+        },
+      },
+    },
+  });
+
+  return collections.map((collection) => ({
+    id: collection.id,
+    title: collection.title,
+    isDefault: collection.isDefault,
+    containsPaper: collection.collectionPapers.length > 0,
+  }));
 }
 
 /** Confirms the collection exists and the signed-in user owns it. */

@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
-import { getDefaultCollectionId } from "@/services/collection.service";
+import { getCollectionsForPaper } from "@/services/collection.service";
 
-/** Removes a paper from the user's default "Saved" collection. */
-export async function POST(
+/** The signed-in user's collections, each marked with whether it holds this paper. */
+export async function GET(
   request: Request,
   {
     params,
@@ -22,16 +21,10 @@ export async function POST(
   }
 
   const { id: paperId } = await params;
-  const collectionId = await getDefaultCollectionId(userId);
 
-  await prisma.collectionPaper.deleteMany({
-    where: {
-      collectionId,
-      paperId,
-    },
-  });
+  const collections = await getCollectionsForPaper(userId, paperId);
 
   return NextResponse.json({
-    success: true,
+    collections,
   });
 }

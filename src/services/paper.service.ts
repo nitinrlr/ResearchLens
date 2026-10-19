@@ -20,8 +20,8 @@ type PaperWithRelations = Prisma.PaperGetPayload<{
 }>;
 
 /**
- * "Saved" now means "in the user's default collection", so the bookmark state
- * comes from CollectionPaper rather than a dedicated table.
+ * A paper counts as saved when it is in any of the user's collections, so the
+ * bookmark is filled whether it went into "Saved" or a collection of their own.
  */
 function paperInclude(userId: string | null) {
   return {
@@ -30,7 +30,6 @@ function paperInclude(userId: string | null) {
         ? {
             collection: {
               userId,
-              isDefault: true,
             },
           }
         : {

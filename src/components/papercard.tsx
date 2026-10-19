@@ -1,7 +1,7 @@
-"use client";
 import Link from "next/link";
-import { Bookmark, Calendar, Clock3, Star } from "lucide-react";
-import { useState } from "react";
+import { Calendar, Clock3, Star } from "lucide-react";
+
+import CollectionPicker from "@/components/collection-picker";
 
 type PaperCardProps = {
   paper: {
@@ -17,86 +17,79 @@ type PaperCardProps = {
 };
 
 export default function PaperCard({ paper }: PaperCardProps) {
+  return (
+    <article className="relative rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-all duration-200 hover:border-zinc-600 hover:shadow-lg has-[a:focus-visible]:border-blue-500">
+      <div className="flex items-start justify-between gap-3">
+        <h2 className="text-lg font-semibold leading-snug text-white">
+          {/*
+            The ::after overlay stretches this link across the whole card, so
+            the card stays clickable without the picker's checkboxes having to
+            live inside an <a> (invalid HTML, and their clicks would navigate).
+          */}
+          <Link
+            href={`/papers/${paper.id}`}
+            className="outline-none after:absolute after:inset-0 after:rounded-xl"
+          >
+            {paper.title}
+          </Link>
+        </h2>
 
-const [saved, setSaved] = useState(paper.saved);
-
-    async function toggleSaved() {
-        const endpoint = saved
-            ? `/api/papers/${paper.id}/unsave`
-            : `/api/papers/${paper.id}/save`;
-
-        const response = await fetch(endpoint, {
-            method: "POST",
-        });
-
-        if (!response.ok) {
-            console.error("Failed");
-            return;
-        }
-
-        setSaved(!saved);
-    }
-  
-    return (
-    <Link href={`/papers/${paper.id}`} className="block rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-all duration-200 hover:border-zinc-600 hover:shadow-lg">
-        <div className="flex items-start justify-between">
-            <h2 className="text-lg font-semibold leading-snug text-white">
-                {paper.title}
-            </h2>
-            <button
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleSaved();
-                }}
-            >
-                <Bookmark
-                    size={20}
-                    fill={saved ? "currentColor" : "none"}
-                    strokeWidth={saved ? 0 : 2}
-                    className={saved ? "text-blue-500" : "text-zinc-400"}
-                />
-            </button>
+        {/*
+          `relative` alone puts this above the link overlay: positioned
+          elements without a z-index paint in page order, and this comes after
+          the link. Giving it a z-index would trap the open panel's z-20 inside
+          this card, letting the next card's bookmark draw over the panel.
+        */}
+        <div className="relative shrink-0">
+          <CollectionPicker
+            paperId={paper.id}
+            initialSaved={paper.saved}
+          />
         </div>
-            <p className="mt-2 text-sm text-zinc-400">
-                {paper.authors.length > 0
-                    ? `${paper.authors[0]} et al.`
-                    : "Unknown Author"}
+      </div>
+
+      <p className="mt-2 text-sm text-zinc-400">
+        {paper.authors.length > 0
+          ? `${paper.authors[0]} et al.`
+          : "Unknown Author"}
+      </p>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {paper.topics.slice(0, 3).map((topic) => (
+          <span
+            key={topic}
+            className="rounded-full bg-zinc-800 px-3 py-1 text-xs"
+          >
+            {topic}
+          </span>
+        ))}
+      </div>
+
+      <div className="mt-3 flex items-center gap-2 text-sm text-zinc-400">
+        <Calendar size={16} />
+        <span>{new Date(paper.publishedDate).getFullYear()}</span>
+      </div>
+
+      <div className="mt-auto flex justify-end gap-4">
+        <div className="flex gap-1.5">
+          <Star size={16} />
+          <div>
+            <p className="text-xs text-zinc-500">
+              Difficulty
             </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-            {paper.topics.slice(0, 3).map((topic) => (
-                <span
-                key={topic}
-                className="rounded-full bg-zinc-800 px-3 py-1 text-xs"
-                >
-                {topic}
-                </span>
-            ))}
+            <p>{paper.difficulty}/5</p>
+          </div>
         </div>
-        <div className="mt-3 flex items-center gap-2 text-sm text-zinc-400">
-            <Calendar size={16} />
-            <span>{new Date(paper.publishedDate).getFullYear()}</span>
+        <div className="flex gap-1.5">
+          <Clock3 size={16} />
+          <div>
+            <p className="text-xs text-zinc-500">
+              Reading Time
+            </p>
+            <p>{paper.readingTime} min</p>
+          </div>
         </div>
-        <div className="mt-auto flex justify-end gap-4">
-            <div className="flex gap-1.5">
-                <Star size={16} />
-                <div>
-                    <p className="text-xs text-zinc-500">
-                        Difficulty
-                    </p>
-                    <p>{paper.difficulty}/5</p>
-                </div>
-            </div>
-            <div className="flex gap-1.5">
-                <Clock3 size={16} />
-                <div>
-                    <p className="text-xs text-zinc-500">
-                        Reading Time
-                    </p>
-                    <p>{paper.readingTime} min</p>
-                </div>
-            </div>
-        </div>
-    </Link>
+      </div>
+    </article>
   );
 }

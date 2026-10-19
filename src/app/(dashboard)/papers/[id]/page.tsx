@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPaperById } from "@/services/paper.service";
-import SavePaperButton from "@/components/save-paper-button";
+import CollectionPicker from "@/components/collection-picker";
 import RecordPaperRead from "@/components/record-paper-read";
 
 type Props = {
@@ -38,9 +38,10 @@ export default async function PaperDetailsPage({ params }: Props) {
             </p>
           </div>
 
-          <SavePaperButton
+          <CollectionPicker
             paperId={paper.id}
             initialSaved={paper.saved}
+            variant="button"
           />
         </div>
         <div className="mb-8 flex flex-wrap gap-2">

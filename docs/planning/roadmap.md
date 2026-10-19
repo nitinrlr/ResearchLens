@@ -23,7 +23,6 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 
 **Gaps**
 
-- Custom collections can't be filled: the bookmark only adds to Saved
 - Goals is a static stub; Settings is a placeholder
 - Difficulty is a placeholder: OpenAlex has no difficulty data, so every paper shows 1/5
 - Split theme: the landing page is light, everything else is dark
@@ -36,9 +35,9 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 
 - [x] **1. Import a few hundred papers.** Done: 410 papers across 17 topics, with abstracts and page-based reading times. See `src/scripts/README.md`.
 - [x] **1a. Paginate Explore.** Done: 25 per page with numbered links. Page loads went from about 1–1.8s to about 0.4s.
-- [ ] **2. Add papers to custom collections.** Replace the bookmark with a popover that lists your collections as checkboxes.
+- [x] **2. Add papers to custom collections.** Done: the bookmark opens a picker listing every collection as a checkbox, on paper cards and the paper page.
 - [ ] **3. Decide what to do with Goals.** Build it (the schema already supports it) or hide it from the sidebar until it's built.
-- [ ] **4. Fix unsave on the collection page.** Unsaving while viewing Saved leaves the card on screen until a refresh.
+- [x] **4. Fix unsave on the collection page.** Done: the page refreshes when the picker closes, so a removed card disappears.
 
 ## Phase 2: Light theme conversion
 

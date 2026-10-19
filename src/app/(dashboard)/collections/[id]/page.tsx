@@ -76,9 +76,7 @@ export default async function CollectionDetailPage({ params }: Props) {
             No papers in here yet
           </h2>
           <p className="mt-3 text-zinc-500">
-            {collection.isDefault
-              ? "Tap the bookmark on any paper to add it here."
-              : "Papers you add to this collection will appear here."}
+            Use the bookmark on any paper to add it here.
           </p>
         </div>
       ) : (

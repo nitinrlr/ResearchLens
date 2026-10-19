@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
-import { findDefaultCollectionId } from "@/services/collection.service";
 import { searchWhere } from "@/services/paper.service";
 
 /**
@@ -37,8 +36,6 @@ export async function getContinueReading(query = "") {
     return [];
   }
 
-  const defaultCollectionId = await findDefaultCollectionId(userId);
-
   const entries = await prisma.readingHistory.findMany({
     where: {
       userId,
@@ -62,9 +59,12 @@ export async function getContinueReading(query = "") {
               topic: true,
             },
           },
+          // Saved means "in any of this user's collections".
           collectionPapers: {
             where: {
-              collectionId: defaultCollectionId ?? "__none__",
+              collection: {
+                userId,
+              },
             },
             select: {
               collectionId: true,
