@@ -167,7 +167,7 @@ export default function CollectionPicker({
       size={variant === "icon" ? 20 : 18}
       fill={saved ? "currentColor" : "none"}
       strokeWidth={saved ? 0 : 2}
-      className={saved ? "text-blue-500" : "text-zinc-400"}
+      className={saved ? "text-accent" : "text-ink-muted"}
     />
   );
 
@@ -185,8 +185,8 @@ export default function CollectionPicker({
         aria-label={variant === "icon" ? "Save to collection" : undefined}
         className={
           variant === "icon"
-            ? "-m-1 rounded-md p-1 transition hover:bg-zinc-800"
-            : "inline-flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2 font-medium transition hover:bg-zinc-800"
+            ? "-m-1 rounded-md p-1 transition hover:bg-subtle"
+            : "inline-flex items-center gap-2 rounded-lg border border-line-strong px-4 py-2 font-medium transition hover:bg-subtle"
         }
       >
         {icon}
@@ -197,19 +197,19 @@ export default function CollectionPicker({
         <div
           role="dialog"
           aria-label="Save to collection"
-          className={`absolute top-full z-20 mt-2 w-64 rounded-xl border border-zinc-800 bg-zinc-900 p-1.5 text-left shadow-xl shadow-black/50 ${
+          className={`absolute top-full z-20 mt-2 w-64 rounded-xl border border-line bg-canvas p-1.5 text-left shadow-lg ${
             // The paper page's button sits at the left on phones and the right
             // on wider screens, so the panel opens toward the screen's middle.
             variant === "icon" ? "right-0" : "left-0 sm:left-auto sm:right-0"
           }`}
         >
-          <p className="px-3 pb-1.5 pt-2 text-xs font-medium uppercase tracking-wide text-zinc-500">
+          <p className="px-3 pb-1.5 pt-2 text-xs font-medium uppercase tracking-wide text-ink-faint">
             Save to
           </p>
 
           {collections === null ? (
             !error && (
-              <p className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-400">
+              <p className="flex items-center gap-2 px-3 py-2 text-sm text-ink-muted">
                 <Loader2
                   size={14}
                   className="animate-spin"
@@ -222,7 +222,7 @@ export default function CollectionPicker({
               {collections.map((collection) => (
                 <li key={collection.id}>
                   <label
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-zinc-200 transition hover:bg-zinc-800 ${
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-ink transition hover:bg-subtle ${
                       fresh ? "cursor-pointer" : "opacity-60"
                     }`}
                   >
@@ -231,7 +231,7 @@ export default function CollectionPicker({
                       checked={collection.containsPaper}
                       disabled={!fresh || pending.has(collection.id)}
                       onChange={() => toggle(collection)}
-                      className="size-4 shrink-0 accent-blue-600"
+                      className="size-4 shrink-0 accent-accent"
                     />
                     <span className="min-w-0 flex-1 truncate">
                       {collection.title}
@@ -245,17 +245,17 @@ export default function CollectionPicker({
           {error && (
             <p
               role="alert"
-              className="px-3 py-2 text-xs text-red-400"
+              className="px-3 py-2 text-xs text-danger"
             >
               {error}
             </p>
           )}
 
-          <div className="my-1.5 border-t border-zinc-800" />
+          <div className="my-1.5 border-t border-line" />
 
           <Link
             href="/collections"
-            className="block rounded-lg px-3 py-2 text-sm text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+            className="block rounded-lg px-3 py-2 text-sm text-ink-muted transition hover:bg-subtle hover:text-ink"
           >
             Manage collections
           </Link>

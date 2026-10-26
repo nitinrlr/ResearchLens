@@ -19,19 +19,19 @@ export default async function PaperDetailsPage({ params }: Props) {
   }
 
   return (
-    <main className="p-10 text-white">
+    <main className="p-10 text-ink">
       <RecordPaperRead paperId={paper.id} />
 
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-ink-faint">
               Paper Details
             </p>
             <h1 className="mt-2 text-4xl font-bold leading-tight">
               {paper.title}
             </h1>
-            <p className="mt-4 text-zinc-400">
+            <p className="mt-4 text-ink-muted">
               {paper.authors.length > 0
                 ? paper.authors.join(", ")
                 : "Unknown authors"}
@@ -48,49 +48,49 @@ export default async function PaperDetailsPage({ params }: Props) {
           {paper.topics.map((topic) => (
             <span
               key={topic}
-              className="rounded-full bg-zinc-800 px-3 py-1 text-sm text-zinc-300"
+              className="rounded-full bg-subtle px-3 py-1 text-sm text-ink-muted"
             >
               {topic}
             </span>
           ))}
         </div>
-        <section className="mb-8 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+        <section className="mb-8 rounded-xl border border-line bg-canvas p-6">
           <h2 className="text-xl font-semibold">
             Abstract
           </h2>
 
-          <p className="mt-4 leading-7 text-zinc-300">
+          <p className="mt-4 leading-7 text-ink-muted">
             {paper.abstract || "No abstract available for this paper yet."}
           </p>
         </section>
         <section className="mb-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-            <p className="text-sm text-zinc-500">Published</p>
+          <div className="rounded-xl border border-line bg-canvas p-5">
+            <p className="text-sm text-ink-faint">Published</p>
             <p className="mt-1 font-medium">
               {new Date(paper.publishedDate).getFullYear()}
             </p>
           </div>
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-            <p className="text-sm text-zinc-500">Difficulty</p>
+          <div className="rounded-xl border border-line bg-canvas p-5">
+            <p className="text-sm text-ink-faint">Difficulty</p>
             <p className="mt-1 font-medium">
               {paper.difficulty}/5
             </p>
           </div>
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5">
-            <p className="text-sm text-zinc-500">Reading Time</p>
+          <div className="rounded-xl border border-line bg-canvas p-5">
+            <p className="text-sm text-ink-faint">Reading Time</p>
             <p className="mt-1 font-medium">
               {paper.readingTime} min
             </p>
           </div>
         </section>
         {paper.pdfUrl ? (
-          <section className="mb-8 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-800 p-4">
+          <section className="mb-8 overflow-hidden rounded-xl border border-line bg-canvas">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line p-4">
               <div>
                 <h2 className="text-xl font-semibold">
                   Read Paper
                 </h2>
-                <p className="mt-1 text-sm text-zinc-400">
+                <p className="mt-1 text-sm text-ink-muted">
                   Embedded from the open-access PDF link provided by OpenAlex.
                   If the publisher blocks embedding, open the PDF in a new tab.
                 </p>
@@ -101,7 +101,7 @@ export default async function PaperDetailsPage({ params }: Props) {
                   href={paper.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg bg-blue-600 px-4 py-2 font-medium transition hover:bg-blue-500"
+                  className="rounded-lg bg-accent text-white px-4 py-2 font-medium transition hover:bg-accent-strong"
                 >
                   Open PDF
                 </a>
@@ -110,7 +110,7 @@ export default async function PaperDetailsPage({ params }: Props) {
                   href={paper.paperUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg border border-zinc-700 px-4 py-2 font-medium transition hover:bg-zinc-800"
+                  className="rounded-lg border border-line-strong px-4 py-2 font-medium transition hover:bg-subtle"
                 >
                   Source Page
                 </a>
@@ -120,15 +120,15 @@ export default async function PaperDetailsPage({ params }: Props) {
             <iframe
               src={paper.pdfUrl}
               title={`PDF for ${paper.title}`}
-              className="h-[75vh] w-full bg-white"
+              className="h-[75vh] w-full bg-canvas"
             />
           </section>
         ) : (
-          <section className="mb-8 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+          <section className="mb-8 rounded-xl border border-line bg-canvas p-6">
             <h2 className="text-xl font-semibold">
               Read Paper
             </h2>
-            <p className="mt-2 text-zinc-400">
+            <p className="mt-2 text-ink-muted">
               OpenAlex does not have a direct PDF link for this paper. You can
               still read it from the source or publisher page.
             </p>
@@ -137,7 +137,7 @@ export default async function PaperDetailsPage({ params }: Props) {
               href={paper.paperUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex rounded-lg bg-blue-600 px-5 py-3 font-medium transition hover:bg-blue-500"
+              className="mt-5 inline-flex rounded-lg bg-accent text-white px-5 py-3 font-medium transition hover:bg-accent-strong"
             >
               Open Source Page
             </a>

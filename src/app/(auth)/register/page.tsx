@@ -52,12 +52,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-      <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-900 p-8 shadow-xl">
+    <main className="flex min-h-screen items-center justify-center bg-surface px-6 text-ink">
+      <div className="w-full max-w-md rounded-2xl border border-line bg-canvas p-8 shadow-sm">
         <h1 className="text-3xl font-bold text-center">
           ResearchLens
         </h1>
-        <p className="mt-1 text-zinc-400 text-center">
+        <p className="mt-1 text-ink-muted text-center">
           Create your account
         </p>
         <form 
@@ -73,7 +73,7 @@ export default function RegisterPage() {
               placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-blue-500"
+              className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
             />
           </div>
           <div>
@@ -85,7 +85,7 @@ export default function RegisterPage() {
               placeholder="john@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-blue-500"
+              className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
             />
           </div>
           <div>
@@ -96,7 +96,7 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-blue-500"
+              className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
             />
           </div>
           <div>
@@ -107,26 +107,26 @@ export default function RegisterPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-blue-500"
+              className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
             />
           </div>
           {error && (
-            <p className="text-sm text-red-500">
+            <p className="text-sm text-danger">
               {error}
             </p>
           )}
           <button
             type="submit"
-            className="w-full rounded-md bg-blue-600 py-3 font-medium transition hover:bg-blue-500"
+            className="w-full rounded-md bg-accent text-white py-3 font-medium transition hover:bg-accent-strong"
           >
             {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
-        <p className="mt-6 text-center text-sm text-zinc-400">
+        <p className="mt-6 text-center text-sm text-ink-muted">
           Already have an account?{" "}
           <Link
             href="/login"
-            className="text-blue-400 hover:underline"
+            className="text-accent hover:underline"
           >
             Sign In
           </Link>

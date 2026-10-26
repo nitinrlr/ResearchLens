@@ -45,7 +45,7 @@ export default function Pagination({
       {previous ? (
         <Link
           href={href(previous)}
-          className={`${itemClass} gap-1 border-zinc-800 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-900`}
+          className={`${itemClass} gap-1 border-line text-ink-muted hover:border-line-strong hover:bg-subtle`}
         >
           <ChevronLeft size={16} />
           Previous
@@ -53,7 +53,7 @@ export default function Pagination({
       ) : (
         <span
           aria-disabled="true"
-          className={`${itemClass} gap-1 border-zinc-900 text-zinc-600`}
+          className={`${itemClass} gap-1 border-line text-ink-faint/50`}
         >
           <ChevronLeft size={16} />
           Previous
@@ -65,7 +65,7 @@ export default function Pagination({
           <span
             key={`gap-${index}`}
             aria-hidden="true"
-            className="px-1.5 text-zinc-500"
+            className="px-1.5 text-ink-faint"
           >
             …
           </span>
@@ -73,7 +73,7 @@ export default function Pagination({
           <span
             key={item}
             aria-current="page"
-            className={`${itemClass} border-blue-600 bg-blue-600 font-medium text-white`}
+            className={`${itemClass} border-accent bg-accent font-medium text-white`}
           >
             {item}
           </span>
@@ -82,7 +82,7 @@ export default function Pagination({
             key={item}
             href={href(item)}
             aria-label={`Page ${item}`}
-            className={`${itemClass} border-zinc-800 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-900`}
+            className={`${itemClass} border-line text-ink-muted hover:border-line-strong hover:bg-subtle`}
           >
             {item}
           </Link>
@@ -92,7 +92,7 @@ export default function Pagination({
       {next ? (
         <Link
           href={href(next)}
-          className={`${itemClass} gap-1 border-zinc-800 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-900`}
+          className={`${itemClass} gap-1 border-line text-ink-muted hover:border-line-strong hover:bg-subtle`}
         >
           Next
           <ChevronRight size={16} />
@@ -100,7 +100,7 @@ export default function Pagination({
       ) : (
         <span
           aria-disabled="true"
-          className={`${itemClass} gap-1 border-zinc-900 text-zinc-600`}
+          className={`${itemClass} gap-1 border-line text-ink-faint/50`}
         >
           Next
           <ChevronRight size={16} />

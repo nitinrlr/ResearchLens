@@ -26,10 +26,10 @@ export default async function CollectionDetailPage({ params }: Props) {
   }
 
   return (
-    <main className="p-10 text-white">
+    <main className="p-10 text-ink">
       <Link
         href="/collections"
-        className="inline-flex items-center gap-2 text-sm text-zinc-400 transition hover:text-white"
+        className="inline-flex items-center gap-2 text-sm text-ink-muted transition hover:text-ink"
       >
         <ArrowLeft size={16} />
         All collections
@@ -42,12 +42,12 @@ export default async function CollectionDetailPage({ params }: Props) {
           </h1>
 
           {collection.description && (
-            <p className="mt-2 text-zinc-400">
+            <p className="mt-2 text-ink-muted">
               {collection.description}
             </p>
           )}
 
-          <p className="mt-2 text-sm text-zinc-500">
+          <p className="mt-2 text-sm text-ink-faint">
             {collection.papers.length}{" "}
             {collection.papers.length === 1 ? "paper" : "papers"}
           </p>
@@ -62,7 +62,7 @@ export default async function CollectionDetailPage({ params }: Props) {
             />
             <button
               type="submit"
-              className="rounded-lg border border-zinc-700 px-4 py-2 text-sm font-medium transition hover:border-red-500/60 hover:bg-red-950/40 hover:text-red-400"
+              className="rounded-lg border border-line-strong px-4 py-2 text-sm font-medium transition hover:border-danger/40 hover:bg-danger-soft hover:text-danger"
             >
               Delete collection
             </button>
@@ -71,11 +71,11 @@ export default async function CollectionDetailPage({ params }: Props) {
       </div>
 
       {collection.papers.length === 0 ? (
-        <div className="mt-12 rounded-xl border border-dashed border-zinc-700 p-16 text-center">
+        <div className="mt-12 rounded-xl border border-dashed border-line-strong p-16 text-center">
           <h2 className="text-2xl font-semibold">
             No papers in here yet
           </h2>
-          <p className="mt-3 text-zinc-500">
+          <p className="mt-3 text-ink-faint">
             Use the bookmark on any paper to add it here.
           </p>
         </div>
@@ -85,7 +85,7 @@ export default async function CollectionDetailPage({ params }: Props) {
             <div key={paper.id}>
               <PaperCard paper={paper} />
 
-              <div className="mt-2 flex justify-end px-1 text-xs text-zinc-500">
+              <div className="mt-2 flex justify-end px-1 text-xs text-ink-faint">
                 <form action={removePaperFromCollectionAction}>
                   <input
                     type="hidden"
@@ -99,7 +99,7 @@ export default async function CollectionDetailPage({ params }: Props) {
                   />
                   <button
                     type="submit"
-                    className="transition hover:text-red-400"
+                    className="transition hover:text-danger"
                   >
                     Remove from collection
                   </button>

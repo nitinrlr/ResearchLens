@@ -8,13 +8,13 @@ export default async function CollectionsPage() {
   const collections = await getCollections();
 
   return (
-    <main className="p-10 text-white">
+    <main className="p-10 text-ink">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-4xl font-bold">
             Collections
           </h1>
-          <p className="mt-2 text-zinc-400">
+          <p className="mt-2 text-ink-muted">
             Organize papers into custom collections.
           </p>
         </div>
@@ -27,18 +27,18 @@ export default async function CollectionsPage() {
           <Link
             key={collection.id}
             href={`/collections/${collection.id}`}
-            className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 transition-all duration-200 hover:border-zinc-600 hover:shadow-lg"
+            className="rounded-xl border border-line bg-canvas p-6 transition-all duration-200 hover:border-line-strong hover:shadow-lg"
           >
             <div className="flex items-center gap-3">
               {collection.isDefault ? (
                 <Bookmark
                   size={20}
-                  className="text-blue-500"
+                  className="text-accent"
                 />
               ) : (
                 <Folder
                   size={20}
-                  className="text-zinc-400"
+                  className="text-ink-muted"
                 />
               )}
 
@@ -48,12 +48,12 @@ export default async function CollectionsPage() {
             </div>
 
             {collection.description && (
-              <p className="mt-3 text-sm text-zinc-400">
+              <p className="mt-3 text-sm text-ink-muted">
                 {collection.description}
               </p>
             )}
 
-            <p className="mt-4 text-sm text-zinc-500">
+            <p className="mt-4 text-sm text-ink-faint">
               {collection.paperCount}{" "}
               {collection.paperCount === 1 ? "paper" : "papers"}
             </p>

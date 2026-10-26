@@ -60,15 +60,15 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900">
+    <div className="min-h-screen bg-canvas text-ink">
       <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-6">
         <span className="flex items-center gap-2.5 font-display text-lg font-bold tracking-tight">
-          <span className="block size-5 rounded-md bg-blue-600" />
+          <span className="block size-5 rounded-md bg-accent" />
           ResearchLens
         </span>
         <Link
           href="/login"
-          className="rounded-lg border border-zinc-200 px-4 py-2 text-sm font-medium transition hover:border-zinc-300 hover:bg-zinc-50"
+          className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition hover:border-line-strong hover:bg-surface"
         >
           Sign in
         </Link>
@@ -79,30 +79,30 @@ export default async function HomePage() {
           {/* Soft blue wash behind the headline. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(60%_70%_at_50%_0%,rgba(37,99,235,0.14),transparent_70%)]"
+            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(60%_70%_at_50%_0%,color-mix(in_oklab,var(--color-accent)_14%,transparent),transparent_70%)]"
           />
           <div className="mx-auto max-w-3xl px-6 pb-20 pt-16 text-center sm:pt-24">
-            <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-medium text-blue-700">
-              <span className="block size-1.5 rounded-full bg-blue-600" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent-line bg-accent-soft px-3.5 py-1.5 text-xs font-medium text-accent-strong">
+              <span className="block size-1.5 rounded-full bg-accent" />
               Powered by OpenAlex
             </span>
             <h1 className="mt-6 text-balance font-display text-5xl font-extrabold leading-[0.98] tracking-tighter sm:text-6xl md:text-7xl">
               Find the papers worth reading.
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-zinc-600">
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ink-muted">
               Search millions of open-access CS papers, keep track of what
               you&apos;ve started, and organize what matters — in one place.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               <Link
                 href="/register"
-                className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white shadow-sm transition hover:bg-blue-500"
+                className="rounded-lg bg-accent px-6 py-3 font-medium text-white shadow-sm transition hover:bg-accent-strong"
               >
                 Start reading
               </Link>
               <Link
                 href="/login"
-                className="rounded-lg border border-zinc-200 px-6 py-3 font-medium transition hover:border-zinc-300 hover:bg-zinc-50"
+                className="rounded-lg border border-line px-6 py-3 font-medium transition hover:border-line-strong hover:bg-surface"
               >
                 Sign in
               </Link>
@@ -116,19 +116,19 @@ export default async function HomePage() {
             {FEATURES.map(({ icon: Icon, title, body, wide }) => (
               <div
                 key={title}
-                className={`rounded-2xl border border-zinc-200 bg-zinc-50/70 p-6 transition hover:border-zinc-300 hover:bg-zinc-50 ${
+                className={`rounded-2xl border border-line bg-surface p-6 transition hover:border-line-strong ${
                   wide ? "lg:col-span-2" : ""
                 }`}
               >
                 <Icon
                   size={20}
-                  className="text-blue-600"
+                  className="text-accent"
                   strokeWidth={2}
                 />
                 <h2 className="mt-4 font-display text-lg font-semibold tracking-tight">
                   {title}
                 </h2>
-                <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">
+                <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
                   {body}
                 </p>
               </div>
@@ -137,17 +137,17 @@ export default async function HomePage() {
         </section>
 
         {/* Closing ---------------------------------------------------- */}
-        <section className="border-t border-zinc-200 bg-zinc-50">
+        <section className="border-t border-line bg-surface">
           <div className="mx-auto max-w-6xl px-6 py-20 text-center">
             <h2 className="text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl">
               Start with one paper.
             </h2>
-            <p className="mx-auto mt-4 max-w-md text-zinc-600">
+            <p className="mx-auto mt-4 max-w-md text-ink-muted">
               Free, and your reading list is yours.
             </p>
             <Link
               href="/register"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white shadow-sm transition hover:bg-blue-500"
+              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-medium text-white shadow-sm transition hover:bg-accent-strong"
             >
               <Bookmark size={18} />
               Start reading
@@ -156,14 +156,14 @@ export default async function HomePage() {
         </section>
       </main>
 
-      <footer className="mx-auto max-w-6xl px-6 py-10 text-sm text-zinc-500">
+      <footer className="mx-auto max-w-6xl px-6 py-10 text-sm text-ink-faint">
         <p>
           Paper metadata from{" "}
           <a
             href="https://openalex.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-zinc-700 underline underline-offset-4 transition hover:text-blue-600"
+            className="text-ink underline underline-offset-4 transition hover:text-accent"
           >
             OpenAlex
           </a>

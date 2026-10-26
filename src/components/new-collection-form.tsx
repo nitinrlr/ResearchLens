@@ -13,7 +13,7 @@ export default function NewCollectionForm() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 font-medium transition hover:bg-blue-500"
+        className="inline-flex items-center gap-2 rounded-lg bg-accent text-white px-5 py-3 font-medium transition hover:bg-accent-strong"
       >
         <Plus size={18} />
         New Collection
@@ -24,7 +24,7 @@ export default function NewCollectionForm() {
   return (
     <form
       action={createCollectionAction}
-      className="w-full max-w-md rounded-xl border border-zinc-800 bg-zinc-900 p-5"
+      className="w-full max-w-md rounded-xl border border-line bg-canvas p-5"
     >
       <label
         htmlFor="title"
@@ -39,27 +39,27 @@ export default function NewCollectionForm() {
         maxLength={100}
         autoFocus
         placeholder="e.g. Transformers"
-        className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-blue-500"
+        className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
       />
 
       <label
         htmlFor="description"
         className="mb-2 mt-4 block text-sm"
       >
-        Description <span className="text-zinc-500">(optional)</span>
+        Description <span className="text-ink-faint">(optional)</span>
       </label>
       <input
         id="description"
         name="description"
         maxLength={300}
         placeholder="What goes in this collection?"
-        className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-4 py-3 outline-none focus:border-blue-500"
+        className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
       />
 
       <div className="mt-5 flex gap-3">
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-5 py-2.5 font-medium transition hover:bg-blue-500"
+          className="rounded-lg bg-accent text-white px-5 py-2.5 font-medium transition hover:bg-accent-strong"
         >
           Create
         </button>
@@ -67,7 +67,7 @@ export default function NewCollectionForm() {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="rounded-lg border border-zinc-700 px-5 py-2.5 font-medium transition hover:bg-zinc-800"
+          className="rounded-lg border border-line-strong px-5 py-2.5 font-medium transition hover:bg-subtle"
         >
           Cancel
         </button>

@@ -36,18 +36,18 @@ export default async function ReadingPage({ searchParams }: Props) {
 
   if (papers.length === 0 && !query) {
     return (
-      <main className="p-10 text-white">
+      <main className="p-10 text-ink">
         <h1 className="text-4xl font-bold">
           Continue Reading
         </h1>
-        <p className="mt-2 text-zinc-400">
+        <p className="mt-2 text-ink-muted">
           Papers you&apos;ve opened, most recent first.
         </p>
-        <div className="mt-12 rounded-xl border border-dashed border-zinc-700 p-16 text-center">
+        <div className="mt-12 rounded-xl border border-dashed border-line-strong p-16 text-center">
           <h2 className="text-2xl font-semibold">
             Nothing here yet
           </h2>
-          <p className="mt-3 text-zinc-500">
+          <p className="mt-3 text-ink-faint">
             Open a paper from Discover and it will show up here automatically.
           </p>
         </div>
@@ -56,11 +56,11 @@ export default async function ReadingPage({ searchParams }: Props) {
   }
 
   return (
-    <main className="p-10 text-white">
+    <main className="p-10 text-ink">
       <h1 className="text-3xl font-bold">
         Continue Reading
       </h1>
-      <p className="mt-2 text-zinc-400">
+      <p className="mt-2 text-ink-muted">
         Papers you&apos;ve opened, most recent first.
       </p>
 
@@ -70,16 +70,16 @@ export default async function ReadingPage({ searchParams }: Props) {
           name="q"
           defaultValue={query}
           placeholder="Search papers you've read..."
-          className="mt-8 w-full rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-4 outline-none transition focus:border-blue-500"
+          className="mt-8 w-full rounded-xl border border-line-strong bg-canvas px-5 py-4 outline-none transition focus:border-accent"
         />
       </form>
 
       {papers.length === 0 ? (
-        <div className="mt-12 rounded-xl border border-dashed border-zinc-700 p-12 text-center">
+        <div className="mt-12 rounded-xl border border-dashed border-line-strong p-12 text-center">
           <h2 className="text-xl font-semibold">
             No matches
           </h2>
-          <p className="mt-2 text-zinc-500">
+          <p className="mt-2 text-ink-faint">
             Try a different title, author, or topic.
           </p>
         </div>
@@ -89,7 +89,7 @@ export default async function ReadingPage({ searchParams }: Props) {
             <div key={paper.id}>
               <PaperCard paper={paper} />
 
-              <div className="mt-2 flex items-center justify-between px-1 text-xs text-zinc-500">
+              <div className="mt-2 flex items-center justify-between px-1 text-xs text-ink-faint">
                 <span>Opened {lastReadLabel(paper.lastReadAt)}</span>
 
                 <form action={removeFromReadingAction}>
@@ -100,7 +100,7 @@ export default async function ReadingPage({ searchParams }: Props) {
                   />
                   <button
                     type="submit"
-                    className="transition hover:text-red-400"
+                    className="transition hover:text-danger"
                   >
                     Remove
                   </button>

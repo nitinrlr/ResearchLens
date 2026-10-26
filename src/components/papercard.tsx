@@ -18,9 +18,9 @@ type PaperCardProps = {
 
 export default function PaperCard({ paper }: PaperCardProps) {
   return (
-    <article className="relative rounded-xl border border-zinc-800 bg-zinc-900 p-5 transition-all duration-200 hover:border-zinc-600 hover:shadow-lg has-[a:focus-visible]:border-blue-500">
+    <article className="relative rounded-xl border border-line bg-canvas p-5 transition-all duration-200 hover:border-line-strong hover:shadow-lg has-[a:focus-visible]:border-accent">
       <div className="flex items-start justify-between gap-3">
-        <h2 className="text-lg font-semibold leading-snug text-white">
+        <h2 className="text-lg font-semibold leading-snug text-ink">
           {/*
             The ::after overlay stretches this link across the whole card, so
             the card stays clickable without the picker's checkboxes having to
@@ -48,7 +48,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
         </div>
       </div>
 
-      <p className="mt-2 text-sm text-zinc-400">
+      <p className="mt-2 text-sm text-ink-muted">
         {paper.authors.length > 0
           ? `${paper.authors[0]} et al.`
           : "Unknown Author"}
@@ -58,14 +58,14 @@ export default function PaperCard({ paper }: PaperCardProps) {
         {paper.topics.slice(0, 3).map((topic) => (
           <span
             key={topic}
-            className="rounded-full bg-zinc-800 px-3 py-1 text-xs"
+            className="rounded-full bg-subtle px-3 py-1 text-xs"
           >
             {topic}
           </span>
         ))}
       </div>
 
-      <div className="mt-3 flex items-center gap-2 text-sm text-zinc-400">
+      <div className="mt-3 flex items-center gap-2 text-sm text-ink-muted">
         <Calendar size={16} />
         <span>{new Date(paper.publishedDate).getFullYear()}</span>
       </div>
@@ -74,7 +74,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
         <div className="flex gap-1.5">
           <Star size={16} />
           <div>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-ink-faint">
               Difficulty
             </p>
             <p>{paper.difficulty}/5</p>
@@ -83,7 +83,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
         <div className="flex gap-1.5">
           <Clock3 size={16} />
           <div>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-ink-faint">
               Reading Time
             </p>
             <p>{paper.readingTime} min</p>

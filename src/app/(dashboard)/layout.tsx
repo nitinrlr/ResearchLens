@@ -14,7 +14,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-black text-white">
+    <div className="flex min-h-screen bg-canvas text-ink">
       <Sidebar
         user={{
           name: session.user.name ?? "Account",

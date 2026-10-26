@@ -48,22 +48,22 @@ export default async function ExplorePage({ searchParams }: Props) {
           name="q"
           defaultValue={query}
           placeholder="Search by title, author, or topic..."
-          className="mb-8 w-full rounded-lg border border-zinc-700 bg-zinc-900 p-3 outline-none focus:border-blue-500"
+          className="mb-8 w-full rounded-lg border border-line-strong bg-canvas p-3 outline-none focus:border-accent"
         />
       </form>
 
       {papers.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-zinc-700 p-12 text-center">
+        <div className="rounded-xl border border-dashed border-line-strong p-12 text-center">
           <h2 className="text-xl font-semibold">
             No papers found
           </h2>
-          <p className="mt-2 text-zinc-500">
+          <p className="mt-2 text-ink-faint">
             Try searching for another title, author, or topic.
           </p>
         </div>
       ) : (
         <>
-          <p className="mb-6 text-sm text-zinc-500">
+          <p className="mb-6 text-sm text-ink-faint">
             Showing {firstShown}–{lastShown} of {total}{" "}
             {total === 1 ? "paper" : "papers"}
             {query && (

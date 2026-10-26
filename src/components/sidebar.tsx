@@ -16,13 +16,14 @@ export default function Sidebar({ user }: SidebarProps) {
   const navClass = (href: string) =>
   `block rounded-lg px-4 py-3 transition ${
     pathname === href
-      ? "bg-zinc-800"
-      : "hover:bg-zinc-900"
+      ? "bg-accent-soft font-medium text-accent-strong"
+      : "text-ink-muted hover:bg-subtle hover:text-ink"
   }`;
 
   return (
-    <aside className="flex w-60 flex-col border-r border-zinc-800 bg-zinc-950 p-6">
-      <h1 className="mb-10 text-2xl font-bold">
+    <aside className="flex w-60 flex-col border-r border-line bg-surface p-6">
+      <h1 className="mb-10 flex items-center gap-2.5 font-display text-xl font-bold tracking-tight">
+        <span className="block size-5 shrink-0 rounded-md bg-accent" />
         ResearchLens
       </h1>
       <nav className="space-y-2">

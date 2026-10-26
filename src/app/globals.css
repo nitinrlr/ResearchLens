@@ -1,8 +1,35 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  All colors in the app comes from this block
+
+  Values are Tailwind's own palette colors, written
+  out in full so they don't depend on which palette variables Tailwind emits.
+*/
+@theme {
+  /* Backgrounds */
+  --color-canvas: #ffffff;                            /* page, cards, inputs, menus */
+  --color-surface: oklch(98.5% 0 none);               /* sidebar, auth pages (zinc-50) */
+  --color-subtle: oklch(96.7% 0.001 286.375);         /* hover fills, topic pills (zinc-100) */
+
+  /* Borders */
+  --color-line: oklch(92% 0.004 286.32);              /* cards, dividers (zinc-200) */
+  --color-line-strong: oklch(87.1% 0.006 286.286);    /* inputs, hovered cards (zinc-300) */
+
+  /* Text */
+  --color-ink: oklch(21% 0.006 285.885);              /* headings, body (zinc-900) */
+  --color-ink-muted: oklch(44.2% 0.017 285.786);      /* secondary text (zinc-600) */
+  --color-ink-faint: oklch(55.2% 0.016 285.938);      /* captions, metadata (zinc-500) */
+
+  /* Blue accent */
+  --color-accent: oklch(54.6% 0.245 262.881);         /* buttons, links, active state (blue-600) */
+  --color-accent-strong: oklch(48.8% 0.243 264.376);  /* hover, text on accent-soft (blue-700) */
+  --color-accent-soft: oklch(97% 0.014 254.604);      /* active nav, chips (blue-50) */
+  --color-accent-line: oklch(88.2% 0.059 254.128);    /* chip borders (blue-200) */
+
+  /* Errors and destructive actions */
+  --color-danger: oklch(57.7% 0.245 27.325);          /* red-600 */
+  --color-danger-soft: oklch(97.1% 0.013 17.38);      /* red-50 */
 }
 
 @theme inline {
@@ -10,15 +37,13 @@
   --font-display: var(--font-bricolage);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Light theme only: keeps native controls and scrollbars light too. */
+:root {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-canvas);
+  color: var(--color-ink);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }

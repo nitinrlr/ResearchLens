@@ -25,7 +25,6 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 
 - Goals is a static stub; Settings is a placeholder
 - Difficulty is a placeholder: OpenAlex has no difficulty data, so every paper shows 1/5
-- Split theme: the landing page is light, everything else is dark
 - No loading, error or 404 pages
 - No tests
 - Not deployed
@@ -41,7 +40,7 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 
 ## Phase 2: Light theme conversion
 
-- [ ] **5. Convert the dashboard and auth screens to white and blue.** Define color tokens once (background, surface, border, muted, accent) so the theme lives in one place. Delete the `prefers-color-scheme: dark` block in `globals.css`.
+- [x] **5. Convert the dashboard and auth screens to white and blue.** Done: every color comes from tokens in `src/app/globals.css`, and the dark-mode block is gone.
 - [ ] **6. Decide on shadcn/ui.** Adopt it here, since every component is being touched anyway, or remove it from the README.
 
 Phase 2 comes before Phase 3 so the loading and error pages are only built once.
