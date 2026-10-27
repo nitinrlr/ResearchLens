@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Button } from "@radix-ui/themes";
 import { getPaperById } from "@/services/paper.service";
 import CollectionPicker from "@/components/collection-picker";
 import RecordPaperRead from "@/components/record-paper-read";
@@ -97,23 +98,29 @@ export default async function PaperDetailsPage({ params }: Props) {
               </div>
 
               <div className="flex flex-wrap gap-3">
-                <a
-                  href={paper.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-lg bg-accent text-white px-4 py-2 font-medium transition hover:bg-accent-strong"
-                >
-                  Open PDF
-                </a>
+                <Button asChild>
+                  <a
+                    href={paper.pdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open PDF
+                  </a>
+                </Button>
 
-                <a
-                  href={paper.paperUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-lg border border-line-strong px-4 py-2 font-medium transition hover:bg-subtle"
+                <Button
+                  asChild
+                  variant="soft"
+                  color="gray"
                 >
-                  Source Page
-                </a>
+                  <a
+                    href={paper.paperUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source Page
+                  </a>
+                </Button>
               </div>
             </div>
 
@@ -133,14 +140,19 @@ export default async function PaperDetailsPage({ params }: Props) {
               still read it from the source or publisher page.
             </p>
 
-            <a
-              href={paper.paperUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 inline-flex rounded-lg bg-accent text-white px-5 py-3 font-medium transition hover:bg-accent-strong"
+            <Button
+              asChild
+              size="3"
+              mt="5"
             >
-              Open Source Page
-            </a>
+              <a
+                href={paper.paperUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open Source Page
+              </a>
+            </Button>
           </section>
         )}
       </div>

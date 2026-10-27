@@ -2,8 +2,18 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Bookmark, Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { Bookmark } from "lucide-react";
+import {
+  Button,
+  Checkbox,
+  Flex,
+  IconButton,
+  Popover,
+  Separator,
+  Spinner,
+  Text,
+} from "@radix-ui/themes";
 
 type Collection = {
   id: string;
@@ -20,6 +30,12 @@ type CollectionPickerProps = {
   variant?: "icon" | "button";
 };
 
+/*
+  Radix's Popover handles closing on an outside click or Escape, returning
+  focus to the bookmark, and keyboard navigation. It also renders the panel at
+  the top of the page and flips it upward when there's no room below, so it
+  can't be covered by the next card or open off the bottom of the screen.
+*/
 export default function CollectionPicker({
   paperId,
   initialSaved,
@@ -35,8 +51,6 @@ export default function CollectionPicker({
   const [pending, setPending] = useState<ReadonlySet<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
   // Bumped on every opening so a slow response from an earlier one is ignored.
   const loadIdRef = useRef(0);
   // Set when a checkbox change is saved. The page refreshes once, on close,
@@ -49,19 +63,9 @@ export default function CollectionPicker({
     ? collections.some((collection) => collection.containsPaper)
     : initialSaved;
 
-  const close = useCallback(() => {
-    setOpen(false);
-
-    if (changedRef.current) {
-      changedRef.current = false;
-      router.refresh();
-    }
-  }, [router]);
-
-  async function openPicker() {
+  async function loadCollections() {
     const loadId = ++loadIdRef.current;
 
-    setOpen(true);
     setFresh(false);
     setError(null);
 
@@ -82,6 +86,17 @@ export default function CollectionPicker({
       if (loadId === loadIdRef.current) {
         setError("Couldn't load your collections. Close this and try again.");
       }
+    }
+  }
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+
+    if (nextOpen) {
+      loadCollections();
+    } else if (changedRef.current) {
+      changedRef.current = false;
+      router.refresh();
     }
   }
 
@@ -134,133 +149,136 @@ export default function CollectionPicker({
     }
   }
 
-  // Close on a click anywhere outside the picker, or on Escape.
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    function handlePointerDown(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) {
-        close();
-      }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        close();
-        triggerRef.current?.focus();
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open, close]);
-
   const icon = (
     <Bookmark
-      size={variant === "icon" ? 20 : 18}
+      size={variant === "icon" ? 20 : 16}
       fill={saved ? "currentColor" : "none"}
       strokeWidth={saved ? 0 : 2}
-      className={saved ? "text-accent" : "text-ink-muted"}
     />
   );
 
   return (
-    <div
-      ref={containerRef}
-      className="relative"
+    <Popover.Root
+      open={open}
+      onOpenChange={handleOpenChange}
     >
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => (open ? close() : openPicker())}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-label={variant === "icon" ? "Save to collection" : undefined}
-        className={
-          variant === "icon"
-            ? "-m-1 rounded-md p-1 transition hover:bg-subtle"
-            : "inline-flex items-center gap-2 rounded-lg border border-line-strong px-4 py-2 font-medium transition hover:bg-subtle"
-        }
-      >
-        {icon}
-        {variant === "button" && (saved ? "Saved" : "Save")}
-      </button>
-
-      {open && (
-        <div
-          role="dialog"
-          aria-label="Save to collection"
-          className={`absolute top-full z-20 mt-2 w-64 rounded-xl border border-line bg-canvas p-1.5 text-left shadow-lg ${
-            // The paper page's button sits at the left on phones and the right
-            // on wider screens, so the panel opens toward the screen's middle.
-            variant === "icon" ? "right-0" : "left-0 sm:left-auto sm:right-0"
-          }`}
-        >
-          <p className="px-3 pb-1.5 pt-2 text-xs font-medium uppercase tracking-wide text-ink-faint">
-            Save to
-          </p>
-
-          {collections === null ? (
-            !error && (
-              <p className="flex items-center gap-2 px-3 py-2 text-sm text-ink-muted">
-                <Loader2
-                  size={14}
-                  className="animate-spin"
-                />
-                Loading…
-              </p>
-            )
-          ) : (
-            <ul className="max-h-64 overflow-y-auto">
-              {collections.map((collection) => (
-                <li key={collection.id}>
-                  <label
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-ink transition hover:bg-subtle ${
-                      fresh ? "cursor-pointer" : "opacity-60"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={collection.containsPaper}
-                      disabled={!fresh || pending.has(collection.id)}
-                      onChange={() => toggle(collection)}
-                      className="size-4 shrink-0 accent-accent"
-                    />
-                    <span className="min-w-0 flex-1 truncate">
-                      {collection.title}
-                    </span>
-                  </label>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {error && (
-            <p
-              role="alert"
-              className="px-3 py-2 text-xs text-danger"
-            >
-              {error}
-            </p>
-          )}
-
-          <div className="my-1.5 border-t border-line" />
-
-          <Link
-            href="/collections"
-            className="block rounded-lg px-3 py-2 text-sm text-ink-muted transition hover:bg-subtle hover:text-ink"
+      <Popover.Trigger>
+        {variant === "icon" ? (
+          <IconButton
+            variant="ghost"
+            color={saved ? "blue" : "gray"}
+            size="2"
+            aria-label="Save to collection"
           >
+            {icon}
+          </IconButton>
+        ) : (
+          <Button
+            variant="soft"
+            color={saved ? "blue" : "gray"}
+            size="3"
+          >
+            {icon}
+            {saved ? "Saved" : "Save"}
+          </Button>
+        )}
+      </Popover.Trigger>
+
+      <Popover.Content
+        size="1"
+        width="260px"
+        align="end"
+        aria-label="Save to collection"
+      >
+        <Text
+          as="p"
+          size="1"
+          weight="medium"
+          color="gray"
+          mb="2"
+          className="uppercase tracking-wide"
+        >
+          Save to
+        </Text>
+
+        {collections === null ? (
+          !error && (
+            <Flex
+              align="center"
+              gap="2"
+              py="1"
+            >
+              <Spinner size="1" />
+              <Text
+                size="2"
+                color="gray"
+              >
+                Loading…
+              </Text>
+            </Flex>
+          )
+        ) : (
+          <Flex
+            direction="column"
+            gap="1"
+            className="max-h-64 overflow-y-auto"
+          >
+            {collections.map((collection) => (
+              <Text
+                key={collection.id}
+                as="label"
+                size="2"
+                className={`rounded-md px-1 py-1.5 transition hover:bg-subtle ${
+                  fresh ? "cursor-pointer" : "opacity-60"
+                }`}
+              >
+                <Flex
+                  align="center"
+                  gap="2"
+                >
+                  <Checkbox
+                    checked={collection.containsPaper}
+                    disabled={!fresh || pending.has(collection.id)}
+                    onCheckedChange={() => toggle(collection)}
+                  />
+                  <span className="min-w-0 flex-1 truncate">
+                    {collection.title}
+                  </span>
+                </Flex>
+              </Text>
+            ))}
+          </Flex>
+        )}
+
+        {error && (
+          <Text
+            as="p"
+            role="alert"
+            size="1"
+            color="red"
+            mt="2"
+          >
+            {error}
+          </Text>
+        )}
+
+        <Separator
+          size="4"
+          my="2"
+        />
+
+        <Button
+          asChild
+          variant="soft"
+          color="gray"
+          size="2"
+          className="w-full"
+        >
+          <Link href="/collections">
             Manage collections
           </Link>
-        </div>
-      )}
-    </div>
+        </Button>
+      </Popover.Content>
+    </Popover.Root>
   );
 }

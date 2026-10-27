@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { Button, TextField } from "@radix-ui/themes";
 
 export default function LoginPage() {
 
@@ -49,25 +50,35 @@ export default function LoginPage() {
         className="mt-8 space-y-5"
         >
           <div>
-            <label className="mb-2 block text-sm">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-medium"
+            >
               Email
             </label>
-            <input
+            <TextField.Root
+              id="email"
               type="email"
+              size="3"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm">
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm font-medium"
+            >
               Password
             </label>
-            <input
+            <TextField.Root
+              id="password"
               type="password"
+              size="3"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
             />
           </div>
           {error && (
@@ -75,18 +86,20 @@ export default function LoginPage() {
               {error}
             </p>
           )}
-          <button
+          <Button
             type="submit"
-            className="w-full rounded-md bg-accent text-white py-3 font-medium transition hover:bg-accent-strong"
+            size="3"
+            loading={loading}
+            className="w-full"
           >
-            {loading ? "Signing In..." : "Sign In"}
-          </button>
+            Sign In
+          </Button>
         </form>
         <p className="mt-6 text-center text-sm text-ink-muted">
           Don&apos;t have an account?{" "}
           <Link
             href="/register"
-            className="text-accent hover:underline"
+            className="font-medium text-accent-ink hover:underline"
           >
             Create one
           </Link>

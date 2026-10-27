@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { Button } from "@radix-ui/themes";
 
+import DeleteCollectionButton from "@/components/delete-collection-button";
 import PaperCard from "@/components/papercard";
 import { getCollectionById } from "@/services/collection.service";
-import {
-  deleteCollectionAction,
-  removePaperFromCollectionAction,
-} from "@/actions/collections";
+import { removePaperFromCollectionAction } from "@/actions/collections";
 
 type Props = {
   params: Promise<{
@@ -54,19 +53,10 @@ export default async function CollectionDetailPage({ params }: Props) {
         </div>
 
         {!collection.isDefault && (
-          <form action={deleteCollectionAction}>
-            <input
-              type="hidden"
-              name="collectionId"
-              value={collection.id}
-            />
-            <button
-              type="submit"
-              className="rounded-lg border border-line-strong px-4 py-2 text-sm font-medium transition hover:border-danger/40 hover:bg-danger-soft hover:text-danger"
-            >
-              Delete collection
-            </button>
-          </form>
+          <DeleteCollectionButton
+            collectionId={collection.id}
+            title={collection.title}
+          />
         )}
       </div>
 
@@ -85,7 +75,7 @@ export default async function CollectionDetailPage({ params }: Props) {
             <div key={paper.id}>
               <PaperCard paper={paper} />
 
-              <div className="mt-2 flex justify-end px-1 text-xs text-ink-faint">
+              <div className="mt-3 flex justify-end px-1">
                 <form action={removePaperFromCollectionAction}>
                   <input
                     type="hidden"
@@ -97,12 +87,14 @@ export default async function CollectionDetailPage({ params }: Props) {
                     name="paperId"
                     value={paper.id}
                   />
-                  <button
+                  <Button
                     type="submit"
-                    className="transition hover:text-danger"
+                    variant="ghost"
+                    color="gray"
+                    size="1"
                   >
                     Remove from collection
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>

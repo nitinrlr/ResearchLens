@@ -1,4 +1,7 @@
+import { Button } from "@radix-ui/themes";
+
 import PaperCard from "@/components/papercard";
+import SearchField from "@/components/search-field";
 import { getContinueReading } from "@/services/reading.service";
 import { removeFromReadingAction } from "@/actions/collections";
 
@@ -64,13 +67,14 @@ export default async function ReadingPage({ searchParams }: Props) {
         Papers you&apos;ve opened, most recent first.
       </p>
 
-      <form action="/reading">
-        <input
-          type="text"
-          name="q"
+      <form
+        action="/reading"
+        className="mt-8"
+      >
+        <SearchField
           defaultValue={query}
           placeholder="Search papers you've read..."
-          className="mt-8 w-full rounded-xl border border-line-strong bg-canvas px-5 py-4 outline-none transition focus:border-accent"
+          label="Search papers you've read"
         />
       </form>
 
@@ -98,12 +102,14 @@ export default async function ReadingPage({ searchParams }: Props) {
                     name="paperId"
                     value={paper.id}
                   />
-                  <button
+                  <Button
                     type="submit"
-                    className="transition hover:text-danger"
+                    variant="ghost"
+                    color="gray"
+                    size="1"
                   >
                     Remove
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>

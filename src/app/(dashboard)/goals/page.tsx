@@ -1,3 +1,5 @@
+import { Button } from "@radix-ui/themes";
+
 export default function GoalsPage() {
   return (
     <main className="p-10 text-ink">
@@ -14,11 +16,12 @@ export default function GoalsPage() {
         <p className="mt-2 text-ink-faint">
           Set your first learning goal.
         </p>
-        <button
-          className="mt-6 rounded-lg bg-accent text-white px-6 py-3 font-medium transition hover:bg-accent-strong"
+        <Button
+          size="3"
+          mt="6"
         >
           Create Goal
-        </button>
+        </Button>
       </div>
     </main>
   );

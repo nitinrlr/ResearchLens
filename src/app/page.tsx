@@ -10,6 +10,8 @@ import {
   Target,
 } from "lucide-react";
 
+import { Button } from "@radix-ui/themes";
+
 import { auth } from "@/auth";
 
 const FEATURES = [
@@ -66,12 +68,13 @@ export default async function HomePage() {
           <span className="block size-5 rounded-md bg-accent" />
           ResearchLens
         </span>
-        <Link
-          href="/login"
-          className="rounded-lg border border-line px-4 py-2 text-sm font-medium transition hover:border-line-strong hover:bg-surface"
+        <Button
+          asChild
+          variant="soft"
+          color="gray"
         >
-          Sign in
-        </Link>
+          <Link href="/login">Sign in</Link>
+        </Button>
       </header>
       <main>
         {/* Hero ------------------------------------------------------- */}
@@ -79,10 +82,10 @@ export default async function HomePage() {
           {/* Soft blue wash behind the headline. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(60%_70%_at_50%_0%,color-mix(in_oklab,var(--color-accent)_14%,transparent),transparent_70%)]"
+            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(60%_70%_at_50%_0%,color-mix(in_oklab,var(--accent-9)_14%,transparent),transparent_70%)]"
           />
           <div className="mx-auto max-w-3xl px-6 pb-20 pt-16 text-center sm:pt-24">
-            <span className="inline-flex items-center gap-2 rounded-full border border-accent-line bg-accent-soft px-3.5 py-1.5 text-xs font-medium text-accent-strong">
+            <span className="inline-flex items-center gap-2 rounded-full border border-accent-line bg-accent-soft px-3.5 py-1.5 text-xs font-medium text-accent-ink">
               <span className="block size-1.5 rounded-full bg-accent" />
               Powered by OpenAlex
             </span>
@@ -94,18 +97,20 @@ export default async function HomePage() {
               you&apos;ve started, and organize what matters — in one place.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
-              <Link
-                href="/register"
-                className="rounded-lg bg-accent px-6 py-3 font-medium text-white shadow-sm transition hover:bg-accent-strong"
+              <Button
+                asChild
+                size="4"
               >
-                Start reading
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-lg border border-line px-6 py-3 font-medium transition hover:border-line-strong hover:bg-surface"
+                <Link href="/register">Start reading</Link>
+              </Button>
+              <Button
+                asChild
+                size="4"
+                variant="soft"
+                color="gray"
               >
-                Sign in
-              </Link>
+                <Link href="/login">Sign in</Link>
+              </Button>
             </div>
           </div>
         </section>
@@ -145,13 +150,16 @@ export default async function HomePage() {
             <p className="mx-auto mt-4 max-w-md text-ink-muted">
               Free, and your reading list is yours.
             </p>
-            <Link
-              href="/register"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 font-medium text-white shadow-sm transition hover:bg-accent-strong"
+            <Button
+              asChild
+              size="4"
+              mt="8"
             >
-              <Bookmark size={18} />
-              Start reading
-            </Link>
+              <Link href="/register">
+                <Bookmark size={18} />
+                Start reading
+              </Link>
+            </Button>
           </div>
         </section>
       </main>
@@ -163,7 +171,7 @@ export default async function HomePage() {
             href="https://openalex.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-ink underline underline-offset-4 transition hover:text-accent"
+            className="text-ink underline underline-offset-4 transition hover:text-accent-ink"
           >
             OpenAlex
           </a>

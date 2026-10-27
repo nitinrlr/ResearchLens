@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import Pagination from "@/components/pagination";
 import PaperCard from "@/components/papercard";
+import SearchField from "@/components/search-field";
 import { PAGE_SIZE, pageHref, parsePage } from "@/lib/pagination";
 import { getPapersPage } from "@/services/paper.service";
 
@@ -42,13 +43,14 @@ export default async function ExplorePage({ searchParams }: Props) {
       <h1 className="mb-6 text-3xl font-bold">
         Explore Papers
       </h1>
-      <form action="/explore">
-        <input
-          type="text"
-          name="q"
+      <form
+        action="/explore"
+        className="mb-8"
+      >
+        <SearchField
           defaultValue={query}
           placeholder="Search by title, author, or topic..."
-          className="mb-8 w-full rounded-lg border border-line-strong bg-canvas p-3 outline-none focus:border-accent"
+          label="Search papers"
         />
       </form>
 
