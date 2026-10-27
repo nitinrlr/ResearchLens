@@ -28,7 +28,7 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 - No loading, error or 404 pages
 - No tests
 - Not deployed
-- README lists shadcn/ui and the OpenAI API, and neither is in the project
+- README lists the OpenAI API, which isn't in the project yet
 
 ## Phase 1: Make what exists real
 
@@ -41,7 +41,8 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 ## Phase 2: Light theme conversion
 
 - [x] **5. Convert the dashboard and auth screens to white and blue.** Done: every color comes from tokens in `src/app/globals.css`, and the dark-mode block is gone.
-- [ ] **6. Decide on shadcn/ui.** Adopt it here, since every component is being touched anyway, or remove it from the README.
+- [x] **6. Pick a component library.** Chose Radix Themes over shadcn/ui. The picker, user menu, buttons, inputs and a delete confirmation use it; cards and page layouts still use Tailwind.
+- [ ] **6a. Move cards and page layouts to Radix Themes** (optional), if the mix of Radix and Tailwind styling looks uneven.
 
 Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 
@@ -72,6 +73,6 @@ In order of difficulty; each builds on the one before.
 ## Open decisions
 
 - **Goals:** build it in v1, or hide it until later?
-- **shadcn/ui:** adopt it during the theme conversion, or keep hand-written components and update the README?
+- **Button contrast:** white text on Radix's blue buttons is 3.3:1, below the 4.5:1 accessibility guideline. Keep Radix's blue, or switch the accent to a darker blue such as indigo?
 - **v1 scope:** confirm Phases 1–4 for v1, with AI as v2.
 - **Difficulty:** hide the score until it means something, or estimate it, for example alongside the AI summaries in step 16?

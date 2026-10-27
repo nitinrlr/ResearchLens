@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Bricolage_Grotesque } from "next/font/google";
+import { Theme } from "@radix-ui/themes";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,12 +29,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${bricolage.variable} h-full antialiased`}
     >
-      {/*
-        No background here on purpose: the landing page is light while the
-        dashboard and auth screens are dark, so each one paints its own ground.
-      */}
       <body>
-        {children}
+        {/*
+          Every page renders inside Radix Themes. accentColor and grayColor set
+          the colors for Radix components and, through the tokens in
+          globals.css, for our own Tailwind classes too.
+        */}
+        <Theme
+          appearance="light"
+          accentColor="blue"
+          grayColor="slate"
+        >
+          {children}
+        </Theme>
       </body>
     </html>
   );

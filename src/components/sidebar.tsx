@@ -16,7 +16,7 @@ export default function Sidebar({ user }: SidebarProps) {
   const navClass = (href: string) =>
   `block rounded-lg px-4 py-3 transition ${
     pathname === href
-      ? "bg-accent-soft font-medium text-accent-strong"
+      ? "bg-accent-soft font-medium text-accent-ink"
       : "text-ink-muted hover:bg-subtle hover:text-ink"
   }`;
 

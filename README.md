@@ -15,7 +15,7 @@ A platform that helps students and researchers discover, organize, and understan
 
 # Full Tech Stack
 
-Frontend: Next.js, React, TypeScript, Tailwind CSS, Shadcn/ui
+Frontend: Next.js, React, TypeScript, Tailwind CSS, Radix Themes
 Backend: Next.js Route Handlers
 Database: PostgreSQL
 Object Relational Mapping: Prisma

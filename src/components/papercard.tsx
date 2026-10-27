@@ -35,10 +35,9 @@ export default function PaperCard({ paper }: PaperCardProps) {
         </h2>
 
         {/*
-          `relative` alone puts this above the link overlay: positioned
-          elements without a z-index paint in page order, and this comes after
-          the link. Giving it a z-index would trap the open panel's z-20 inside
-          this card, letting the next card's bookmark draw over the panel.
+          `relative` puts the bookmark above the link overlay: positioned
+          elements paint in page order, and this comes after the link. The
+          picker's panel renders outside the card, so it can't be covered.
         */}
         <div className="relative shrink-0">
           <CollectionPicker

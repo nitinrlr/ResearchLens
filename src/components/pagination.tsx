@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@radix-ui/themes";
 
 import { getPageItems, pageHref } from "@/lib/pagination";
 
@@ -16,9 +17,6 @@ type PaginationProps = {
    */
   scrollTarget?: string;
 };
-
-const itemClass =
-  "flex h-10 min-w-10 items-center justify-center rounded-lg border px-3 text-sm transition";
 
 export default function Pagination({
   page,
@@ -43,21 +41,25 @@ export default function Pagination({
       className="mt-12 flex flex-wrap items-center justify-center gap-1.5"
     >
       {previous ? (
-        <Link
-          href={href(previous)}
-          className={`${itemClass} gap-1 border-line text-ink-muted hover:border-line-strong hover:bg-subtle`}
+        <Button
+          asChild
+          variant="soft"
+          color="gray"
         >
-          <ChevronLeft size={16} />
-          Previous
-        </Link>
+          <Link href={href(previous)}>
+            <ChevronLeft size={16} />
+            Previous
+          </Link>
+        </Button>
       ) : (
-        <span
-          aria-disabled="true"
-          className={`${itemClass} gap-1 border-line text-ink-faint/50`}
+        <Button
+          variant="soft"
+          color="gray"
+          disabled
         >
           <ChevronLeft size={16} />
           Previous
-        </span>
+        </Button>
       )}
 
       {getPageItems(page, totalPages).map((item, index) =>
@@ -70,41 +72,51 @@ export default function Pagination({
             …
           </span>
         ) : item === page ? (
-          <span
+          <Button
             key={item}
-            aria-current="page"
-            className={`${itemClass} border-accent bg-accent font-medium text-white`}
+            asChild
+            className="min-w-8"
           >
-            {item}
-          </span>
+            <span aria-current="page">{item}</span>
+          </Button>
         ) : (
-          <Link
+          <Button
             key={item}
-            href={href(item)}
-            aria-label={`Page ${item}`}
-            className={`${itemClass} border-line text-ink-muted hover:border-line-strong hover:bg-subtle`}
+            asChild
+            variant="soft"
+            color="gray"
+            className="min-w-8"
           >
-            {item}
-          </Link>
+            <Link
+              href={href(item)}
+              aria-label={`Page ${item}`}
+            >
+              {item}
+            </Link>
+          </Button>
         )
       )}
 
       {next ? (
-        <Link
-          href={href(next)}
-          className={`${itemClass} gap-1 border-line text-ink-muted hover:border-line-strong hover:bg-subtle`}
+        <Button
+          asChild
+          variant="soft"
+          color="gray"
         >
-          Next
-          <ChevronRight size={16} />
-        </Link>
+          <Link href={href(next)}>
+            Next
+            <ChevronRight size={16} />
+          </Link>
+        </Button>
       ) : (
-        <span
-          aria-disabled="true"
-          className={`${itemClass} gap-1 border-line text-ink-faint/50`}
+        <Button
+          variant="soft"
+          color="gray"
+          disabled
         >
           Next
           <ChevronRight size={16} />
-        </span>
+        </Button>
       )}
     </nav>
   );

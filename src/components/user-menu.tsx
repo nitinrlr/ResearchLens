@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useTransition } from "react";
 import { ChevronsUpDown, LogOut, Settings, User } from "lucide-react";
+import { Avatar, Box, DropdownMenu, Text } from "@radix-ui/themes";
+
 import { signOutAction } from "@/actions/auth";
 
 type UserMenuProps = {
@@ -12,122 +14,105 @@ type UserMenuProps = {
   };
 };
 
+/*
+  Radix's DropdownMenu handles opening, closing on an outside click or Escape,
+  arrow-key navigation between items, and returning focus to the trigger.
+*/
 export default function UserMenu({ user }: UserMenuProps) {
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Close the menu when the user clicks anywhere outside it or presses Escape.
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    function handlePointerDown(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open]);
+  const [signingOut, startSignOut] = useTransition();
 
   const initial = user.name.trim().charAt(0).toUpperCase() || "?";
 
-  const itemClass =
-    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-ink-muted transition hover:bg-subtle hover:text-ink";
-
   return (
-    <div
-      ref={containerRef}
-      className="relative"
-    >
-      {open && (
-        <div
-          role="menu"
-          className="absolute bottom-full left-0 z-50 mb-2 w-60 rounded-xl border border-line bg-canvas p-1.5 shadow-lg"
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        <button
+          type="button"
+          className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition hover:bg-subtle data-[state=open]:bg-subtle"
         >
-          <div className="border-b border-line px-3 py-2.5">
-            <p className="truncate text-sm font-medium text-ink">
-              {user.name}
-            </p>
-            <p className="truncate text-xs text-ink-faint">
-              {user.email}
-            </p>
-          </div>
+          <Avatar
+            fallback={initial}
+            size="2"
+            radius="full"
+            variant="solid"
+          />
 
-          <div className="mt-1.5 space-y-0.5">
-            <Link
-              href="/profile"
-              role="menuitem"
-              onClick={() => setOpen(false)}
-              className={itemClass}
-            >
-              <User size={16} />
-              Profile
-            </Link>
-
-            <Link
-              href="/settings"
-              role="menuitem"
-              onClick={() => setOpen(false)}
-              className={itemClass}
-            >
-              <Settings size={16} />
-              Settings
-            </Link>
-          </div>
-
-          <div className="my-1.5 border-t border-line" />
-
-          <form action={signOutAction}>
-            <button
-              type="submit"
-              role="menuitem"
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-ink-muted transition hover:bg-danger-soft hover:text-danger"
-            >
-              <LogOut size={16} />
-              Log out
-            </button>
-          </form>
-        </div>
-      )}
-
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition hover:bg-subtle ${
-          open ? "bg-subtle" : ""
-        }`}
-      >
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-semibold text-white">
-          {initial}
-        </span>
-
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-medium text-ink">
+          <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink">
             {user.name}
           </span>
-        </span>
 
-        <ChevronsUpDown
-          size={16}
-          className="shrink-0 text-ink-faint"
-        />
-      </button>
-    </div>
+          <ChevronsUpDown
+            size={16}
+            className="shrink-0 text-ink-faint"
+          />
+        </button>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Content
+        side="top"
+        align="start"
+        className="min-w-56"
+      >
+        <Box
+          px="2"
+          py="1"
+        >
+          <Text
+            as="p"
+            size="2"
+            weight="medium"
+            truncate
+          >
+            {user.name}
+          </Text>
+          <Text
+            as="p"
+            size="1"
+            color="gray"
+            truncate
+          >
+            {user.email}
+          </Text>
+        </Box>
+
+        <DropdownMenu.Separator />
+
+        <DropdownMenu.Item asChild>
+          <Link
+            href="/profile"
+            className="gap-2"
+          >
+            <User size={16} />
+            Profile
+          </Link>
+        </DropdownMenu.Item>
+
+        <DropdownMenu.Item asChild>
+          <Link
+            href="/settings"
+            className="gap-2"
+          >
+            <Settings size={16} />
+            Settings
+          </Link>
+        </DropdownMenu.Item>
+
+        <DropdownMenu.Separator />
+
+        <DropdownMenu.Item
+          color="red"
+          disabled={signingOut}
+          className="gap-2"
+          onSelect={(event) => {
+            // Keep the menu open showing "Logging out…" until the redirect.
+            event.preventDefault();
+            startSignOut(() => signOutAction());
+          }}
+        >
+          <LogOut size={16} />
+          {signingOut ? "Logging out…" : "Log out"}
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   );
 }

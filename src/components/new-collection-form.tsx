@@ -1,23 +1,38 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { Plus } from "lucide-react";
+import { Button, Flex, TextField } from "@radix-ui/themes";
 
 import { createCollectionAction } from "@/actions/collections";
+
+/** Separate component because useFormStatus only works inside the <form>. */
+function CreateButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      type="submit"
+      loading={pending}
+    >
+      Create
+    </Button>
+  );
+}
 
 export default function NewCollectionForm() {
   const [open, setOpen] = useState(false);
 
   if (!open) {
     return (
-      <button
-        type="button"
+      <Button
+        size="3"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 rounded-lg bg-accent text-white px-5 py-3 font-medium transition hover:bg-accent-strong"
       >
         <Plus size={18} />
         New Collection
-      </button>
+      </Button>
     );
   }
 
@@ -28,50 +43,49 @@ export default function NewCollectionForm() {
     >
       <label
         htmlFor="title"
-        className="mb-2 block text-sm"
+        className="mb-2 block text-sm font-medium"
       >
         Title
       </label>
-      <input
+      <TextField.Root
         id="title"
         name="title"
+        size="3"
         required
         maxLength={100}
         autoFocus
         placeholder="e.g. Transformers"
-        className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
       />
 
       <label
         htmlFor="description"
-        className="mb-2 mt-4 block text-sm"
+        className="mb-2 mt-4 block text-sm font-medium"
       >
-        Description <span className="text-ink-faint">(optional)</span>
+        Description <span className="font-normal text-ink-faint">(optional)</span>
       </label>
-      <input
+      <TextField.Root
         id="description"
         name="description"
+        size="3"
         maxLength={300}
         placeholder="What goes in this collection?"
-        className="w-full rounded-md border border-line-strong bg-canvas px-4 py-3 outline-none focus:border-accent"
       />
 
-      <div className="mt-5 flex gap-3">
-        <button
-          type="submit"
-          className="rounded-lg bg-accent text-white px-5 py-2.5 font-medium transition hover:bg-accent-strong"
-        >
-          Create
-        </button>
+      <Flex
+        gap="3"
+        mt="5"
+      >
+        <CreateButton />
 
-        <button
+        <Button
           type="button"
+          variant="soft"
+          color="gray"
           onClick={() => setOpen(false)}
-          className="rounded-lg border border-line-strong px-5 py-2.5 font-medium transition hover:bg-subtle"
         >
           Cancel
-        </button>
-      </div>
+        </Button>
+      </Flex>
     </form>
   );
 }
