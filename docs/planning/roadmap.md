@@ -25,7 +25,6 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 
 - Goals is a static stub; Settings is a placeholder
 - Difficulty is a placeholder: OpenAlex has no difficulty data, so every paper shows 1/5
-- No loading, error or 404 pages
 - No tests
 - Not deployed
 - README lists the OpenAI API, which isn't in the project yet
@@ -48,7 +47,7 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 
 ## Phase 3: Polish
 
-- [ ] **7. Add `loading.tsx`, `error.tsx` and `not-found.tsx`.** Neon can be slow on a cold start.
+- [x] **7. Add `loading.tsx`, `error.tsx` and `not-found.tsx`.** Done: skeleton loading screens, error screens with a Try again button, and not-found pages, inside and outside the dashboard.
 - [ ] **8. Show save failures to the user.** The bookmark only logs failures to the console. Add a toast.
 - [ ] **9. Give each page its own title.** The `%s | ResearchLens` template is already in place.
 - [ ] **10. Add experience level to Settings.** `User.experienceLevel` already exists and nothing uses it yet.
