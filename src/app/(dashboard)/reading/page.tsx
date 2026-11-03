@@ -1,6 +1,5 @@
-import { Button } from "@radix-ui/themes";
-
 import PaperCard from "@/components/papercard";
+import RemoveButton from "@/components/remove-button";
 import SearchField from "@/components/search-field";
 import { getContinueReading } from "@/services/reading.service";
 import { removeFromReadingAction } from "@/actions/collections";
@@ -96,21 +95,14 @@ export default async function ReadingPage({ searchParams }: Props) {
               <div className="mt-2 flex items-center justify-between px-1 text-xs text-ink-faint">
                 <span>Opened {lastReadLabel(paper.lastReadAt)}</span>
 
-                <form action={removeFromReadingAction}>
-                  <input
-                    type="hidden"
-                    name="paperId"
-                    value={paper.id}
-                  />
-                  <Button
-                    type="submit"
-                    variant="ghost"
-                    color="gray"
-                    size="1"
-                  >
-                    Remove
-                  </Button>
-                </form>
+                <RemoveButton
+                  action={removeFromReadingAction}
+                  fields={{
+                    paperId: paper.id,
+                  }}
+                >
+                  Remove
+                </RemoveButton>
               </div>
             </div>
           ))}

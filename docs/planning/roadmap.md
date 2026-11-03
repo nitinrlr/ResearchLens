@@ -48,7 +48,7 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 ## Phase 3: Polish
 
 - [x] **7. Add `loading.tsx`, `error.tsx` and `not-found.tsx`.** Done: skeleton loading screens, error screens with a Try again button, and not-found pages, inside and outside the dashboard.
-- [ ] **8. Show save failures to the user.** The bookmark only logs failures to the console. Add a toast.
+- [x] **8. Show save failures to the user.** Toasts for the bookmark and Remove buttons, inline errors in the create and delete forms.
 - [ ] **9. Give each page its own title.** The `%s | ResearchLens` template is already in place.
 - [ ] **10. Add experience level to Settings.** `User.experienceLevel` already exists and nothing uses it yet.
 - [ ] **11. Write a few real tests.** Vitest on the service layer, starting with the collection ownership checks.

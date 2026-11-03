@@ -1,28 +1,35 @@
 "use client";
 
-import { useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useState, useTransition } from "react";
 import { Plus } from "lucide-react";
-import { Button, Flex, TextField } from "@radix-ui/themes";
+import { Button, Flex, Text, TextField } from "@radix-ui/themes";
 
 import { createCollectionAction } from "@/actions/collections";
-
-/** Separate component because useFormStatus only works inside the <form>. */
-function CreateButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      type="submit"
-      loading={pending}
-    >
-      Create
-    </Button>
-  );
-}
+import { runAction } from "@/lib/run-action";
 
 export default function NewCollectionForm() {
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  // onSubmit rather than <form action>: React clears a form after an action
+  // runs, even a failed one, and the user would have to retype the title.
+  // On success the action redirects to the new collection, so this only
+  // returns when something went wrong.
+  function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    startTransition(async () => {
+      setError(await runAction(createCollectionAction, formData));
+    });
+  }
+
+  function close() {
+    setOpen(false);
+    setError(null);
+  }
 
   if (!open) {
     return (
@@ -38,7 +45,7 @@ export default function NewCollectionForm() {
 
   return (
     <form
-      action={createCollectionAction}
+      onSubmit={submit}
       className="w-full max-w-md rounded-xl border border-line bg-canvas p-5"
     >
       <label
@@ -71,17 +78,34 @@ export default function NewCollectionForm() {
         placeholder="What goes in this collection?"
       />
 
+      {error && (
+        <Text
+          as="p"
+          role="alert"
+          size="2"
+          color="red"
+          mt="4"
+        >
+          {error}
+        </Text>
+      )}
+
       <Flex
         gap="3"
         mt="5"
       >
-        <CreateButton />
+        <Button
+          type="submit"
+          loading={pending}
+        >
+          Create
+        </Button>
 
         <Button
           type="button"
           variant="soft"
           color="gray"
-          onClick={() => setOpen(false)}
+          onClick={close}
         >
           Cancel
         </Button>

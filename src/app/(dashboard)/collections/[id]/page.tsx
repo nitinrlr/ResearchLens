@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@radix-ui/themes";
 
 import DeleteCollectionButton from "@/components/delete-collection-button";
 import PaperCard from "@/components/papercard";
+import RemoveButton from "@/components/remove-button";
 import { getCollectionById } from "@/services/collection.service";
 import { removePaperFromCollectionAction } from "@/actions/collections";
 
@@ -76,26 +76,15 @@ export default async function CollectionDetailPage({ params }: Props) {
               <PaperCard paper={paper} />
 
               <div className="mt-3 flex justify-end px-1">
-                <form action={removePaperFromCollectionAction}>
-                  <input
-                    type="hidden"
-                    name="collectionId"
-                    value={collection.id}
-                  />
-                  <input
-                    type="hidden"
-                    name="paperId"
-                    value={paper.id}
-                  />
-                  <Button
-                    type="submit"
-                    variant="ghost"
-                    color="gray"
-                    size="1"
-                  >
-                    Remove from collection
-                  </Button>
-                </form>
+                <RemoveButton
+                  action={removePaperFromCollectionAction}
+                  fields={{
+                    collectionId: collection.id,
+                    paperId: paper.id,
+                  }}
+                >
+                  Remove from collection
+                </RemoveButton>
               </div>
             </div>
           ))}

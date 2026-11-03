@@ -15,6 +15,8 @@ import {
   Text,
 } from "@radix-ui/themes";
 
+import { useToast } from "@/components/toast";
+
 type Collection = {
   id: string;
   title: string;
@@ -42,6 +44,7 @@ export default function CollectionPicker({
   variant = "icon",
 }: CollectionPickerProps) {
   const router = useRouter();
+  const { showError } = useToast();
 
   const [open, setOpen] = useState(false);
   const [collections, setCollections] = useState<Collection[] | null>(null);
@@ -120,7 +123,6 @@ export default function CollectionPicker({
     // Optimistic: tick the box now, undo it if the request fails.
     setContains(collection.id, adding);
     setPending((current) => new Set(current).add(collection.id));
-    setError(null);
 
     try {
       const response = await fetch(
@@ -136,9 +138,11 @@ export default function CollectionPicker({
 
       changedRef.current = true;
     } catch {
+      // A toast rather than a message in the panel: the user may have closed
+      // the panel by the time the request fails.
       setContains(collection.id, !adding);
-      setError(
-        `Couldn't ${adding ? "add this to" : "remove this from"} "${collection.title}". Try again.`
+      showError(
+        `Couldn't ${adding ? "save this to" : "remove this from"} "${collection.title}". Try again.`
       );
     } finally {
       setPending((current) => {
