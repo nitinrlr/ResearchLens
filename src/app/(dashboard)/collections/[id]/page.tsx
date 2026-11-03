@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -13,6 +14,15 @@ type Props = {
     id: string;
   }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const collection = await getCollectionById(id);
+
+  return {
+    title: collection?.title ?? "Collection not found",
+  };
+}
 
 export default async function CollectionDetailPage({ params }: Props) {
   const { id } = await params;

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -13,6 +14,14 @@ import {
 import { Button } from "@radix-ui/themes";
 
 import { auth } from "@/auth";
+
+// absolute skips the "| ResearchLens" template from the root layout, which
+// would repeat the name here.
+export const metadata: Metadata = {
+  title: {
+    absolute: "ResearchLens: Find the papers worth reading",
+  },
+};
 
 const FEATURES = [
   {

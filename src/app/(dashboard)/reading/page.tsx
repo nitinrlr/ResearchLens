@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import PaperCard from "@/components/papercard";
 import RemoveButton from "@/components/remove-button";
 import SearchField from "@/components/search-field";
 import { getContinueReading } from "@/services/reading.service";
 import { removeFromReadingAction } from "@/actions/collections";
+
+export const metadata: Metadata = {
+  title: "Continue Reading",
+};
 
 type Props = {
   searchParams: Promise<{

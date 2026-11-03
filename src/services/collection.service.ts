@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
 
@@ -94,8 +96,11 @@ export async function getCollections() {
  *
  * Returns null when the collection does not exist *or* belongs to someone
  * else, so a user cannot read another account's collection by guessing its id.
+ *
+ * Wrapped in React's cache() so the page and its generateMetadata share one
+ * database query per request instead of running it twice.
  */
-export async function getCollectionById(collectionId: string) {
+export const getCollectionById = cache(async (collectionId: string) => {
   const userId = await getCurrentUserId();
 
   if (!userId) {
@@ -158,7 +163,7 @@ export async function getCollectionById(collectionId: string) {
       topics: paper.paperTopics.map((pt) => pt.topic.name),
     })),
   };
-}
+});
 
 /**
  * Every collection the user owns, with whether `paperId` is already in it.

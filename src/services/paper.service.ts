@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { prisma } from "@/lib/prisma";
 import { PAGE_SIZE } from "@/lib/pagination";
 import { getCurrentUserId } from "@/lib/session";
@@ -158,7 +160,9 @@ export async function getPapersPage(query = "", page = 1) {
   };
 }
 
-export async function getPaperById(id: string) {
+// Wrapped in React's cache() so the page and its generateMetadata share one
+// database query per request instead of running it twice.
+export const getPaperById = cache(async (id: string) => {
   const userId = await getCurrentUserId();
 
   const paper = await prisma.paper.findUnique({
@@ -188,4 +192,4 @@ export async function getPaperById(id: string) {
 
     topics: paper.paperTopics.map((pt) => pt.topic.name),
   };
-}
+});

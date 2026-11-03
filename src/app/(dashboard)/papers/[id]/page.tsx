@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Button } from "@radix-ui/themes";
 import { getPaperById } from "@/services/paper.service";
@@ -9,6 +10,15 @@ type Props = {
     id: string;
   }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const paper = await getPaperById(id);
+
+  return {
+    title: paper?.title ?? "Paper not found",
+  };
+}
 
 export default async function PaperDetailsPage({ params }: Props) {
   const { id } = await params;

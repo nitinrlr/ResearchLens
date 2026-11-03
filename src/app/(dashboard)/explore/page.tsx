@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import Pagination from "@/components/pagination";
@@ -5,6 +6,10 @@ import PaperCard from "@/components/papercard";
 import SearchField from "@/components/search-field";
 import { PAGE_SIZE, pageHref, parsePage } from "@/lib/pagination";
 import { getPapersPage } from "@/services/paper.service";
+
+export const metadata: Metadata = {
+  title: "Explore",
+};
 
 type Props = {
   searchParams: Promise<{

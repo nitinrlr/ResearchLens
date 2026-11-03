@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Folder, Bookmark } from "lucide-react";
 
 import { getCollections } from "@/services/collection.service";
 import NewCollectionForm from "@/components/new-collection-form";
+
+export const metadata: Metadata = {
+  title: "Collections",
+};
 
 export default async function CollectionsPage() {
   const collections = await getCollections();
