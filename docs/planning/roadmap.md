@@ -50,8 +50,7 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 - [x] **7. Add `loading.tsx`, `error.tsx` and `not-found.tsx`.** Done: skeleton loading screens, error screens with a Try again button, and not-found pages, inside and outside the dashboard.
 - [x] **8. Show save failures to the user.** Toasts for the bookmark and Remove buttons, inline errors in the create and delete forms.
 - [x] **9. Give each page its own title.** Paper and collection pages use their own names.
-- [ ] **10. Add experience level to Settings.** `User.experienceLevel` already exists and nothing uses it yet.
-- [ ] **11. Write a few real tests.** Vitest on the service layer, starting with the collection ownership checks.
+- [x] **11. Write a few real tests.** Vitest covers the collection ownership checks, the Server Actions and pagination. Run them with `npm test`.
 - [ ] **12. Final pass on the landing page.** Revisit once Explore has real data.
 
 ## Phase 4: Ship v1
@@ -64,7 +63,7 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 
 In order of difficulty; each builds on the one before.
 
-- [ ] **16. AI summaries.** Explain a paper at the user's experience level and cache the result in the database. The provider is still open; the README says OpenAI, but nothing is wired up.
+- [ ] **16. AI summaries.** Explain a paper in plain language and cache the result in the database. The provider is still open; the README says OpenAI, but nothing is wired up.
 - [ ] **17. Semantic search.** Embeddings stored with pgvector on Neon.
 - [ ] **18. Q&A over a paper (RAG).** Extract PDF text, split it into chunks, retrieve the relevant ones, answer from them.
 - [ ] **19. Paper comparison.** Easy once summaries exist.

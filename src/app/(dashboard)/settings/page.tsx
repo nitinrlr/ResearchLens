@@ -19,7 +19,7 @@ export default function SettingsPage() {
           Nothing to configure yet
         </h2>
         <p className="mt-2 text-ink-faint">
-          Experience level and reading preferences are coming soon.
+          Reading preferences are coming soon.
         </p>
       </div>
     </main>
