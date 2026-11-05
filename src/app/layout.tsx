@@ -37,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         */}
         <Theme
           appearance="light"
-          accentColor="blue"
+          accentColor="indigo"
           grayColor="slate"
         >
           {children}

@@ -1,41 +1,46 @@
-import { Skeleton } from "@radix-ui/themes";
+import { Card, Flex, Skeleton } from "@radix-ui/themes";
 
 const PLACEHOLDER_CARDS = 6;
 
 /** Gray placeholder shaped like a PaperCard. */
 function PaperCardSkeleton() {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-line bg-canvas p-5">
-      <Skeleton
-        height="20px"
-        width="90%"
-      />
-      <Skeleton
-        height="20px"
-        width="60%"
-      />
-      <Skeleton
-        height="14px"
-        width="40%"
-        mt="1"
-      />
-      <div className="flex gap-2">
+    <Card size="3">
+      <Flex
+        direction="column"
+        gap="3"
+      >
         <Skeleton
-          height="22px"
-          width="80px"
-          className="rounded-full"
+          height="20px"
+          width="90%"
         />
         <Skeleton
-          height="22px"
-          width="64px"
-          className="rounded-full"
+          height="20px"
+          width="60%"
         />
-      </div>
-      <Skeleton
-        height="14px"
-        width="48px"
-      />
-    </div>
+        <Skeleton
+          height="14px"
+          width="40%"
+          mt="1"
+        />
+        <div className="flex gap-2">
+          <Skeleton
+            height="22px"
+            width="80px"
+            className="rounded-full"
+          />
+          <Skeleton
+            height="22px"
+            width="64px"
+            className="rounded-full"
+          />
+        </div>
+        <Skeleton
+          height="14px"
+          width="48px"
+        />
+      </Flex>
+    </Card>
   );
 }
 

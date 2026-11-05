@@ -29,7 +29,7 @@
   --color-ink-muted: var(--gray-11);         /* secondary text */
   --color-ink-faint: var(--gray-11);         /* captions, metadata */
 
-  /* Blue accent */
+  /* Accent (indigo, set by accentColor in layout.tsx) */
   --color-accent: var(--accent-9);           /* solid fills and icons */
   --color-accent-strong: var(--accent-10);   /* hovered solid fills */
   --color-accent-ink: var(--accent-11);      /* accent-colored text and links */

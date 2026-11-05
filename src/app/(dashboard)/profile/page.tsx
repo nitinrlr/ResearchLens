@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { Card, DataList } from "@radix-ui/themes";
+
 import { auth } from "@/auth";
+import PageHeader from "@/components/page-header";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -10,30 +13,28 @@ export default async function ProfilePage() {
 
   return (
     <main className="p-10 text-ink">
-      <h1 className="text-4xl font-bold">
-        Profile
-      </h1>
-      <p className="mt-2 text-ink-muted">
-        Your account details.
-      </p>
-      <dl className="mt-10 max-w-md space-y-5 rounded-xl border border-line bg-canvas p-6">
-        <div>
-          <dt className="text-sm text-ink-faint">
-            Name
-          </dt>
-          <dd className="mt-1">
-            {session?.user?.name}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm text-ink-faint">
-            Email
-          </dt>
-          <dd className="mt-1">
-            {session?.user?.email}
-          </dd>
-        </div>
-      </dl>
+      <PageHeader
+        title="Profile"
+        description="Your account details."
+      />
+
+      <Card
+        size="3"
+        mt="8"
+        className="max-w-md"
+      >
+        {/* DataList is a <dl> underneath, built for label and value pairs. */}
+        <DataList.Root size="2">
+          <DataList.Item>
+            <DataList.Label minWidth="88px">Name</DataList.Label>
+            <DataList.Value>{session?.user?.name}</DataList.Value>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.Label minWidth="88px">Email</DataList.Label>
+            <DataList.Value>{session?.user?.email}</DataList.Value>
+          </DataList.Item>
+        </DataList.Root>
+      </Card>
     </main>
   );
 }

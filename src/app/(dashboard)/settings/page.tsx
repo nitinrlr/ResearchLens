@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+import EmptyState from "@/components/empty-state";
+import PageHeader from "@/components/page-header";
+
 export const metadata: Metadata = {
   title: "Settings",
 };
@@ -7,20 +10,16 @@ export const metadata: Metadata = {
 export default function SettingsPage() {
   return (
     <main className="p-10 text-ink">
-      <h1 className="text-4xl font-bold">
-        Settings
-      </h1>
-      <p className="mt-2 text-ink-muted">
-        Manage your account preferences.
-      </p>
+      <PageHeader
+        title="Settings"
+        description="Manage your account preferences."
+      />
 
-      <div className="mt-12 rounded-xl border border-dashed border-line-strong p-12 text-center">
-        <h2 className="text-xl font-semibold">
-          Nothing to configure yet
-        </h2>
-        <p className="mt-2 text-ink-faint">
-          Reading preferences are coming soon.
-        </p>
+      <div className="mt-12">
+        <EmptyState
+          title="Nothing to configure yet"
+          description="Reading preferences are coming soon."
+        />
       </div>
     </main>
   );

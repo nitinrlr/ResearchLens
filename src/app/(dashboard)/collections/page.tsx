@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Folder, Bookmark } from "lucide-react";
+import { Card, Flex, Heading, Text } from "@radix-ui/themes";
 
 import { getCollections } from "@/services/collection.service";
 import NewCollectionForm from "@/components/new-collection-form";
+import PageHeader from "@/components/page-header";
 
 export const metadata: Metadata = {
   title: "Collections",
@@ -14,55 +16,70 @@ export default async function CollectionsPage() {
 
   return (
     <main className="p-10 text-ink">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-4xl font-bold">
-            Collections
-          </h1>
-          <p className="mt-2 text-ink-muted">
-            Organize papers into custom collections.
-          </p>
-        </div>
-
+      <PageHeader
+        title="Collections"
+        description="Organize papers into custom collections."
+      >
         <NewCollectionForm />
-      </div>
+      </PageHeader>
 
       <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {collections.map((collection) => (
-          <Link
+          // As a link, the Card darkens its own border on hover.
+          <Card
             key={collection.id}
-            href={`/collections/${collection.id}`}
-            className="rounded-xl border border-line bg-canvas p-6 transition-all duration-200 hover:border-line-strong hover:shadow-lg"
+            asChild
+            size="3"
+            className="transition-shadow duration-200 hover:shadow-lg"
           >
-            <div className="flex items-center gap-3">
-              {collection.isDefault ? (
-                <Bookmark
-                  size={20}
-                  className="text-accent"
-                />
-              ) : (
-                <Folder
-                  size={20}
-                  className="text-ink-muted"
-                />
+            <Link href={`/collections/${collection.id}`}>
+              <Flex
+                align="center"
+                gap="3"
+              >
+                {collection.isDefault ? (
+                  <Bookmark
+                    size={20}
+                    className="text-accent"
+                  />
+                ) : (
+                  <Folder
+                    size={20}
+                    className="text-ink-muted"
+                  />
+                )}
+
+                <Heading
+                  as="h2"
+                  size="4"
+                  weight="medium"
+                >
+                  {collection.title}
+                </Heading>
+              </Flex>
+
+              {collection.description && (
+                <Text
+                  as="p"
+                  size="2"
+                  color="gray"
+                  mt="3"
+                >
+                  {collection.description}
+                </Text>
               )}
 
-              <h2 className="text-lg font-semibold">
-                {collection.title}
-              </h2>
-            </div>
-
-            {collection.description && (
-              <p className="mt-3 text-sm text-ink-muted">
-                {collection.description}
-              </p>
-            )}
-
-            <p className="mt-4 text-sm text-ink-faint">
-              {collection.paperCount}{" "}
-              {collection.paperCount === 1 ? "paper" : "papers"}
-            </p>
-          </Link>
+              <Text
+                as="p"
+                size="2"
+                color="gray"
+                mt="4"
+              >
+                {collection.paperCount}{" "}
+                {collection.paperCount === 1 ? "paper" : "papers"}
+              </Text>
+            </Link>
+          </Card>
         ))}
       </div>
     </main>

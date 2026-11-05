@@ -39,9 +39,9 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 
 ## Phase 2: Light theme conversion
 
-- [x] **5. Convert the dashboard and auth screens to white and blue.** Done: every color comes from tokens in `src/app/globals.css`, and the dark-mode block is gone.
+- [x] **5. Convert the dashboard and auth screens to white and blue.** Done: every color comes from tokens in `src/app/globals.css`, and the dark-mode block is gone. The accent is now Radix's indigo, which gives white button text enough contrast.
 - [x] **6. Pick a component library.** Chose Radix Themes over shadcn/ui. The picker, user menu, buttons, inputs and a delete confirmation use it; cards and page layouts still use Tailwind.
-- [ ] **6a. Move cards and page layouts to Radix Themes** (optional), if the mix of Radix and Tailwind styling looks uneven.
+- [x] **6a. Move cards and page layouts to Radix Themes.** Cards, topic badges, page headings and text, and the Profile details now use Radix. Layout and the sidebar stay in Tailwind.
 
 Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 
@@ -72,6 +72,5 @@ In order of difficulty; each builds on the one before.
 ## Open decisions
 
 - **Goals:** build it in v1, or hide it until later?
-- **Button contrast:** white text on Radix's blue buttons is 3.3:1, below the 4.5:1 accessibility guideline. Keep Radix's blue, or switch the accent to a darker blue such as indigo?
 - **v1 scope:** confirm Phases 1–4 for v1, with AI as v2.
 - **Difficulty:** hide the score until it means something, or estimate it, for example alongside the AI summaries in step 16?

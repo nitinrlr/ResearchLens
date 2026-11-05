@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { Text } from "@radix-ui/themes";
 
 import DeleteCollectionButton from "@/components/delete-collection-button";
+import EmptyState from "@/components/empty-state";
+import PageHeader from "@/components/page-header";
 import PaperCard from "@/components/papercard";
 import RemoveButton from "@/components/remove-button";
 import { getCollectionById } from "@/services/collection.service";
@@ -44,40 +47,36 @@ export default async function CollectionDetailPage({ params }: Props) {
         All collections
       </Link>
 
-      <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-4xl font-bold">
-            {collection.title}
-          </h1>
-
-          {collection.description && (
-            <p className="mt-2 text-ink-muted">
-              {collection.description}
-            </p>
+      <div className="mt-6">
+        <PageHeader
+          title={collection.title}
+          description={collection.description ?? undefined}
+        >
+          {!collection.isDefault && (
+            <DeleteCollectionButton
+              collectionId={collection.id}
+              title={collection.title}
+            />
           )}
+        </PageHeader>
 
-          <p className="mt-2 text-sm text-ink-faint">
-            {collection.papers.length}{" "}
-            {collection.papers.length === 1 ? "paper" : "papers"}
-          </p>
-        </div>
-
-        {!collection.isDefault && (
-          <DeleteCollectionButton
-            collectionId={collection.id}
-            title={collection.title}
-          />
-        )}
+        <Text
+          as="p"
+          size="2"
+          color="gray"
+          mt="2"
+        >
+          {collection.papers.length}{" "}
+          {collection.papers.length === 1 ? "paper" : "papers"}
+        </Text>
       </div>
 
       {collection.papers.length === 0 ? (
-        <div className="mt-12 rounded-xl border border-dashed border-line-strong p-16 text-center">
-          <h2 className="text-2xl font-semibold">
-            No papers in here yet
-          </h2>
-          <p className="mt-3 text-ink-faint">
-            Use the bookmark on any paper to add it here.
-          </p>
+        <div className="mt-12">
+          <EmptyState
+            title="No papers in here yet"
+            description="Use the bookmark on any paper to add it here."
+          />
         </div>
       ) : (
         <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">

@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+
+import EmptyState from "@/components/empty-state";
+import PageHeader from "@/components/page-header";
 import PaperCard from "@/components/papercard";
 import RemoveButton from "@/components/remove-button";
 import SearchField from "@/components/search-field";
@@ -8,6 +11,8 @@ import { removeFromReadingAction } from "@/actions/collections";
 export const metadata: Metadata = {
   title: "Continue Reading",
 };
+
+const DESCRIPTION = "Papers you've opened, most recent first.";
 
 type Props = {
   searchParams: Promise<{
@@ -44,19 +49,16 @@ export default async function ReadingPage({ searchParams }: Props) {
   if (papers.length === 0 && !query) {
     return (
       <main className="p-10 text-ink">
-        <h1 className="text-4xl font-bold">
-          Continue Reading
-        </h1>
-        <p className="mt-2 text-ink-muted">
-          Papers you&apos;ve opened, most recent first.
-        </p>
-        <div className="mt-12 rounded-xl border border-dashed border-line-strong p-16 text-center">
-          <h2 className="text-2xl font-semibold">
-            Nothing here yet
-          </h2>
-          <p className="mt-3 text-ink-faint">
-            Open a paper from Discover and it will show up here automatically.
-          </p>
+        <PageHeader
+          title="Continue Reading"
+          description={DESCRIPTION}
+        />
+
+        <div className="mt-12">
+          <EmptyState
+            title="Nothing here yet"
+            description="Open a paper from Discover and it will show up here automatically."
+          />
         </div>
       </main>
     );
@@ -64,12 +66,10 @@ export default async function ReadingPage({ searchParams }: Props) {
 
   return (
     <main className="p-10 text-ink">
-      <h1 className="text-3xl font-bold">
-        Continue Reading
-      </h1>
-      <p className="mt-2 text-ink-muted">
-        Papers you&apos;ve opened, most recent first.
-      </p>
+      <PageHeader
+        title="Continue Reading"
+        description={DESCRIPTION}
+      />
 
       <form
         action="/reading"
@@ -83,13 +83,11 @@ export default async function ReadingPage({ searchParams }: Props) {
       </form>
 
       {papers.length === 0 ? (
-        <div className="mt-12 rounded-xl border border-dashed border-line-strong p-12 text-center">
-          <h2 className="text-xl font-semibold">
-            No matches
-          </h2>
-          <p className="mt-2 text-ink-faint">
-            Try a different title, author, or topic.
-          </p>
+        <div className="mt-12">
+          <EmptyState
+            title="No matches"
+            description="Try a different title, author, or topic."
+          />
         </div>
       ) : (
         <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">

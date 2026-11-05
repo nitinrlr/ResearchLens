@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button, TextField } from "@radix-ui/themes";
+import { Button, Card, Heading, Text, TextField } from "@radix-ui/themes";
 
 export default function RegisterForm() {
 
@@ -54,13 +54,25 @@ export default function RegisterForm() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-surface px-6 text-ink">
-      <div className="w-full max-w-md rounded-2xl border border-line bg-canvas p-8 shadow-sm">
-        <h1 className="text-3xl font-bold text-center">
+      <Card
+        size="4"
+        className="w-full max-w-md shadow-sm"
+      >
+        <Heading
+          as="h1"
+          size="7"
+          align="center"
+        >
           ResearchLens
-        </h1>
-        <p className="mt-1 text-ink-muted text-center">
+        </Heading>
+        <Text
+          as="p"
+          color="gray"
+          align="center"
+          mt="1"
+        >
           Create your account
-        </p>
+        </Text>
         <form 
           onSubmit={handleSubmit}
           className="mt-8 space-y-5"
@@ -154,7 +166,7 @@ export default function RegisterForm() {
             Sign In
           </Link>
         </p>
-      </div>
+      </Card>
     </main>
   );
 }

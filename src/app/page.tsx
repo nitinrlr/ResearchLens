@@ -88,7 +88,7 @@ export default async function HomePage() {
       <main>
         {/* Hero ------------------------------------------------------- */}
         <section className="relative overflow-hidden">
-          {/* Soft blue wash behind the headline. */}
+          {/* Soft accent-colored wash behind the headline. */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(60%_70%_at_50%_0%,color-mix(in_oklab,var(--accent-9)_14%,transparent),transparent_70%)]"

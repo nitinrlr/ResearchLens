@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { Button, TextField } from "@radix-ui/themes";
+import { Button, Card, Heading, Text, TextField } from "@radix-ui/themes";
 
 export default function LoginForm() {
 
@@ -39,13 +39,23 @@ export default function LoginForm() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-surface px-6 text-ink">
-      <div className="w-full max-w-md rounded-2xl border border-line bg-canvas p-8 shadow-sm">
-        <h1 className="text-3xl font-bold">
+      <Card
+        size="4"
+        className="w-full max-w-md shadow-sm"
+      >
+        <Heading
+          as="h1"
+          size="7"
+        >
           ResearchLens
-        </h1>
-        <p className="mt-2 text-ink-muted">
+        </Heading>
+        <Text
+          as="p"
+          color="gray"
+          mt="2"
+        >
           Sign in to your account
-        </p>
+        </Text>
         <form onSubmit={handleSubmit}
         className="mt-8 space-y-5"
         >
@@ -104,7 +114,7 @@ export default function LoginForm() {
             Create one
           </Link>
         </p>
-      </div>
+      </Card>
     </main>
   );
 }

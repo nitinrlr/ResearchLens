@@ -1,4 +1,4 @@
-import { Skeleton } from "@radix-ui/themes";
+import { Card, Flex, Skeleton } from "@radix-ui/themes";
 
 /**
  * Loading placeholder for a single paper, shaped like the real page: title,
@@ -51,35 +51,43 @@ export default function PaperLoading() {
           />
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 rounded-xl border border-line p-6">
-          <Skeleton
-            height="24px"
-            width="120px"
-          />
-          <Skeleton
-            height="16px"
-            width="100%"
-            mt="2"
-          />
-          <Skeleton
-            height="16px"
-            width="100%"
-          />
-          <Skeleton
-            height="16px"
-            width="92%"
-          />
-          <Skeleton
-            height="16px"
-            width="70%"
-          />
-        </div>
+        <Card
+          size="3"
+          mt="6"
+        >
+          <Flex
+            direction="column"
+            gap="3"
+          >
+            <Skeleton
+              height="24px"
+              width="120px"
+            />
+            <Skeleton
+              height="16px"
+              width="100%"
+              mt="2"
+            />
+            <Skeleton
+              height="16px"
+              width="100%"
+            />
+            <Skeleton
+              height="16px"
+              width="92%"
+            />
+            <Skeleton
+              height="16px"
+              width="70%"
+            />
+          </Flex>
+        </Card>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {["Published", "Difficulty", "Reading time"].map((label) => (
-            <div
+            <Card
               key={label}
-              className="rounded-xl border border-line p-5"
+              size="3"
             >
               <Skeleton
                 height="14px"
@@ -90,7 +98,7 @@ export default function PaperLoading() {
                 width="48px"
                 mt="2"
               />
-            </div>
+            </Card>
           ))}
         </div>
       </div>

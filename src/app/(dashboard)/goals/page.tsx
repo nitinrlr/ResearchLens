@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Button } from "@radix-ui/themes";
 
+import EmptyState from "@/components/empty-state";
+import PageHeader from "@/components/page-header";
+
 export const metadata: Metadata = {
   title: "Goals",
 };
@@ -8,25 +11,23 @@ export const metadata: Metadata = {
 export default function GoalsPage() {
   return (
     <main className="p-10 text-ink">
-      <h1 className="text-4xl font-bold">
-        Learning Goals
-      </h1>
-      <p className="mt-2 text-ink-muted">
-        Track your research progress.
-      </p>
-      <div className="mt-12 rounded-xl border border-dashed border-line-strong p-12 text-center">
-        <h2 className="text-xl font-semibold">
-          No goals yet
-        </h2>
-        <p className="mt-2 text-ink-faint">
-          Set your first learning goal.
-        </p>
-        <Button
-          size="3"
-          mt="6"
+      <PageHeader
+        title="Learning Goals"
+        description="Track your research progress."
+      />
+
+      <div className="mt-12">
+        <EmptyState
+          title="No goals yet"
+          description="Set your first learning goal."
         >
-          Create Goal
-        </Button>
+          <Button
+            size="3"
+            mt="6"
+          >
+            Create Goal
+          </Button>
+        </EmptyState>
       </div>
     </main>
   );

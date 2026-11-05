@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Button } from "@radix-ui/themes";
+import {
+  Badge,
+  Button,
+  Card,
+  Flex,
+  Grid,
+  Heading,
+  Inset,
+  Text,
+} from "@radix-ui/themes";
+
 import { getPaperById } from "@/services/paper.service";
 import CollectionPicker from "@/components/collection-picker";
 import RecordPaperRead from "@/components/record-paper-read";
@@ -29,24 +39,57 @@ export default async function PaperDetailsPage({ params }: Props) {
     notFound();
   }
 
+  const stats = [
+    {
+      label: "Published",
+      value: new Date(paper.publishedDate).getFullYear(),
+    },
+    {
+      label: "Difficulty",
+      value: `${paper.difficulty}/5`,
+    },
+    {
+      label: "Reading Time",
+      value: `${paper.readingTime} min`,
+    },
+  ];
+
   return (
     <main className="p-10 text-ink">
       <RecordPaperRead paperId={paper.id} />
 
       <div className="mx-auto max-w-4xl">
-        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <Flex
+          justify="between"
+          align="start"
+          gap="4"
+          wrap="wrap"
+          mb="6"
+        >
           <div>
-            <p className="text-sm text-ink-faint">
+            <Text
+              as="p"
+              size="2"
+              color="gray"
+            >
               Paper Details
-            </p>
-            <h1 className="mt-2 text-4xl font-bold leading-tight">
+            </Text>
+            <Heading
+              as="h1"
+              size="8"
+              mt="2"
+            >
               {paper.title}
-            </h1>
-            <p className="mt-4 text-ink-muted">
+            </Heading>
+            <Text
+              as="p"
+              color="gray"
+              mt="4"
+            >
               {paper.authors.length > 0
                 ? paper.authors.join(", ")
                 : "Unknown authors"}
-            </p>
+            </Text>
           </div>
 
           <CollectionPicker
@@ -54,116 +97,188 @@ export default async function PaperDetailsPage({ params }: Props) {
             initialSaved={paper.saved}
             variant="button"
           />
-        </div>
-        <div className="mb-8 flex flex-wrap gap-2">
+        </Flex>
+
+        <Flex
+          wrap="wrap"
+          gap="2"
+          mb="6"
+        >
           {paper.topics.map((topic) => (
-            <span
+            <Badge
               key={topic}
-              className="rounded-full bg-subtle px-3 py-1 text-sm text-ink-muted"
+              size="1"
+              radius="full"
+              color="gray"
             >
               {topic}
-            </span>
+            </Badge>
           ))}
-        </div>
-        <section className="mb-8 rounded-xl border border-line bg-canvas p-6">
-          <h2 className="text-xl font-semibold">
-            Abstract
-          </h2>
+        </Flex>
 
-          <p className="mt-4 leading-7 text-ink-muted">
-            {paper.abstract || "No abstract available for this paper yet."}
-          </p>
-        </section>
-        <section className="mb-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-xl border border-line bg-canvas p-5">
-            <p className="text-sm text-ink-faint">Published</p>
-            <p className="mt-1 font-medium">
-              {new Date(paper.publishedDate).getFullYear()}
-            </p>
-          </div>
-          <div className="rounded-xl border border-line bg-canvas p-5">
-            <p className="text-sm text-ink-faint">Difficulty</p>
-            <p className="mt-1 font-medium">
-              {paper.difficulty}/5
-            </p>
-          </div>
-          <div className="rounded-xl border border-line bg-canvas p-5">
-            <p className="text-sm text-ink-faint">Reading Time</p>
-            <p className="mt-1 font-medium">
-              {paper.readingTime} min
-            </p>
-          </div>
-        </section>
-        {paper.pdfUrl ? (
-          <section className="mb-8 overflow-hidden rounded-xl border border-line bg-canvas">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line p-4">
-              <div>
-                <h2 className="text-xl font-semibold">
-                  Read Paper
-                </h2>
-                <p className="mt-1 text-sm text-ink-muted">
-                  Embedded from the open-access PDF link provided by OpenAlex.
-                  If the publisher blocks embedding, open the PDF in a new tab.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <Button asChild>
-                  <a
-                    href={paper.pdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open PDF
-                  </a>
-                </Button>
-
-                <Button
-                  asChild
-                  variant="soft"
-                  color="gray"
-                >
-                  <a
-                    href={paper.paperUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Source Page
-                  </a>
-                </Button>
-              </div>
-            </div>
-
-            <iframe
-              src={paper.pdfUrl}
-              title={`PDF for ${paper.title}`}
-              className="h-[75vh] w-full bg-canvas"
-            />
-          </section>
-        ) : (
-          <section className="mb-8 rounded-xl border border-line bg-canvas p-6">
-            <h2 className="text-xl font-semibold">
-              Read Paper
-            </h2>
-            <p className="mt-2 text-ink-muted">
-              OpenAlex does not have a direct PDF link for this paper. You can
-              still read it from the source or publisher page.
-            </p>
-
-            <Button
-              asChild
-              size="3"
-              mt="5"
+        <Card
+          asChild
+          size="3"
+          mb="6"
+        >
+          <section>
+            <Heading
+              as="h2"
+              size="5"
             >
-              <a
-                href={paper.paperUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open Source Page
-              </a>
-            </Button>
+              Abstract
+            </Heading>
+            <Text
+              as="p"
+              color="gray"
+              mt="4"
+              className="leading-7"
+            >
+              {paper.abstract || "No abstract available for this paper yet."}
+            </Text>
           </section>
+        </Card>
+
+        <Grid
+          columns={{ initial: "1", md: "3" }}
+          gap="4"
+          mb="6"
+        >
+          {stats.map((stat) => (
+            <Card
+              key={stat.label}
+              size="3"
+            >
+              <Text
+                as="p"
+                size="2"
+                color="gray"
+              >
+                {stat.label}
+              </Text>
+              <Text
+                as="p"
+                weight="medium"
+                mt="1"
+              >
+                {stat.value}
+              </Text>
+            </Card>
+          ))}
+        </Grid>
+
+        {paper.pdfUrl ? (
+          <Card
+            asChild
+            size="3"
+            mb="6"
+          >
+            <section>
+              <Flex
+                justify="between"
+                align="center"
+                gap="4"
+                wrap="wrap"
+              >
+                <div>
+                  <Heading
+                    as="h2"
+                    size="5"
+                  >
+                    Read Paper
+                  </Heading>
+                  <Text
+                    as="p"
+                    size="2"
+                    color="gray"
+                    mt="1"
+                  >
+                    Embedded from the open-access PDF link provided by OpenAlex.
+                    If the publisher blocks embedding, open the PDF in a new tab.
+                  </Text>
+                </div>
+
+                <Flex
+                  gap="3"
+                  wrap="wrap"
+                >
+                  <Button asChild>
+                    <a
+                      href={paper.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open PDF
+                    </a>
+                  </Button>
+
+                  <Button
+                    asChild
+                    variant="soft"
+                    color="gray"
+                  >
+                    <a
+                      href={paper.paperUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Source Page
+                    </a>
+                  </Button>
+                </Flex>
+              </Flex>
+
+              {/* Inset lets the PDF run edge to edge, past the card's padding. */}
+              <Inset
+                side="bottom"
+                clip="padding-box"
+                mt="4"
+              >
+                <iframe
+                  src={paper.pdfUrl}
+                  title={`PDF for ${paper.title}`}
+                  className="block h-[75vh] w-full border-t border-line bg-canvas"
+                />
+              </Inset>
+            </section>
+          </Card>
+        ) : (
+          <Card
+            asChild
+            size="3"
+            mb="6"
+          >
+            <section>
+              <Heading
+                as="h2"
+                size="5"
+              >
+                Read Paper
+              </Heading>
+              <Text
+                as="p"
+                color="gray"
+                mt="2"
+              >
+                OpenAlex does not have a direct PDF link for this paper. You can
+                still read it from the source or publisher page.
+              </Text>
+
+              <Button
+                asChild
+                size="3"
+                mt="5"
+              >
+                <a
+                  href={paper.paperUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open Source Page
+                </a>
+              </Button>
+            </section>
+          </Card>
         )}
       </div>
     </main>

@@ -166,11 +166,12 @@ export default function CollectionPicker({
       open={open}
       onOpenChange={handleOpenChange}
     >
+      {/* No color means the theme's accent, so a saved bookmark follows accentColor. */}
       <Popover.Trigger>
         {variant === "icon" ? (
           <IconButton
             variant="ghost"
-            color={saved ? "blue" : "gray"}
+            color={saved ? undefined : "gray"}
             size="2"
             aria-label="Save to collection"
           >
@@ -179,7 +180,7 @@ export default function CollectionPicker({
         ) : (
           <Button
             variant="soft"
-            color={saved ? "blue" : "gray"}
+            color={saved ? undefined : "gray"}
             size="3"
           >
             {icon}

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { Text } from "@radix-ui/themes";
 
+import EmptyState from "@/components/empty-state";
+import PageHeader from "@/components/page-header";
 import Pagination from "@/components/pagination";
 import PaperCard from "@/components/papercard";
 import SearchField from "@/components/search-field";
@@ -45,12 +48,11 @@ export default async function ExplorePage({ searchParams }: Props) {
       id="papers"
       className="p-10"
     >
-      <h1 className="mb-6 text-3xl font-bold">
-        Explore Papers
-      </h1>
+      <PageHeader title="Explore Papers" />
+
       <form
         action="/explore"
-        className="mb-8"
+        className="mb-8 mt-6"
       >
         <SearchField
           defaultValue={query}
@@ -60,17 +62,18 @@ export default async function ExplorePage({ searchParams }: Props) {
       </form>
 
       {papers.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-line-strong p-12 text-center">
-          <h2 className="text-xl font-semibold">
-            No papers found
-          </h2>
-          <p className="mt-2 text-ink-faint">
-            Try searching for another title, author, or topic.
-          </p>
-        </div>
+        <EmptyState
+          title="No papers found"
+          description="Try searching for another title, author, or topic."
+        />
       ) : (
         <>
-          <p className="mb-6 text-sm text-ink-faint">
+          <Text
+            as="p"
+            size="2"
+            color="gray"
+            mb="5"
+          >
             Showing {firstShown}–{lastShown} of {total}{" "}
             {total === 1 ? "paper" : "papers"}
             {query && (
@@ -78,7 +81,7 @@ export default async function ExplorePage({ searchParams }: Props) {
                 {" "}for &ldquo;{query}&rdquo;
               </>
             )}
-          </p>
+          </Text>
 
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {papers.map((paper) => (
