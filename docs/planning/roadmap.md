@@ -1,6 +1,6 @@
 # ResearchLens Roadmap
 
-Last updated: 2026-10-14
+Last updated: 2026-11-05
 
 ## Goal
 
@@ -19,7 +19,7 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 - Continue Reading, which tracks papers automatically when you open them
 - Collections: a default "Saved" collection plus custom ones you can create and delete, and remove papers from
 - Landing page (light theme) that sends signed-in users to `/explore`
-- OpenAlex import script: 410 papers across 17 CS topics
+- OpenAlex import script: 1,000 papers across 47 CS topics
 
 **Gaps**
 
@@ -31,7 +31,7 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 
 ## Phase 1: Make what exists real
 
-- [x] **1. Import a few hundred papers.** Done: 410 papers across 17 topics, with abstracts and page-based reading times. See `src/scripts/README.md`.
+- [x] **1. Import a few hundred papers.** Done: 1,000 papers across 47 topics, with abstracts and page-based reading times. The script's list has a few topics that aren't fully imported yet. See `src/scripts/README.md`.
 - [x] **1a. Paginate Explore.** Done: 25 per page with numbered links. Page loads went from about 1–1.8s to about 0.4s.
 - [x] **2. Add papers to custom collections.** Done: the bookmark opens a picker listing every collection as a checkbox, on paper cards and the paper page.
 - [ ] **3. Decide what to do with Goals.** Build it (the schema already supports it) or hide it from the sidebar until it's built.
@@ -52,11 +52,11 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 - [x] **9. Give each page its own title.** Paper and collection pages use their own names.
 - ~~[ ] 10. Add experience level to Settings. `User.experienceLevel` already exists and nothing uses it yet.~~
 - [x] **11. Write a few real tests.** Vitest on the service layer, starting with the collection ownership checks.
-- [ ] **12. Final pass on the landing page.** Revisit once Explore has real data.
+- [x] **12. Final pass on the landing page.** Done: the claims match the app, real papers are previewed, the tiles use Radix, and the favicon is ours. The paper count in the headline is written by hand, so update it after big imports.
 
 ## Phase 4: Ship v1
 
-- [ ] **13. Deploy to Vercel.** Set `DATABASE_URL`, `AUTH_SECRET` and `OPENALEX_API_KEY`, run `prisma migrate deploy` during the build, and fix the SSL-mode warning in the connection string.
+- [ ] **13. Deploy to Vercel.** Set `DATABASE_URL`, `AUTH_SECRET` and `OPENALEX_API_KEY`, run `prisma migrate deploy` during the build, fix the SSL-mode warning in the connection string, and add a link-preview image and `metadataBase` once the domain is known.
 - [ ] **14. Rate-limit login and register.**
 - [ ] **15. Make the docs match reality.** Fix the README's stack list and fill in `docs/planning/`.
 
@@ -64,7 +64,7 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 
 In order of difficulty; each builds on the one before.
 
-- [ ] **16. AI summaries.** Explain a paper at the user's experience level and cache the result in the database. The provider is still open; the README says OpenAI, but nothing is wired up.
+- [ ] **16. AI summaries.** Explain a paper at the user's experience level and cache the result in the database. Also use the model to estimate difficulty and fix reading times. The provider is still open; the README says OpenAI, but nothing is wired up.
 - [ ] **17. Semantic search.** Embeddings stored with pgvector on Neon.
 - [ ] **18. Q&A over a paper (RAG).** Extract PDF text, split it into chunks, retrieve the relevant ones, answer from them.
 - [ ] **19. Paper comparison.** Easy once summaries exist.
@@ -73,4 +73,3 @@ In order of difficulty; each builds on the one before.
 
 - **Goals:** build it in v1, or hide it until later?
 - **v1 scope:** confirm Phases 1–4 for v1, with AI as v2.
-- **Difficulty:** hide the score until it means something, or estimate it, for example alongside the AI summaries in step 16?
