@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Instrument_Serif } from "next/font/google";
-import { BookOpen, Bookmark, Calendar, Clock3, FileText, FolderOpen, Search } from "lucide-react";
+import { Bookmark, Calendar, Clock3 } from "lucide-react";
 import { Badge, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
 
 import FallingPapers from "@/components/landing/falling-papers";
+import FeatureReveal from "@/components/landing/feature-reveal";
 import FlutedBackground from "@/components/landing/fluted-background";
 import GlassNav from "@/components/landing/glass-nav";
 import SmoothScroll from "@/components/landing/smooth-scroll";
@@ -15,13 +16,6 @@ const instrumentSerif = Instrument_Serif({
   weight: "400",
   style: ["normal", "italic"],
 });
-
-const FEATURES = [
-  { icon: Search, title: "Discover", body: "Search titles, abstracts, authors, and topics across the most-cited open-access CS papers.", wide: true },
-  { icon: BookOpen, title: "Continue Reading", body: "Papers are added the moment you open them, most recent first." },
-  { icon: FolderOpen, title: "Collections", body: "A Saved collection to start, plus any you make yourself." },
-  { icon: FileText, title: "Built-in reader", body: "Open-access PDFs open right in the page, when the publisher allows it.", wide: true },
-];
 
 // Real papers, hardcoded so this page never waits on the database.
 const SAMPLE_PAPERS = [
@@ -66,7 +60,20 @@ export default function LandingPage() {
 
         {/* One fixed size, leaving the background visible on both sides. */}
         <div className="relative z-10 mx-auto -mt-[100svh] w-[calc(100%-1.5rem)] max-w-[1320px] overflow-hidden sm:w-[86%] rounded-[2rem] bg-canvas shadow-[0_-20px_80px_-20px_rgb(3_8_30/0.8)] motion-reduce:mt-0">
-          <section id="papers" className="scroll-mt-24 px-6 pb-16 pt-20 sm:px-8">
+          <section className="px-6 py-20 text-center sm:px-8 sm:py-24">
+            <h2 className="text-balance font-display text-4xl font-bold tracking-tight sm:text-5xl">
+              A better way to <em className="font-serif text-[1.12em] font-normal text-accent">read research</em>
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-ink-muted">
+              ResearchLens is built for students studying computer science. Instead of opening multiple browser tabs, journals, and preprint servers to find what you need, you get the most-cited open-access papers in one searchable library. With features like reading history and custom-built collections, the organization is taken care of, so you can study peacefully.
+            </p>
+          </section>
+
+          <section id="features" className="scroll-mt-24 px-6 pb-24 sm:px-8">
+            <FeatureReveal />
+          </section>
+
+          <section id="papers" className="scroll-mt-24 px-6 pb-24 sm:px-8">
             <Heading as="h2" size="5" align="center" className="font-display tracking-tight">
               A few of the papers inside
             </Heading>
@@ -95,18 +102,6 @@ export default function LandingPage() {
                       </Text>
                     </Flex>
                   </article>
-                </Card>
-              ))}
-            </div>
-          </section>
-
-          <section id="features" className="scroll-mt-24 px-6 pb-24 sm:px-8">
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURES.map(({ icon: Icon, title, body, wide }) => (
-                <Card key={title} size="3" className={wide ? "lg:col-span-2" : ""}>
-                  <Icon size={20} className="text-accent" strokeWidth={2} />
-                  <Heading as="h2" size="4" mt="4" className="font-display tracking-tight">{title}</Heading>
-                  <Text as="p" size="2" color="gray" mt="2">{body}</Text>
                 </Card>
               ))}
             </div>

@@ -20,8 +20,8 @@ export default function GlassNav() {
           </Link>
 
           <div className="hidden items-center gap-7 text-sm md:flex">
-            <a href="#papers" className="transition hover:text-sky">Papers</a>
             <a href="#features" className="transition hover:text-sky">Features</a>
+            <a href="#papers" className="transition hover:text-sky">Papers</a>
           </div>
 
           <div className="flex items-center gap-1">

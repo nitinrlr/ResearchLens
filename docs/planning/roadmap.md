@@ -58,7 +58,7 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
   - [x] Ribbed-glass background, glass nav and hero.
   - [x] Falling papers prototype, built with CSS 3D. Switch to Three.js only if it doesn't feel 3D enough.
   - [x] One-size white sheet, with the glass nav readable over it.
-  - [ ] Hover reveal section with four feature mock-ups.
+  - [x] Hover reveal section with four feature mock-ups.
   - [ ] Mobile, reduced motion, accessibility and a speed check.
 
 ## Phase 4: Ship v1
