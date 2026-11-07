@@ -53,6 +53,13 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 - ~~[ ] 10. Add experience level to Settings. `User.experienceLevel` already exists and nothing uses it yet.~~
 - [x] **11. Write a few real tests.** Vitest on the service layer, starting with the collection ownership checks.
 - [x] **12. Final pass on the landing page.** Done: the claims match the app, real papers are previewed, the tiles use Radix, and the favicon is ours. The paper count in the headline is written by hand, so update it after big imports.
+- [ ] **12a. Rebuild the landing page around motion.** Code lives in `src/components/landing/`.
+  - [x] Libraries (GSAP, Lenis), colors and smooth scrolling.
+  - [x] Ribbed-glass background, glass nav and hero.
+  - [x] Falling papers prototype, built with CSS 3D. Switch to Three.js only if it doesn't feel 3D enough.
+  - [x] One-size white sheet, with the glass nav readable over it.
+  - [ ] Hover reveal section with four feature mock-ups.
+  - [ ] Mobile, reduced motion, accessibility and a speed check.
 
 ## Phase 4: Ship v1
 

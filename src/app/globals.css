@@ -42,6 +42,15 @@
 
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-bricolage);
+  --font-serif: var(--font-instrument-serif);
+}
+
+/* Landing page colors. `static` makes them available to landing.css too. */
+@theme static {
+  --color-night: #070f2b;
+  --color-deep: #0f1e54;
+  --color-sky: #8da4ef;
+  --color-mist: #b9c6ee;
 }
 
 /* Use the app's font in Radix components instead of Radix's system stack. */
