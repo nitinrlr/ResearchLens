@@ -1,13 +1,10 @@
 # ResearchLens Roadmap
 
-Last updated: 2026-11-05
+Last updated: 2026-11-08
 
 ## Goal
 
-**v1** is a deployed app that works end to end: Phases 1–4 below.
-**v2** adds the AI features: Phase 5.
-
-A working live link is worth more than a half-built AI feature on localhost, so v1 ships first.
+**v1** is a deployed app that works end to end, with the AI features and Goals included. Everything is built first (Phases 1–4), then shipped (Phase 5).
 
 ## Where things stand
 
@@ -18,14 +15,14 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 - Paper detail page with an embedded PDF where one is available
 - Continue Reading, which tracks papers automatically when you open them
 - Collections: a default "Saved" collection plus custom ones you can create and delete, and remove papers from
-- Landing page (light theme) that sends signed-in users to `/explore`
+- Animated landing page that sends signed-in users to `/explore`, and a metallic glass design across the app
 - OpenAlex import script: 1,000 papers across 47 CS topics
+- Vitest tests for the collection ownership checks, Server Actions and pagination
 
 **Gaps**
 
 - Goals is a static stub; Settings is a placeholder
 - Difficulty is a placeholder: OpenAlex has no difficulty data, so every paper shows 1/5
-- No tests
 - Not deployed
 - README lists the OpenAI API, which isn't in the project yet
 
@@ -34,7 +31,7 @@ A working live link is worth more than a half-built AI feature on localhost, so 
 - [x] **1. Import a few hundred papers.** Done: 1,000 papers across 47 topics, with abstracts and page-based reading times. The script's list has a few topics that aren't fully imported yet. See `src/scripts/README.md`.
 - [x] **1a. Paginate Explore.** Done: 25 per page with numbered links. Page loads went from about 1–1.8s to about 0.4s.
 - [x] **2. Add papers to custom collections.** Done: the bookmark opens a picker listing every collection as a checkbox, on paper cards and the paper page.
-- [ ] **3. Decide what to do with Goals.** Build it (the schema already supports it) or hide it from the sidebar until it's built.
+- [x] **3. Decide what to do with Goals.** Decided: build it with the AI features, in step 17.
 - [x] **4. Fix unsave on the collection page.** Done: the page refreshes when the picker closes, so a removed card disappears.
 
 ## Phase 2: Light theme conversion
@@ -62,22 +59,18 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
   - [ ] Mobile, reduced motion, accessibility and a speed check.
 - [x] **12b. Bring the metallic glass design to the rest of the app.** Every dashboard page uses the frozen background and frosted panels. Login and register still use the light design.
 
-## Phase 4: Ship v1
-
-- [ ] **13. Deploy to Vercel.** Set `DATABASE_URL`, `AUTH_SECRET` and `OPENALEX_API_KEY`, run `prisma migrate deploy` during the build, fix the SSL-mode warning in the connection string, and add a link-preview image and `metadataBase` once the domain is known.
-- [ ] **14. Rate-limit login and register.**
-- [ ] **15. Make the docs match reality.** Fix the README's stack list and fill in `docs/planning/`.
-
-## Phase 5: AI features (v2)
+## Phase 4: AI features and Goals
 
 In order of difficulty; each builds on the one before.
 
-- [ ] **16. AI summaries.** Explain a paper at the user's experience level and cache the result in the database. Also use the model to estimate difficulty and fix reading times. The provider is still open; the README says OpenAI, but nothing is wired up.
-- [ ] **17. Semantic search.** Embeddings stored with pgvector on Neon.
-- [ ] **18. Q&A over a paper (RAG).** Extract PDF text, split it into chunks, retrieve the relevant ones, answer from them.
-- [ ] **19. Paper comparison.** Easy once summaries exist.
+- [ ] **13. AI summaries.** Explain a paper in plain language and cache the result in the database. Also use the model to estimate difficulty and fix reading times. The provider is still open; the README says OpenAI, but nothing is wired up.
+- [ ] **14. Semantic search.** Embeddings stored with pgvector on Neon.
+- [ ] **15. Q&A over a paper (RAG).** Extract PDF text, split it into chunks, retrieve the relevant ones, answer from them.
+- [ ] **16. Paper comparison.** Easy once summaries exist.
+- [ ] **17. Build Goals.** Replace the placeholder page. The `Goal` and `GoalTopic` tables already exist.
 
-## Open decisions
+## Phase 5: Ship v1
 
-- **Goals:** build it in v1, or hide it until later?
-- **v1 scope:** confirm Phases 1–4 for v1, with AI as v2.
+- [ ] **18. Deploy to Vercel.** Set `DATABASE_URL`, `AUTH_SECRET`, `OPENALEX_API_KEY` and the AI provider's key, run `prisma migrate deploy` during the build, fix the SSL-mode warning in the connection string, and add a link-preview image and `metadataBase` once the domain is known.
+- [ ] **19. Rate-limit login and register.** Include the AI endpoints, since each call costs money.
+- [ ] **20. Make the docs match reality.** Fix the README's stack list.

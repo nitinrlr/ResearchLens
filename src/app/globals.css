@@ -17,7 +17,7 @@
 @theme inline {
   /* Backgrounds */
   --color-canvas: var(--color-background);   /* page, cards, inputs (white) */
-  --color-surface: var(--gray-2);            /* sidebar, auth pages */
+  --color-surface: var(--gray-2);            /* auth pages, landing closing section */
   --color-subtle: var(--gray-3);             /* hover fills, topic pills */
 
   /* Borders */
@@ -31,14 +31,11 @@
 
   /* Accent (indigo, set by accentColor in layout.tsx) */
   --color-accent: var(--accent-9);           /* solid fills and icons */
-  --color-accent-strong: var(--accent-10);   /* hovered solid fills */
   --color-accent-ink: var(--accent-11);      /* accent-colored text and links */
   --color-accent-soft: var(--accent-3);      /* active nav, chips */
-  --color-accent-line: var(--accent-6);      /* chip borders */
 
   /* Errors and destructive actions */
   --color-danger: var(--red-11);
-  --color-danger-soft: var(--red-3);
 
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-bricolage);

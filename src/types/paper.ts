@@ -1,10 +1,10 @@
-export interface SearchAuthor {
+interface SearchAuthor {
   openAlexId: string;
   name: string;
   institution: string | null;
 }
 
-export interface SearchTopic {
+interface SearchTopic {
   name: string;
 }
 
