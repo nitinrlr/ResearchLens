@@ -58,6 +58,29 @@
   --default-font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Frosted panels, matching the landing page's glass nav. */
+.glass-panel {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: rgb(255 255 255 / 0.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4) brightness(0.6);
+  backdrop-filter: blur(14px) saturate(1.4) brightness(0.6);
+  box-shadow:
+    0 18px 40px -24px rgb(3 8 30 / 0.9),
+    inset 0 0 0 1px rgb(255 255 255 / 0.09);
+}
+
+@media (min-width: 48rem) {
+  .glass-panel {
+    padding: 1.75rem;
+  }
+}
+
+/* OverlayScrollbar replaces the native one, which would take up width. */
+html:has(.overlay-scroll) {
+  scrollbar-width: none;
+}
+
 /* Light theme only: keeps native controls and scrollbars light too. */
 :root {
   color-scheme: light;

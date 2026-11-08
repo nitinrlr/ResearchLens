@@ -10,50 +10,39 @@ type SidebarProps = {
   };
 };
 
+const NAV = [
+  { href: "/explore", icon: "🔍", label: "Discover" },
+  { href: "/reading", icon: "📖", label: "Continue Reading" },
+  { href: "/collections", icon: "📁", label: "Collections" },
+  { href: "/goals", icon: "🎯", label: "Goals" },
+];
+
 export default function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
 
   const navClass = (href: string) =>
-  `block rounded-lg px-4 py-3 transition ${
-    pathname === href
-      ? "bg-accent-soft font-medium text-accent-ink"
-      : "text-ink-muted hover:bg-subtle hover:text-ink"
-  }`;
+    `flex items-center gap-2 whitespace-nowrap rounded-lg px-3 py-3 text-white transition max-md:justify-center max-md:px-0 ${
+      pathname === href ? "bg-white/20 font-medium" : "hover:bg-white/10"
+    }`;
 
   return (
-    <aside className="flex w-60 flex-col border-r border-line bg-surface p-6">
-      <h1 className="mb-10 flex items-center gap-2.5 font-display text-xl font-bold tracking-tight">
+    <aside className="sticky top-0 flex h-svh w-60 shrink-0 flex-col self-start p-6 text-white max-md:w-16 max-md:px-2 max-md:py-4">
+      <h1 className="mb-10 flex items-center gap-2.5 font-display text-xl font-bold tracking-tight max-md:justify-center">
         <span className="block size-5 shrink-0 rounded-md bg-accent" />
-        ResearchLens
+        <span className="max-md:sr-only">ResearchLens</span>
       </h1>
+
       <nav className="space-y-2">
-        <Link
-          href="/explore"
-          className={navClass("/explore")}
-        >
-          🔍 Discover
-        </Link>
-
-        <Link
-          href="/reading"
-          className={navClass("/reading")}
-        >
-          📖 Continue Reading
-        </Link>
-
-        <Link
-          href="/collections"
-          className={navClass("/collections")}
-        >
-          📁 Collections
-        </Link>
-
-        <Link
-          href="/goals"
-          className={navClass("/goals")}
-        >
-          🎯 Goals
-        </Link>
+        {NAV.map(({ href, icon, label }) => (
+          <Link
+            key={href}
+            href={href}
+            className={navClass(href)}
+          >
+            <span aria-hidden="true">{icon}</span>
+            <span className="max-md:sr-only">{label}</span>
+          </Link>
+        ))}
       </nav>
 
       <div className="mt-auto pt-6">

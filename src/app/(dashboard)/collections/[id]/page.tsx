@@ -38,67 +38,69 @@ export default async function CollectionDetailPage({ params }: Props) {
   }
 
   return (
-    <main className="p-10 text-ink">
-      <Link
-        href="/collections"
-        className="inline-flex items-center gap-2 text-sm text-ink-muted transition hover:text-ink"
-      >
-        <ArrowLeft size={16} />
-        All collections
-      </Link>
-
-      <div className="mt-6">
-        <PageHeader
-          title={collection.title}
-          description={collection.description ?? undefined}
+    <>
+      <section className="glass-panel">
+        <Link
+          href="/collections"
+          className="inline-flex items-center gap-2 text-sm text-ink-muted transition hover:text-ink"
         >
-          {!collection.isDefault && (
-            <DeleteCollectionButton
-              collectionId={collection.id}
-              title={collection.title}
-            />
-          )}
-        </PageHeader>
+          <ArrowLeft size={16} />
+          All collections
+        </Link>
 
-        <Text
-          as="p"
-          size="2"
-          color="gray"
-          mt="2"
-        >
-          {collection.papers.length}{" "}
-          {collection.papers.length === 1 ? "paper" : "papers"}
-        </Text>
-      </div>
+        <div className="mt-6">
+          <PageHeader
+            title={collection.title}
+            description={collection.description ?? undefined}
+          >
+            {!collection.isDefault && (
+              <DeleteCollectionButton
+                collectionId={collection.id}
+                title={collection.title}
+              />
+            )}
+          </PageHeader>
 
-      {collection.papers.length === 0 ? (
-        <div className="mt-12">
+          <Text
+            as="p"
+            size="2"
+            color="gray"
+            mt="2"
+          >
+            {collection.papers.length}{" "}
+            {collection.papers.length === 1 ? "paper" : "papers"}
+          </Text>
+        </div>
+      </section>
+
+      <section className="glass-panel">
+        {collection.papers.length === 0 ? (
           <EmptyState
             title="No papers in here yet"
             description="Use the bookmark on any paper to add it here."
           />
-        </div>
-      ) : (
-        <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {collection.papers.map((paper) => (
-            <div key={paper.id}>
-              <PaperCard paper={paper} />
+        ) : (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+            {collection.papers.map((paper) => (
+              <div key={paper.id}>
+                <PaperCard paper={paper} />
 
-              <div className="mt-3 flex justify-end px-1">
-                <RemoveButton
-                  action={removePaperFromCollectionAction}
-                  fields={{
-                    collectionId: collection.id,
-                    paperId: paper.id,
-                  }}
-                >
-                  Remove from collection
-                </RemoveButton>
+                <div className="mt-3 flex justify-end px-1">
+                  <RemoveButton
+                    action={removePaperFromCollectionAction}
+                    fields={{
+                      collectionId: collection.id,
+                      paperId: paper.id,
+                    }}
+                  >
+                    Remove from collection
+                  </RemoveButton>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </main>
+            ))}
+          </div>
+        )}
+      </section>
+    </>
   );
 }

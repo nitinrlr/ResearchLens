@@ -10,13 +10,15 @@ export const metadata: Metadata = {
 
 export default function GoalsPage() {
   return (
-    <main className="p-10 text-ink">
-      <PageHeader
-        title="Learning Goals"
-        description="Track your research progress."
-      />
+    <>
+      <section className="glass-panel">
+        <PageHeader
+          title="Learning Goals"
+          description="Track your research progress."
+        />
+      </section>
 
-      <div className="mt-12">
+      <section className="glass-panel">
         <EmptyState
           title="No goals yet"
           description="Set your first learning goal."
@@ -28,7 +30,7 @@ export default function GoalsPage() {
             Create Goal
           </Button>
         </EmptyState>
-      </div>
-    </main>
+      </section>
+    </>
   );
 }

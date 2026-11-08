@@ -22,13 +22,13 @@ const FRAGMENT_SHADER = `
     float t = uTime;
     float wave = sin(uv.y * 2.2 + t * 0.09) * 0.5;
     float sheen = pow(0.5 + 0.5 * sin(uv.x * 6.0 + wave + t * 0.11), 3.0);
-    float glow = pow(0.5 + 0.5 * sin(uv.x * 2.5 - wave - t * 0.07 + 1.5), 6.0);
+    float glow = pow(0.5 + 0.5 * sin(uv.x * 12.6 - wave - t * 0.07 + 1.5), 2.0);
     float streak = pow(0.5 + 0.5 * sin(uv.x * 19.0 + wave * 2.0 - t * 0.13), 40.0);
-    float fade = 0.35 + 0.65 * smoothstep(0.0, 1.0, uv.y);
+    float fade = 0.75 + 0.25 * smoothstep(0.0, 1.0, uv.y);
 
     vec3 color = mix(NIGHT, DEEP, sheen * 0.7);
-    color += ACCENT * glow * 0.24 * fade;
-    color += SKY * streak * (0.12 + glow) * 0.5 * fade;
+    color += ACCENT * glow * 0.09 * fade;
+    color += SKY * streak * (0.4 + 0.6 * glow) * 0.28 * fade;
     return color;
   }
 
@@ -43,7 +43,7 @@ const FRAGMENT_SHADER = `
 
     // A hard edge between ribs, with a thin glint on one side.
     color *= 0.62 + 0.38 * smoothstep(0.0, 0.14, across);
-    color += SKY * 0.05 * smoothstep(0.95, 1.0, across);
+    color += SKY * 0.03 * smoothstep(0.95, 1.0, across);
 
     // Noise stops the dark gradients showing bands.
     color += (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) / 160.0;
@@ -52,7 +52,7 @@ const FRAGMENT_SHADER = `
 `;
 
 /** Fixed ribbed-metal background, with a plain gradient if WebGL is missing. */
-export default function FlutedBackground() {
+export default function FlutedBackground({ animated = false }: { animated?: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -87,16 +87,19 @@ export default function FlutedBackground() {
     const time = gl.getUniformLocation(program, "uTime");
 
     function draw(now: number) {
-      gl!.uniform1f(time, now / 1000);
+      gl!.uniform1f(time, (now / 1000) * 1.5);
       gl!.drawArrays(gl!.TRIANGLES, 0, 3);
     }
 
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      // Exact pixels, because viewport units shrink when a scrollbar appears.
+      canvas.style.width = `${canvas.width}px`;
+      canvas.style.height = `${canvas.height}px`;
       gl!.viewport(0, 0, canvas.width, canvas.height);
       gl!.uniform2f(resolution, canvas.width, canvas.height);
-      draw(performance.now());
+      draw(animated ? performance.now() : 0);
     }
 
     resize();
@@ -113,7 +116,7 @@ export default function FlutedBackground() {
       draw(now);
     }
 
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (animated && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       frame = requestAnimationFrame(loop);
     }
 
@@ -121,11 +124,11 @@ export default function FlutedBackground() {
       cancelAnimationFrame(frame);
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [animated]);
 
   return (
     <div aria-hidden="true" className="fixed inset-0 -z-10 bg-[radial-gradient(70%_60%_at_25%_15%,var(--color-deep),var(--color-night))]">
-      <canvas ref={canvasRef} className="size-full" />
+      <canvas ref={canvasRef} />
     </div>
   );
 }

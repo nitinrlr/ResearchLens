@@ -5,7 +5,7 @@ import { Badge, Button, Card, Flex, Heading, Text } from "@radix-ui/themes";
 
 import FallingPapers from "@/components/landing/falling-papers";
 import FeatureReveal from "@/components/landing/feature-reveal";
-import FlutedBackground from "@/components/landing/fluted-background";
+import FlutedBackground from "@/components/fluted-background";
 import GlassNav from "@/components/landing/glass-nav";
 import SmoothScroll from "@/components/landing/smooth-scroll";
 import "@/components/landing/landing.css";
@@ -29,7 +29,7 @@ export default function LandingPage() {
     // isolate keeps the fixed background above the page's white base.
     <div className={`${instrumentSerif.variable} relative isolate text-ink`}>
       <SmoothScroll />
-      <FlutedBackground />
+      <FlutedBackground animated />
       <GlassNav />
 
       <main>

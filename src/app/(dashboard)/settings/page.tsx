@@ -9,18 +9,20 @@ export const metadata: Metadata = {
 
 export default function SettingsPage() {
   return (
-    <main className="p-10 text-ink">
-      <PageHeader
-        title="Settings"
-        description="Manage your account preferences."
-      />
+    <>
+      <section className="glass-panel">
+        <PageHeader
+          title="Settings"
+          description="Manage your account preferences."
+        />
+      </section>
 
-      <div className="mt-12">
+      <section className="glass-panel">
         <EmptyState
           title="Nothing to configure yet"
           description="Reading preferences are coming soon."
         />
-      </div>
-    </main>
+      </section>
+    </>
   );
 }

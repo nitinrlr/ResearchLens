@@ -28,7 +28,7 @@ export default function UserMenu({ user }: UserMenuProps) {
       <DropdownMenu.Trigger>
         <button
           type="button"
-          className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition hover:bg-subtle data-[state=open]:bg-subtle"
+          className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition hover:bg-white/10 data-[state=open]:bg-white/10 max-md:justify-center max-md:px-0"
         >
           <Avatar
             fallback={initial}
@@ -37,13 +37,13 @@ export default function UserMenu({ user }: UserMenuProps) {
             variant="solid"
           />
 
-          <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink">
+          <span className="min-w-0 flex-1 truncate text-sm font-medium text-white max-md:sr-only">
             {user.name}
           </span>
 
           <ChevronsUpDown
             size={16}
-            className="shrink-0 text-ink-faint"
+            className="shrink-0 text-white max-md:hidden"
           />
         </button>
       </DropdownMenu.Trigger>

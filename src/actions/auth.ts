@@ -2,7 +2,7 @@
 import { signOut } from "@/auth";
 
 /**
- * Clears the session cookie and sends the user back to the login page.
+ * Clears the session cookie and sends the user back to the landing page.
  *
  * This lives in a `"use server"` file so client components (like the user
  * menu in the sidebar) can import and call it directly.
@@ -10,6 +10,6 @@ import { signOut } from "@/auth";
 
 export async function signOutAction() {
   await signOut({
-    redirectTo: "/login",
+    redirectTo: "/",
   });
 }

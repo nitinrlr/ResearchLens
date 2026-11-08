@@ -44,63 +44,67 @@ export default async function ExplorePage({ searchParams }: Props) {
   const lastShown = firstShown + papers.length - 1;
 
   return (
-    <main
-      id="papers"
-      className="p-10"
-    >
-      <PageHeader title="Explore Papers" />
-
-      <form
-        action="/explore"
-        className="mb-8 mt-6"
+    <>
+      <section
+        id="papers"
+        className="glass-panel scroll-mt-3"
       >
-        <SearchField
-          defaultValue={query}
-          placeholder="Search by title, author, or topic..."
-          label="Search papers"
-        />
-      </form>
+        <PageHeader title="Explore Papers" />
 
-      {papers.length === 0 ? (
-        <EmptyState
-          title="No papers found"
-          description="Try searching for another title, author, or topic."
-        />
-      ) : (
-        <>
-          <Text
-            as="p"
-            size="2"
-            color="gray"
-            mb="5"
-          >
-            Showing {firstShown}–{lastShown} of {total}{" "}
-            {total === 1 ? "paper" : "papers"}
-            {query && (
-              <>
-                {" "}for &ldquo;{query}&rdquo;
-              </>
-            )}
-          </Text>
-
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {papers.map((paper) => (
-              <PaperCard
-                key={paper.id}
-                paper={paper}
-              />
-            ))}
-          </div>
-
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            pathname="/explore"
-            params={linkParams}
-            scrollTarget="papers"
+        <form
+          action="/explore"
+          className="mt-6"
+        >
+          <SearchField
+            defaultValue={query}
+            placeholder="Search by title, author, or topic..."
+            label="Search papers"
           />
-        </>
-      )}
-    </main>
+        </form>
+      </section>
+
+      <section className="glass-panel">
+        {papers.length === 0 ? (
+          <EmptyState
+            title="No papers found"
+            description="Try searching for another title, author, or topic."
+          />
+        ) : (
+          <>
+            <Text
+              as="p"
+              size="2"
+              color="gray"
+              mb="5"
+            >
+              Showing {firstShown}–{lastShown} of {total}{" "}
+              {total === 1 ? "paper" : "papers"}
+              {query && (
+                <>
+                  {" "}for &ldquo;{query}&rdquo;
+                </>
+              )}
+            </Text>
+
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {papers.map((paper) => (
+                <PaperCard
+                  key={paper.id}
+                  paper={paper}
+                />
+              ))}
+            </div>
+
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              pathname="/explore"
+              params={linkParams}
+              scrollTarget="papers"
+            />
+          </>
+        )}
+      </section>
+    </>
   );
 }

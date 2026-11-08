@@ -48,69 +48,73 @@ export default async function ReadingPage({ searchParams }: Props) {
 
   if (papers.length === 0 && !query) {
     return (
-      <main className="p-10 text-ink">
+      <>
+        <section className="glass-panel">
+          <PageHeader
+            title="Continue Reading"
+            description={DESCRIPTION}
+          />
+        </section>
+
+        <section className="glass-panel">
+          <EmptyState
+            title="Nothing here yet"
+            description="Open a paper from Discover and it will show up here automatically."
+          />
+        </section>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <section className="glass-panel">
         <PageHeader
           title="Continue Reading"
           description={DESCRIPTION}
         />
 
-        <div className="mt-12">
-          <EmptyState
-            title="Nothing here yet"
-            description="Open a paper from Discover and it will show up here automatically."
+        <form
+          action="/reading"
+          className="mt-6"
+        >
+          <SearchField
+            defaultValue={query}
+            placeholder="Search papers you've read..."
+            label="Search papers you've read"
           />
-        </div>
-      </main>
-    );
-  }
+        </form>
+      </section>
 
-  return (
-    <main className="p-10 text-ink">
-      <PageHeader
-        title="Continue Reading"
-        description={DESCRIPTION}
-      />
-
-      <form
-        action="/reading"
-        className="mt-8"
-      >
-        <SearchField
-          defaultValue={query}
-          placeholder="Search papers you've read..."
-          label="Search papers you've read"
-        />
-      </form>
-
-      {papers.length === 0 ? (
-        <div className="mt-12">
+      <section className="glass-panel">
+        {papers.length === 0 ? (
           <EmptyState
             title="No matches"
             description="Try a different title, author, or topic."
           />
-        </div>
-      ) : (
-        <div className="mt-10 grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {papers.map((paper) => (
-            <div key={paper.id}>
-              <PaperCard paper={paper} />
+        ) : (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+            {papers.map((paper) => (
+              <div key={paper.id}>
+                <PaperCard paper={paper} />
 
-              <div className="mt-2 flex items-center justify-between px-1 text-xs text-ink-faint">
-                <span>Opened {lastReadLabel(paper.lastReadAt)}</span>
+                <div className="mt-2 flex items-center justify-between px-1 text-xs text-ink-faint">
+                  <span>Opened {lastReadLabel(paper.lastReadAt)}</span>
 
-                <RemoveButton
-                  action={removeFromReadingAction}
-                  fields={{
-                    paperId: paper.id,
-                  }}
-                >
-                  Remove
-                </RemoveButton>
+                  <RemoveButton
+                    action={removeFromReadingAction}
+                    fields={{
+                      paperId: paper.id,
+                    }}
+                  >
+                    Remove
+                  </RemoveButton>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </main>
+            ))}
+          </div>
+        )}
+      </section>
+    </>
   );
 }

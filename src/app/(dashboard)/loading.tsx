@@ -1,48 +1,8 @@
-import { Card, Flex, Skeleton } from "@radix-ui/themes";
+import { Skeleton } from "@radix-ui/themes";
+
+import PaperCardSkeleton from "@/components/paper-card-skeleton";
 
 const PLACEHOLDER_CARDS = 6;
-
-/** Gray placeholder shaped like a PaperCard. */
-function PaperCardSkeleton() {
-  return (
-    <Card size="3">
-      <Flex
-        direction="column"
-        gap="3"
-      >
-        <Skeleton
-          height="20px"
-          width="90%"
-        />
-        <Skeleton
-          height="20px"
-          width="60%"
-        />
-        <Skeleton
-          height="14px"
-          width="40%"
-          mt="1"
-        />
-        <div className="flex gap-2">
-          <Skeleton
-            height="22px"
-            width="80px"
-            className="rounded-full"
-          />
-          <Skeleton
-            height="22px"
-            width="64px"
-            className="rounded-full"
-          />
-        </div>
-        <Skeleton
-          height="14px"
-          width="48px"
-        />
-      </Flex>
-    </Card>
-  );
-}
 
 /**
  * Shown the moment you navigate to any dashboard page, while its data loads.
@@ -54,10 +14,7 @@ function PaperCardSkeleton() {
  */
 export default function DashboardLoading() {
   return (
-    <main
-      className="p-10"
-      aria-busy="true"
-    >
+    <>
       <span
         role="status"
         className="sr-only"
@@ -65,21 +22,31 @@ export default function DashboardLoading() {
         Loading…
       </span>
 
-      <Skeleton
-        height="36px"
-        width="260px"
-      />
-      <Skeleton
-        height="44px"
-        width="100%"
-        mt="6"
-      />
+      <section
+        className="glass-panel"
+        aria-busy="true"
+      >
+        <Skeleton
+          height="36px"
+          width="260px"
+        />
+        <Skeleton
+          height="44px"
+          width="100%"
+          mt="6"
+        />
+      </section>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {Array.from({ length: PLACEHOLDER_CARDS }, (_, index) => (
-          <PaperCardSkeleton key={index} />
-        ))}
-      </div>
-    </main>
+      <section
+        className="glass-panel"
+        aria-busy="true"
+      >
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: PLACEHOLDER_CARDS }, (_, index) => (
+            <PaperCardSkeleton key={index} />
+          ))}
+        </div>
+      </section>
+    </>
   );
 }

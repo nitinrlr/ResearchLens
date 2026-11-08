@@ -60,6 +60,7 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
   - [x] One-size white sheet, with the glass nav readable over it.
   - [x] Hover reveal section with four feature mock-ups.
   - [ ] Mobile, reduced motion, accessibility and a speed check.
+- [x] **12b. Bring the metallic glass design to the rest of the app.** Every dashboard page uses the frozen background and frosted panels. Login and register still use the light design.
 
 ## Phase 4: Ship v1
 
