@@ -4,7 +4,7 @@
 
 Imports research papers from OpenAlex into PostgreSQL.
 
-It goes through open-access Computer Science papers from most-cited down, and
+It goes through English open-access Computer Science papers from most-cited down, and
 saves them with their abstracts, authors and topics until the database reaches
 the total you ask for.
 

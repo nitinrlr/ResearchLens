@@ -162,6 +162,7 @@ export async function fetchMostCitedPage(
       "has_abstract:true",
       "is_oa:true",
       "is_retracted:false",
+      "language:en",
     ].join(","),
     sort: "cited_by_count:desc",
     per_page: String(PER_PAGE),

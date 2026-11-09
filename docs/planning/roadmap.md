@@ -1,6 +1,6 @@
 # ResearchLens Roadmap
 
-Last updated: 2026-11-08
+Last updated: 2026-11-09
 
 ## Goal
 
@@ -16,7 +16,7 @@ Last updated: 2026-11-08
 - Continue Reading, which tracks papers automatically when you open them
 - Collections: a default "Saved" collection plus custom ones you can create and delete, and remove papers from
 - Animated landing page that sends signed-in users to `/explore`, and a metallic glass design across the app
-- OpenAlex import script: 10,000 of the most-cited open-access CS papers so far, with a target of 50,000
+- OpenAlex import script: the 50,000 most-cited English open-access CS papers
 - Vitest tests for the collection ownership checks, Server Actions and pagination
 
 **Gaps**
@@ -28,7 +28,7 @@ Last updated: 2026-11-08
 
 ## Phase 1: Make what exists real
 
-- [x] **1. Import papers at scale.** Bulk importer and a full-text search index. Imports the most-cited open-access CS papers, skipping duplicates and incomplete records. See `src/scripts/README.md`.
+- [x] **1. Import papers at scale.** Bulk importer and a full-text search index. Imports the most-cited English open-access CS papers, skipping duplicates and incomplete records. See `src/scripts/README.md`.
 - [x] **1a. Paginate Explore.** Done: 25 per page with numbered links. Page loads went from about 1–1.8s to about 0.4s.
 - [x] **2. Add papers to custom collections.** Done: the bookmark opens a picker listing every collection as a checkbox, on paper cards and the paper page.
 - [x] **3. Decide what to do with Goals.** Decided: build it with the AI features, in step 17.
@@ -63,10 +63,10 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 
 In order of difficulty; each builds on the one before.
 
-- [ ] **13. AI summaries.** Explain a paper in plain language and cache the result in the database. Also use the model to estimate difficulty and fix reading times. The provider is still open; the README says OpenAI, but nothing is wired up.
+- [ ] **13. Paper chat.** A chat panel beside the PDF that answers questions from the paper, and says when something isn't in it. Starter buttons such as "Explain this simply" replace AI summaries, and their answers are saved per paper so common requests only run once. First test how many PDF links can actually be read, and fall back to the abstract when one can't. Signed-in users only, with a daily message limit. Chats stay in the browser at first. The provider is still open, Gemini's free tier is the likely start.
 - [ ] **14. Semantic search.** Embeddings stored with pgvector on Neon.
-- [ ] **15. Q&A over a paper (RAG).** Extract PDF text, split it into chunks, retrieve the relevant ones, answer from them.
-- [ ] **16. Paper comparison.** Easy once summaries exist.
+- [ ] **15. Difficulty and reading time.** Estimate difficulty from each abstract. Reading time needs a real page count from the PDF.
+- [ ] **16. Paper comparison.** Reads the two papers directly.
 - [ ] **17. Build Goals.** Replace the placeholder page. The `Goal` and `GoalTopic` tables already exist.
 
 ## Phase 5: Ship v1

@@ -46,7 +46,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="focus-in mx-auto mt-6 max-w-xl text-lg leading-relaxed text-mist" style={{ animationDelay: "0.15s" }}>
-                Search 1,000 open-access CS papers, keep track of what you&apos;ve started, and organize what matters — in one place.
+                Search 50,000 open-access CS papers, keep track of what you&apos;ve started, and organize what matters — in one place.
               </p>
 
               <div className="focus-in mt-9" style={{ animationDelay: "0.3s" }}>

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | ResearchLens",
   },
   description:
-    "Search 1,000 open-access CS papers, keep track of what you've started, and organize what matters — in one place.",
+    "Search 50,000 open-access CS papers, keep track of what you've started, and organize what matters — in one place.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
