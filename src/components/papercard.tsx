@@ -26,18 +26,20 @@ export default function PaperCard({ paper }: PaperCardProps) {
       <Card
         asChild
         size="3"
-        className="flex flex-col transition-shadow duration-200 hover:shadow-lg has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-(--focus-8)"
+        className="paper-card flex flex-col transition-shadow duration-200 hover:shadow-lg has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-(--focus-8)"
       >
         <article>
           <Flex
             justify="between"
             align="start"
             gap="3"
+            className="paper-card-head"
           >
             <Heading
               as="h2"
               size="4"
               weight="medium"
+              className="[grid-area:title]"
             >
               {/*
                 The ::after overlay stretches this link across the whole card, so
@@ -57,7 +59,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
               elements paint in page order, and this comes after the link. The
               picker's panel renders outside the card, so it can't be covered.
             */}
-            <div className="relative shrink-0">
+            <div className="relative shrink-0 [grid-area:save]">
               <CollectionPicker
                 paperId={paper.id}
                 initialSaved={paper.saved}
@@ -70,6 +72,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
             size="2"
             color="gray"
             mt="2"
+            className="[grid-area:author]"
           >
             {paper.authors.length > 0
               ? `${paper.authors[0]} et al.`
@@ -80,6 +83,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
             wrap="wrap"
             gap="2"
             mt="3"
+            className="[grid-area:topics]"
           >
             {paper.topics.slice(0, 3).map((topic) => (
               <Badge
@@ -99,7 +103,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
             size="2"
             color="gray"
             mt="3"
-            className="flex items-center gap-2"
+            className="paper-card-meta flex items-center gap-2 [grid-area:year]"
           >
             <Calendar size={16} />
             {new Date(paper.publishedDate).getFullYear()}
@@ -109,7 +113,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
             justify="end"
             gap="4"
             pt="3"
-            className="mt-auto"
+            className="paper-card-meta mt-auto [grid-area:stats]"
           >
             <Flex gap="1">
               <Star size={16} />

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Text } from "@radix-ui/themes";
 
@@ -6,8 +7,10 @@ import EmptyState from "@/components/empty-state";
 import PageHeader from "@/components/page-header";
 import Pagination from "@/components/pagination";
 import PaperCard from "@/components/papercard";
+import PaperList from "@/components/paper-list";
 import SearchField from "@/components/search-field";
 import { PAGE_SIZE, pageHref, parsePage } from "@/lib/pagination";
+import { PAPER_VIEW_COOKIE, parsePaperView } from "@/lib/paper-view";
 import { getPapersPage } from "@/services/paper.service";
 
 export const metadata: Metadata = {
@@ -42,6 +45,7 @@ export default async function ExplorePage({ searchParams }: Props) {
 
   const firstShown = (page - 1) * PAGE_SIZE + 1;
   const lastShown = firstShown + papers.length - 1;
+  const view = parsePaperView((await cookies()).get(PAPER_VIEW_COOKIE)?.value);
 
   return (
     <>
@@ -71,29 +75,31 @@ export default async function ExplorePage({ searchParams }: Props) {
           />
         ) : (
           <>
-            <Text
-              as="p"
-              size="2"
-              color="gray"
-              mb="5"
+            <PaperList
+              initialView={view}
+              summary={
+                <Text
+                  as="p"
+                  size="2"
+                  color="gray"
+                >
+                  Showing {firstShown}–{lastShown} of {total}{" "}
+                  {total === 1 ? "paper" : "papers"}
+                  {query && (
+                    <>
+                      {" "}for &ldquo;{query}&rdquo;
+                    </>
+                  )}
+                </Text>
+              }
             >
-              Showing {firstShown}–{lastShown} of {total}{" "}
-              {total === 1 ? "paper" : "papers"}
-              {query && (
-                <>
-                  {" "}for &ldquo;{query}&rdquo;
-                </>
-              )}
-            </Text>
-
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {papers.map((paper) => (
                 <PaperCard
                   key={paper.id}
                   paper={paper}
                 />
               ))}
-            </div>
+            </PaperList>
 
             <Pagination
               page={page}

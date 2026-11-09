@@ -73,6 +73,30 @@
   }
 }
 
+/* Paper cards as full-width rows. On phones they stay stacked. */
+@media (min-width: 48rem) {
+  [data-view="list"] .paper-card {
+    --card-padding: var(--space-4);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    grid-template-areas:
+      "title year stats save"
+      "author year stats save"
+      "topics year stats save";
+    column-gap: var(--space-6);
+    align-items: center;
+  }
+
+  [data-view="list"] .paper-card-head {
+    display: contents;
+  }
+
+  [data-view="list"] .paper-card-meta {
+    margin: 0;
+    padding: 0;
+  }
+}
+
 /* OverlayScrollbar replaces the native one, which would take up width. */
 html:has(.overlay-scroll) {
   scrollbar-width: none;
