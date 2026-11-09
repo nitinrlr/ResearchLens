@@ -54,12 +54,17 @@ model Paper {
   pdfUrl           String?
   thumbnailUrl     String?
   externalId       String?           @unique
+  /// Filled by refresh_paper_search in the add_paper_search migration.
+  searchVector     Unsupported("tsvector")?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   paperTopics      PaperTopic[]
   collectionPapers CollectionPaper[]
   readingHistory   ReadingHistory[]
   paperAuthors     PaperAuthor[]
+
+  @@index([publishedDate])
+  @@index([searchVector], type: Gin)
 }
 
 model Goal {

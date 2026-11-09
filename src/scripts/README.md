@@ -4,25 +4,22 @@
 
 Imports research papers from OpenAlex into PostgreSQL.
 
-For each topic in the script's default list, it imports the most-cited
-open-access Computer Science papers whose title or abstract contains that exact
-phrase, including their abstracts, authors and topics.
+It goes through open-access Computer Science papers from most-cited down, and
+saves them with their abstracts, authors and topics until the database reaches
+the total you ask for.
 
 ```bash
-npm run import:papers
+npm run import:papers -- 10000
 ```
 
-Import specific topics instead of the default list:
+With no number, it fills the database to 50,000 papers.
 
-```bash
-npm run import:papers -- "vision transformer" "speculative decoding"
-```
+Running it again is safe, and picks up where it left off. Papers already in the
+database are skipped, along with duplicates and any paper missing a PDF link,
+authors or a real abstract. Existing papers are not updated.
 
-Running it again is safe. Existing papers are refreshed rather than duplicated,
-so a re-run also fills in fields added since the last import.
-
-Set `OPENALEX_API_KEY` in `.env` to raise the OpenAlex limit from 1,000 to
-10,000 requests a day. The import uses one request per topic.
+Set `OPENALEX_API_KEY` in `.env` to get your own daily OpenAlex budget instead
+of sharing one with your network. Each request fetches 200 papers.
 
 To browse the result:
 

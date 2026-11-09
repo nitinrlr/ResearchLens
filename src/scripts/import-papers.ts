@@ -1,111 +1,40 @@
-import { searchWorks } from "@/lib/openalex";
+import { fetchMostCitedPage } from "@/lib/openalex";
+import { paperKeys, selectNewPapers } from "@/lib/paper-import-filter";
 import { prisma } from "@/lib/prisma";
-import { importPapers } from "@/services/paper-import.service";
+import { savePapers } from "@/services/paper-import.service";
 
-// Each phrase is matched exactly in titles and abstracts, and the most-cited
-// open-access CS papers for it are imported. Mostly ML because that is what
-// most students are reading, with systems, databases, theory and security
-// mixed in so Explore is not one topic deep.
-const DEFAULT_TOPICS = [
-  "transformer",
-  "large language model",
-  "diffusion model",
-  "reinforcement learning",
-  "graph neural network",
-  "object detection",
-  "generative adversarial network",
-  "machine translation",
-  "self-supervised learning",
-  "federated learning",
-  "recommender system",
-  "distributed consensus",
-  "operating system",
-  "query optimization",
-  "compiler optimization",
-  "approximation algorithm",
-  "intrusion detection",
-  "convolutional neural network",
-  "recurrent neural network",
-  "attention mechanism",
-  "neural architecture search",
-  "contrastive learning",
-  "transfer learning",
-  "knowledge distillation",
-  "semantic segmentation",
-  "speech recognition",
-  "question answering",
-  "sentiment analysis",
-  "explainable artificial intelligence",
-  "adversarial examples",
-  "knowledge graph",
-  "information retrieval",
-  "data mining",
-  "cloud computing",
-  "edge computing",
-  "software-defined networking",
-  "stream processing",
-  "distributed database",
-  "blockchain",
-  "differential privacy",
-  "homomorphic encryption",
-  "malware detection",
-  "software testing",
-  "static analysis",
-  "program synthesis",
-  "formal verification",
-  "quantum computing",
-  "motion planning",
-  "human-computer interaction",
-  "virtual reality",
-];
-
-const PAPERS_PER_TOPIC = 25;
+const DEFAULT_TARGET = 50_000;
 
 async function main() {
-  // `npm run import:papers -- "topic one" "topic two"` overrides the list.
-  const cliTopics = process.argv.slice(2);
-  const topics = cliTopics.length > 0 ? cliTopics : DEFAULT_TOPICS;
+  // `npm run import:papers -- 10000` sets the total to reach.
+  const target = Number(process.argv[2] ?? DEFAULT_TARGET);
 
-  const before = await prisma.paper.count();
-
-  console.log(
-    `Importing up to ${PAPERS_PER_TOPIC} papers for each of ${topics.length} topics...\n`
-  );
-
-  const failed: string[] = [];
-
-  for (const topic of topics) {
-    // One topic failing (even after searchWorks' retries) should not throw
-    // away the rest of the run. Re-running later picks up what was missed.
-    try {
-      const papers = await searchWorks(topic, PAPERS_PER_TOPIC);
-      const { imported, skipped } = await importPapers(papers);
-
-      console.log(
-        `${topic.padEnd(32)} ${String(imported).padStart(3)} imported` +
-          (skipped.length > 0 ? `, ${skipped.length} skipped (duplicate URL)` : "")
-      );
-    } catch (error) {
-      failed.push(topic);
-      console.error(
-        `${topic.padEnd(32)} FAILED: ${error instanceof Error ? error.message : error}`
-      );
-    }
+  if (!Number.isInteger(target) || target < 1) {
+    throw new Error(`Expected a total number of papers, got "${process.argv[2]}"`);
   }
 
-  const after = await prisma.paper.count();
+  const existing = await prisma.paper.findMany({
+    select: { externalId: true, title: true, abstract: true },
+  });
+  const seen = new Set(existing.flatMap(paperKeys));
 
-  // Topics overlap (a paper can match several), so "imported" above counts
-  // some papers more than once. The table count is the real total.
-  console.log(`\nPapers in database: ${before} -> ${after} (+${after - before})`);
+  let total = existing.length;
+  let cursor: string | null = "*";
 
-  if (failed.length > 0) {
-    console.error(
-      `\n${failed.length} topic(s) failed. Retry just those with:\n` +
-        `npm run import:papers -- ${failed.map((topic) => `"${topic}"`).join(" ")}`
-    );
-    process.exitCode = 1;
+  console.log(`Starting at ${total} papers, importing up to ${target}.\n`);
+
+  while (total < target && cursor) {
+    const page: Awaited<ReturnType<typeof fetchMostCitedPage>> =
+      await fetchMostCitedPage(cursor);
+    const fresh = selectNewPapers(page.papers, seen).slice(0, target - total);
+
+    total += await savePapers(fresh);
+    cursor = page.nextCursor;
+
+    console.log(`+${String(fresh.length).padStart(3)}  total ${total}`);
   }
+
+  console.log(`\nPapers in database: ${await prisma.paper.count()}`);
 }
 
 main()

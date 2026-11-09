@@ -16,6 +16,9 @@ const MAX_PLAUSIBLE_PAGES = 150;
 // on the next try, so those are retried with a growing delay: 1s, then 2s.
 const MAX_ATTEMPTS = 3;
 
+// The most OpenAlex returns per request.
+const PER_PAGE = 200;
+
 type OpenAlexInstitution = {
   display_name: string;
 };
@@ -60,6 +63,9 @@ type OpenAlexWork = {
 
 type OpenAlexWorksResponse = {
   results: OpenAlexWork[];
+  meta: {
+    next_cursor: string | null;
+  };
 };
 
 /**
@@ -136,33 +142,30 @@ async function fetchWithRetry(url: string) {
 
 /** Some OpenAlex titles carry markup such as <i>in vivo</i>. */
 function cleanTitle(title: string) {
-  return title.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+  return title
+    .replace(/<[^>]+>/g, "")
+    .replaceAll("\\n", " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /**
- * The most-cited open-access Computer Science papers whose title or abstract
- * contains `phrase`.
- *
- * The phrase is matched exactly, not word by word: unquoted, "large language
- * model" matched any heavily cited paper containing those three words anywhere.
+ * One page of open-access Computer Science papers, most-cited first. Pass "*"
+ * for the first page, then the returned cursor. It's null after the last page.
  */
-export async function searchWorks(
-  phrase: string,
-  perPage = 25
-): Promise<SearchPaper[]> {
-  // Commas separate OpenAlex filters and quotes delimit the phrase, so neither
-  // can appear inside it.
-  const cleanPhrase = phrase.replace(/[",]/g, " ").trim();
-
+export async function fetchMostCitedPage(
+  cursor: string
+): Promise<{ papers: SearchPaper[]; nextCursor: string | null }> {
   const params = new URLSearchParams({
     filter: [
       `primary_topic.field.id:${COMPUTER_SCIENCE_FIELD_ID}`,
-      `title_and_abstract.search:"${cleanPhrase}"`,
       "has_abstract:true",
       "is_oa:true",
+      "is_retracted:false",
     ].join(","),
     sort: "cited_by_count:desc",
-    per_page: String(perPage),
+    per_page: String(PER_PAGE),
+    cursor,
     select: [
       "id",
       "title",
@@ -189,14 +192,14 @@ export async function searchWorks(
   const response = await fetchWithRetry(`${BASE_URL}/works?${params}`);
 
   if (!response.ok) {
-    throw new Error(
-      `OpenAlex returned ${response.status} for "${cleanPhrase}"`
-    );
+    throw new Error(`OpenAlex returned ${response.status}`);
   }
 
-  const data = (await response.json()) as OpenAlexWorksResponse;
+  // Postgres rejects the null character, which turns up in some source text.
+  const body = (await response.text()).replaceAll("\\u0000", "");
+  const data = JSON.parse(body) as OpenAlexWorksResponse;
 
-  return data.results
+  const papers = data.results
     .filter((paper) => paper.title)
     .map((paper) => ({
       externalId: paper.id,
@@ -238,4 +241,9 @@ export async function searchWorks(
         name: topic.display_name,
       })),
     }));
+
+  return {
+    papers,
+    nextCursor: data.results.length > 0 ? data.meta.next_cursor : null,
+  };
 }

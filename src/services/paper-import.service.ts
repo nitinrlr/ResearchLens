@@ -1,7 +1,5 @@
-import { Prisma } from "@prisma/client";
-
 import { prisma } from "@/lib/prisma";
-import { SearchPaper } from "@/types/paper";
+import type { SearchPaper } from "@/types/paper";
 
 // OpenAlex has no difficulty data, so every paper starts at the same value
 // until something better (e.g. an AI estimate) replaces it.
@@ -9,6 +7,9 @@ const DEFAULT_DIFFICULTY = 1;
 
 // Used when OpenAlex has no page range to estimate from.
 const DEFAULT_READING_TIME = 30;
+
+// Saving a full page of papers can take longer than Prisma's 5-second default.
+const TRANSACTION_TIMEOUT_MS = 120_000;
 
 /** Keeps the first item for each key. OpenAlex occasionally repeats an author. */
 function uniqueBy<T>(items: T[], key: (item: T) => string) {
@@ -27,139 +28,85 @@ function uniqueBy<T>(items: T[], key: (item: T) => string) {
 }
 
 /**
- * Upserts one paper with its authors and topics.
- *
- * Authors and topics are written with createMany + skipDuplicates, so the
- * number of queries stays fixed no matter how many authors a paper has. Every
- * step is idempotent: running the import again only fills in what is missing.
+ * Saves a batch of papers with their authors and topics, and returns how many
+ * were added. All of it runs in one transaction, so a failure part-way can't
+ * leave papers with no authors or missing from search.
  */
-async function importPaper(paper: SearchPaper) {
-  // Fields that come from OpenAlex. Re-running the import refreshes them,
-  // which is how older rows pick up abstracts and reading times.
-  const sourceFields = {
-    title: paper.title,
-    abstract: paper.abstract ?? "",
-    publishedDate: paper.publishedDate,
-    paperUrl: paper.paperUrl,
-    pdfUrl: paper.pdfUrl,
-    readingTime: paper.readingTime ?? DEFAULT_READING_TIME,
-  };
-
-  const dbPaper = await prisma.paper.upsert({
-    where: {
-      externalId: paper.externalId,
-    },
-
-    update: sourceFields,
-
-    // Difficulty is only set on create so a re-import never overwrites a
-    // value someone set by hand.
-    create: {
-      ...sourceFields,
-      externalId: paper.externalId,
-      difficulty: DEFAULT_DIFFICULTY,
-      thumbnailUrl: null,
-    },
-
-    select: {
-      id: true,
-    },
-  });
-
-  const authors = uniqueBy(paper.authors, (author) => author.openAlexId);
-
-  if (authors.length > 0) {
-    await prisma.author.createMany({
-      data: authors,
-      skipDuplicates: true,
-    });
-
-    const dbAuthors = await prisma.author.findMany({
-      where: {
-        openAlexId: {
-          in: authors.map((author) => author.openAlexId),
-        },
-      },
-      select: {
-        id: true,
-        openAlexId: true,
-      },
-    });
-
-    const authorIds = new Map(
-      dbAuthors.map((author) => [author.openAlexId, author.id])
-    );
-
-    await prisma.paperAuthor.createMany({
-      data: authors.map((author, index) => ({
-        paperId: dbPaper.id,
-        authorId: authorIds.get(author.openAlexId)!,
-        authorOrder: index + 1,
-      })),
-      skipDuplicates: true,
-    });
+export async function savePapers(papers: SearchPaper[]) {
+  if (papers.length === 0) {
+    return 0;
   }
 
-  const topics = uniqueBy(paper.topics, (topic) => topic.name);
+  const allAuthors = uniqueBy(papers.flatMap((p) => p.authors), (a) => a.openAlexId);
+  const allTopics = uniqueBy(papers.flatMap((p) => p.topics), (t) => t.name);
 
-  if (topics.length > 0) {
-    await prisma.topic.createMany({
-      data: topics.map((topic) => ({
-        name: topic.name,
-        description: "",
-      })),
-      skipDuplicates: true,
-    });
+  return prisma.$transaction(
+    async (tx) => {
+      // skipDuplicates also covers a URL that already belongs to another paper.
+      const saved = await tx.paper.createManyAndReturn({
+        data: papers.map((paper) => ({
+          externalId: paper.externalId,
+          title: paper.title,
+          abstract: paper.abstract ?? "",
+          publishedDate: paper.publishedDate,
+          paperUrl: paper.paperUrl,
+          pdfUrl: paper.pdfUrl,
+          readingTime: paper.readingTime ?? DEFAULT_READING_TIME,
+          difficulty: DEFAULT_DIFFICULTY,
+        })),
+        skipDuplicates: true,
+        select: { id: true, externalId: true },
+      });
 
-    const dbTopics = await prisma.topic.findMany({
-      where: {
-        name: {
-          in: topics.map((topic) => topic.name),
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
+      await tx.author.createMany({ data: allAuthors, skipDuplicates: true });
+      await tx.topic.createMany({
+        data: allTopics.map((topic) => ({ name: topic.name, description: "" })),
+        skipDuplicates: true,
+      });
 
-    await prisma.paperTopic.createMany({
-      data: dbTopics.map((topic) => ({
-        paperId: dbPaper.id,
-        topicId: topic.id,
-      })),
-      skipDuplicates: true,
-    });
-  }
-}
+      const [authors, topics] = await Promise.all([
+        tx.author.findMany({
+          where: { openAlexId: { in: allAuthors.map((a) => a.openAlexId) } },
+          select: { id: true, openAlexId: true },
+        }),
+        tx.topic.findMany({
+          where: { name: { in: allTopics.map((t) => t.name) } },
+          select: { id: true, name: true },
+        }),
+      ]);
 
-/**
- * Imports a batch of papers. A paper whose URL already belongs to a different
- * paper (OpenAlex sometimes has two records for one work) is skipped rather
- * than failing the whole batch.
- */
-export async function importPapers(papers: SearchPaper[]) {
-  let imported = 0;
-  const skipped: string[] = [];
+      const authorIds = new Map(authors.map((a) => [a.openAlexId, a.id]));
+      const topicIds = new Map(topics.map((t) => [t.name, t.id]));
+      const sourceById = new Map(papers.map((p) => [p.externalId, p]));
 
-  for (const paper of papers) {
-    try {
-      await importPaper(paper);
-      imported++;
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === "P2002"
-      ) {
-        skipped.push(paper.title);
-        continue;
-      }
+      await tx.paperAuthor.createMany({
+        data: saved.flatMap((paper) =>
+          uniqueBy(sourceById.get(paper.externalId!)!.authors, (a) => a.openAlexId).map(
+            (author, index) => ({
+              paperId: paper.id,
+              authorId: authorIds.get(author.openAlexId)!,
+              authorOrder: index + 1,
+            })
+          )
+        ),
+      });
 
-      throw error;
-    }
-  }
+      await tx.paperTopic.createMany({
+        data: saved.flatMap((paper) =>
+          uniqueBy(sourceById.get(paper.externalId!)!.topics, (t) => t.name).map(
+            (topic) => ({
+              paperId: paper.id,
+              topicId: topicIds.get(topic.name)!,
+            })
+          )
+        ),
+      });
 
-  return {
-    imported,
-    skipped,
-  };
+      const ids = saved.map((paper) => paper.id);
+      await tx.$executeRaw`SELECT refresh_paper_search(${ids}::text[])`;
+
+      return saved.length;
+    },
+    { timeout: TRANSACTION_TIMEOUT_MS }
+  );
 }

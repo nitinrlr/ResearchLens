@@ -16,7 +16,7 @@ Last updated: 2026-11-08
 - Continue Reading, which tracks papers automatically when you open them
 - Collections: a default "Saved" collection plus custom ones you can create and delete, and remove papers from
 - Animated landing page that sends signed-in users to `/explore`, and a metallic glass design across the app
-- OpenAlex import script: 1,000 papers across 47 CS topics
+- OpenAlex import script: 10,000 of the most-cited open-access CS papers so far, with a target of 50,000
 - Vitest tests for the collection ownership checks, Server Actions and pagination
 
 **Gaps**
@@ -28,7 +28,7 @@ Last updated: 2026-11-08
 
 ## Phase 1: Make what exists real
 
-- [x] **1. Import a few hundred papers.** Done: 1,000 papers across 47 topics, with abstracts and page-based reading times. The script's list has a few topics that aren't fully imported yet. See `src/scripts/README.md`.
+- [x] **1. Import papers at scale.** Bulk importer and a full-text search index. Imports the most-cited open-access CS papers, skipping duplicates and incomplete records. See `src/scripts/README.md`.
 - [x] **1a. Paginate Explore.** Done: 25 per page with numbered links. Page loads went from about 1–1.8s to about 0.4s.
 - [x] **2. Add papers to custom collections.** Done: the bookmark opens a picker listing every collection as a checkbox, on paper cards and the paper page.
 - [x] **3. Decide what to do with Goals.** Decided: build it with the AI features, in step 17.

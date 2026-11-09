@@ -2,6 +2,7 @@ import { cache } from "react";
 
 import { prisma } from "@/lib/prisma";
 import { PAGE_SIZE } from "@/lib/pagination";
+import { toSearchQuery } from "@/lib/search-query";
 import { getCurrentUserId } from "@/lib/session";
 import { Prisma } from "@prisma/client";
 
@@ -53,6 +54,7 @@ function paperInclude(userId: string | null) {
   };
 }
 
+/** Plain text matching, for a person's own short lists. */
 export function searchWhere(query: string): Prisma.PaperWhereInput {
   const trimmedQuery = query.trim();
 
@@ -123,37 +125,47 @@ function mapPaper(paper: PaperWithRelations) {
  * which page was actually loaded so the caller can fix the URL.
  */
 export async function getPapersPage(query = "", page = 1) {
-  const where = searchWhere(query);
+  const hasQuery = query.trim() !== "";
+  const searchQuery = toSearchQuery(query);
+
+  // Only punctuation: nothing can match, so don't query at all.
+  if (hasQuery && !searchQuery) {
+    return { papers: [], total: 0, page: 1, totalPages: 1 };
+  }
+
+  const filter = searchQuery
+    ? Prisma.sql`WHERE "searchVector" @@ to_tsquery('english', ${searchQuery})`
+    : Prisma.empty;
 
   // Counting first lets us clamp the page before querying, so an out-of-range
   // ?page= never turns into a huge OFFSET.
-  const [userId, total] = await Promise.all([
+  const [userId, [{ total }]] = await Promise.all([
     getCurrentUserId(),
-    prisma.paper.count({ where }),
+    prisma.$queryRaw<[{ total: number }]>`
+      SELECT count(*)::int AS total FROM "Paper" ${filter}
+    `,
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
 
-  const papers = await prisma.paper.findMany({
-    where,
+  // Many papers share a publication date. Without a unique tiebreaker the
+  // database may order those differently on each query, so a paper could
+  // show up on two pages, or on none.
+  const rows = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT id FROM "Paper" ${filter}
+    ORDER BY "publishedDate" DESC, id ASC
+    LIMIT ${PAGE_SIZE} OFFSET ${(currentPage - 1) * PAGE_SIZE}
+  `;
 
-    // Many papers share a publication date. Without a unique tiebreaker the
-    // database may order those differently on each query, so a paper could
-    // show up on two pages, or on none.
-    orderBy: [
-      { publishedDate: "desc" },
-      { id: "asc" },
-    ],
-
-    skip: (currentPage - 1) * PAGE_SIZE,
-    take: PAGE_SIZE,
-
+  const found = await prisma.paper.findMany({
+    where: { id: { in: rows.map((row) => row.id) } },
     include: paperInclude(userId),
   });
+  const byId = new Map(found.map((paper) => [paper.id, paper]));
 
   return {
-    papers: papers.map(mapPaper),
+    papers: rows.map((row) => mapPaper(byId.get(row.id)!)),
     total,
     page: currentPage,
     totalPages,
