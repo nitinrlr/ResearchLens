@@ -75,7 +75,7 @@ export default function AskAiSelection({ children }: { children: React.ReactNode
             style={{ left: selection.x, top: selection.y - 8 }}
           >
             <Sparkles size={14} />
-            Ask AI
+            Ask Lens
           </Button>,
           document.querySelector(".radix-themes[data-is-root-theme='true']") ?? document.body
         )}
