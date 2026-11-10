@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MessageCircle, Send, Sparkles, X } from "lucide-react";
 import { Button, IconButton, Text, TextArea } from "@radix-ui/themes";
 
 import { ASK_AI_EVENT } from "@/components/ask-ai-selection";
+import RevealText from "@/components/reveal-text";
 import { CHAT_STARTERS } from "@/lib/chat-starters";
 import type { ChatStarter } from "@/lib/chat-starters";
 
@@ -48,9 +49,19 @@ export default function PaperChat({ paperId }: { paperId: string }) {
     return () => window.removeEventListener(ASK_AI_EVENT, onAskAi);
   }, []);
 
+  // A new message always scrolls into view.
   useEffect(() => {
     scroller.current?.scrollTo({ top: scroller.current.scrollHeight });
-  }, [messages]);
+  }, [messages.length]);
+
+  // While an answer appears, follow it only if the reader is already at the
+  // bottom, so scrolling up to reread isn't interrupted.
+  const followAnswer = useCallback(() => {
+    const element = scroller.current;
+    if (element && element.scrollHeight - element.scrollTop - element.clientHeight < 80) {
+      element.scrollTo({ top: element.scrollHeight });
+    }
+  }, []);
 
   function updateLast(change: (message: Message) => Message) {
     setMessages((current) => [...current.slice(0, -1), change(current.at(-1)!)]);
@@ -132,7 +143,7 @@ export default function PaperChat({ paperId }: { paperId: string }) {
       </Button>
 
       <aside
-        aria-label="Ask about this paper"
+        aria-label="Ask Lens"
         className={`glass-panel flex flex-col gap-3 max-lg:fixed max-lg:inset-3 max-lg:z-40 lg:sticky lg:top-3 lg:h-[calc(100svh-1.5rem)] ${
           open ? "" : "max-lg:hidden"
         }`}
@@ -140,7 +151,7 @@ export default function PaperChat({ paperId }: { paperId: string }) {
         <div className="flex items-center justify-between gap-2">
           <Text as="p" weight="medium" className="flex items-center gap-2">
             <Sparkles size={16} className="text-accent" />
-            Ask about this paper
+            Questions? Ask Lens!
           </Text>
           <IconButton variant="ghost" color="gray" aria-label="Close chat" onClick={() => setOpen(false)} className="lg:hidden">
             <X size={18} />
@@ -172,7 +183,13 @@ export default function PaperChat({ paperId }: { paperId: string }) {
                 {message.quote && (
                   <p className="mb-1.5 line-clamp-3 border-l-2 border-white/60 pl-2 italic opacity-90">{message.quote}</p>
                 )}
-                {message.text.replaceAll("**", "") || (pending && index === messages.length - 1 ? "Reading the paper…" : "")}
+                {message.role === "user" ? (
+                  message.text
+                ) : message.text ? (
+                  <RevealText text={message.text.replaceAll("**", "")} onGrow={followAnswer} />
+                ) : (
+                  pending && index === messages.length - 1 && <span className="animate-pulse text-ink-muted">Reading the paper…</span>
+                )}
               </div>
             ))
           )}
@@ -194,7 +211,8 @@ export default function PaperChat({ paperId }: { paperId: string }) {
             </div>
           )}
 
-          <div className="flex items-end gap-2">
+          {/* Stretch keeps the send button the same height as the question box. */}
+          <div className="flex items-stretch gap-2">
             <TextArea
               ref={textarea}
               value={input}
@@ -208,7 +226,7 @@ export default function PaperChat({ paperId }: { paperId: string }) {
               rows={2}
               className="flex-1"
             />
-            <IconButton type="submit" size="3" aria-label="Send" loading={pending} disabled={!input.trim() && !quote}>
+            <IconButton type="submit" size="3" aria-label="Send" loading={pending} disabled={!input.trim() && !quote} className="h-auto">
               <Send size={18} />
             </IconButton>
           </div>

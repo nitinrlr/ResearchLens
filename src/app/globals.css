@@ -97,6 +97,18 @@
   }
 }
 
+/* Chat answers: each newly shown word fades in, like Claude and ChatGPT. */
+.fade-in-word {
+  animation: fade-in-word 0.5s ease-out both;
+}
+
+@keyframes fade-in-word {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
 /* OverlayScrollbar replaces the native one, which would take up width. */
 html:has(.overlay-scroll) {
   scrollbar-width: none;
