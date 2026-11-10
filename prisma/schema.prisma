@@ -41,6 +41,7 @@ model User {
   goals           Goal[]
   collections     Collection[]
   readingHistory  ReadingHistory[]
+  chatUsage       ChatUsage[]
 }
 
 model Paper {
@@ -62,6 +63,7 @@ model Paper {
   collectionPapers CollectionPaper[]
   readingHistory   ReadingHistory[]
   paperAuthors     PaperAuthor[]
+  chatAnswers      PaperChatAnswer[]
 
   @@index([publishedDate])
   @@index([searchVector], type: Gin)
@@ -171,4 +173,29 @@ model PaperAuthor {
   author Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@id([paperId, authorId])
+}
+
+/// Paper chat messages each user has sent per day, for the daily limit.
+model ChatUsage {
+  userId   String
+  day      DateTime @db.Date
+  messages Int      @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, day])
+}
+
+/// Saved answers to the paper chat's starter buttons, so each runs once per paper.
+model PaperChatAnswer {
+  paperId   String
+  starter   String
+  answer    String
+  /// "pdf" when the model read the full paper, "abstract" when it couldn't.
+  source    String
+  createdAt DateTime @default(now())
+
+  paper Paper @relation(fields: [paperId], references: [id], onDelete: Cascade)
+
+  @@id([paperId, starter])
 }

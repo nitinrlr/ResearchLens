@@ -63,7 +63,8 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 
 In order of difficulty; each builds on the one before.
 
-- [ ] **13. Paper chat.** A chat panel beside the PDF that answers questions from the paper, and says when something isn't in it. Starter buttons such as "Explain this simply" replace AI summaries, and their answers are saved per paper so common requests only run once. First test how many PDF links can actually be read, and fall back to the abstract when one can't. Signed-in users only, with a daily message limit. Chats stay in the browser at first. The provider is still open, Gemini's free tier is the likely start.
+- [x] **13. Paper chat.** Built with Gemini's free tier: full paper for typed questions, abstract plus the passage for "Ask AI" on highlighted abstract text, 30 messages a day, and saved starter answers. About 64% of PDFs can be read; the rest fall back to the abstract. Next: "Ask AI" inside the PDF itself needs our own PDF viewer (PDF.js).
+  Original plan: A chat panel beside the PDF that answers questions from the paper, and says when something isn't in it. Starter buttons such as "Explain this simply" replace AI summaries, and their answers are saved per paper so common requests only run once. First test how many PDF links can actually be read, and fall back to the abstract when one can't. Signed-in users only, with a daily message limit. Chats stay in the browser at first. The provider is still open, Gemini's free tier is the likely start.
 - [ ] **14. Semantic search.** Embeddings stored with pgvector on Neon.
 - [ ] **15. Difficulty and reading time.** Estimate difficulty from each abstract. Reading time needs a real page count from the PDF.
 - [ ] **16. Paper comparison.** Reads the two papers directly.

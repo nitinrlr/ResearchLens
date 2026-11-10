@@ -51,6 +51,8 @@ type OpenAlexWork = {
   open_access: {
     oa_url: string | null;
   } | null;
+  /** Every copy of the paper OpenAlex knows about. */
+  locations?: { pdf_url: string | null }[];
   authorships: OpenAlexAuthorship[];
   topics: OpenAlexTopic[];
   /** word -> every position it appears at. OpenAlex never sends plain text. */
@@ -140,6 +142,34 @@ async function fetchWithRetry(url: string) {
   }
 }
 
+const ARXIV_PDF = /^https?:\/\/(www\.|export\.)?arxiv\.org\/pdf\//;
+
+// Publishers whose open PDFs reliably download, so their final version wins
+// over an arXiv preprint.
+const RELIABLE_PUBLISHER_PDF = /^https?:\/\/(www\.)?(aclanthology|aclweb)\.org\//;
+
+/**
+ * Prefers an arXiv copy when there is one: arXiv allows downloads and
+ * embedding, while many publishers block both.
+ */
+export function choosePdfUrl(
+  work: Pick<OpenAlexWork, "best_oa_location" | "primary_location" | "open_access" | "locations">
+) {
+  const publisher =
+    work.best_oa_location?.pdf_url ||
+    work.primary_location?.pdf_url ||
+    work.open_access?.oa_url ||
+    null;
+
+  if (publisher && RELIABLE_PUBLISHER_PDF.test(publisher)) {
+    return publisher;
+  }
+
+  const arxiv = work.locations?.find((location) => location.pdf_url && ARXIV_PDF.test(location.pdf_url));
+
+  return arxiv?.pdf_url?.replace(/^http:/, "https:") || publisher;
+}
+
 /** Some OpenAlex titles carry markup such as <i>in vivo</i>. */
 function cleanTitle(title: string) {
   return title
@@ -175,6 +205,7 @@ export async function fetchMostCitedPage(
       "primary_location",
       "best_oa_location",
       "open_access",
+      "locations",
       "authorships",
       "topics",
       "abstract_inverted_index",
@@ -217,11 +248,7 @@ export async function fetchMostCitedPage(
         paper.doi ||
         paper.id,
 
-      pdfUrl:
-        paper.best_oa_location?.pdf_url ||
-        paper.primary_location?.pdf_url ||
-        paper.open_access?.oa_url ||
-        null,
+      pdfUrl: choosePdfUrl(paper),
 
       readingTime: estimateReadingTime(paper.biblio),
 
