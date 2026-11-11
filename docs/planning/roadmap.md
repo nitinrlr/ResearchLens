@@ -1,6 +1,6 @@
 # ResearchLens Roadmap
 
-Last updated: 2026-11-09
+Last updated: 2026-11-11
 
 ## Goal
 
@@ -12,7 +12,7 @@ Last updated: 2026-11-09
 
 - Register, login and logout, with the user id stored in the session and a profile menu
 - Explore, which searches title, abstract, author and topic
-- Paper detail page with an embedded PDF where one is available
+- Paper detail page with our own PDF viewer (React-PDF): selectable text, zoom and page jumps, falling back to the publisher's viewer when a PDF can't be downloaded
 - Continue Reading, which tracks papers automatically when you open them
 - Collections: a default "Saved" collection plus custom ones you can create and delete, and remove papers from
 - Animated landing page that sends signed-in users to `/explore`, and a metallic glass design across the app
@@ -63,7 +63,7 @@ Phase 2 comes before Phase 3 so the loading and error pages are only built once.
 
 In order of difficulty; each builds on the one before.
 
-- [x] **13. Paper chat.** Built with Gemini's free tier: full paper for typed questions, abstract plus the passage for "Ask AI" on highlighted abstract text, 30 messages a day, and saved starter answers. About 64% of PDFs can be read; the rest fall back to the abstract. Next: "Ask AI" inside the PDF itself needs our own PDF viewer (PDF.js).
+- [x] **13. Paper chat.** Built with Gemini's free tier: full paper for typed questions, abstract plus the passage for "Ask AI" on highlighted abstract text, 30 messages a day, and saved starter answers. About 64% of PDFs can be read; the rest fall back to the abstract. Highlighting text in the PDF works too, through our React-PDF viewer.
   Original plan: A chat panel beside the PDF that answers questions from the paper, and says when something isn't in it. Starter buttons such as "Explain this simply" replace AI summaries, and their answers are saved per paper so common requests only run once. First test how many PDF links can actually be read, and fall back to the abstract when one can't. Signed-in users only, with a daily message limit. Chats stay in the browser at first. The provider is still open, Gemini's free tier is the likely start.
 - [ ] **14. Semantic search.** Embeddings stored with pgvector on Neon.
 - [ ] **15. Difficulty and reading time.** Estimate difficulty from each abstract. Reading time needs a real page count from the PDF.

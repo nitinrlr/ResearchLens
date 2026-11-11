@@ -162,7 +162,7 @@ export default function PaperChat({ paperId }: { paperId: string }) {
           {messages.length === 0 ? (
             <div className="flex flex-col gap-2">
               <Text size="2" color="gray">
-                Ask anything about this paper, or highlight text in the abstract and choose Ask AI.
+                Ask anything about this paper, or highlight text in the abstract or PDF and choose Ask Lens.
               </Text>
               {(Object.keys(CHAT_STARTERS) as ChatStarter[]).map((starter) => (
                 <Button key={starter} variant="soft" color="gray" className="justify-start" onClick={() => send("", starter)}>

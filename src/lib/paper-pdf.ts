@@ -1,5 +1,5 @@
-// Gemini reads up to 50 MB, but each page costs about 520 tokens, so very long
-// papers would use up the free tier's per-minute limit.
+// Gemini reads up to 50 MB, but each page costs about 520 tokens, so the chat
+// skips very long papers to stay inside the free tier's per-minute limit.
 const MAX_BYTES = 20 * 1024 * 1024;
 const MAX_PAGES = 80;
 const FETCH_TIMEOUT_MS = 20_000;
@@ -59,10 +59,10 @@ async function fetchPdf(url: string): Promise<Buffer | null> {
 }
 
 /**
- * Downloads a paper's PDF for the chat. Returns null when the publisher blocks
- * downloads, the link isn't a PDF, or the paper is too long to send.
+ * Downloads a paper's PDF, following a publisher page to its PDF when needed.
+ * Returns null when the publisher blocks downloads or the file is too big.
  */
-export async function fetchPaperPdf(url: string | null): Promise<Buffer | null> {
+export async function downloadPaperPdf(url: string | null): Promise<Buffer | null> {
   if (!url) return null;
   if (cache.has(url)) return cache.get(url)!;
 
@@ -74,12 +74,16 @@ export async function fetchPaperPdf(url: string | null): Promise<Buffer | null> 
     pdf = null;
   }
 
-  if (pdf && (pdf.length > MAX_BYTES || countPdfPages(pdf) > MAX_PAGES)) {
-    pdf = null;
-  }
+  if (pdf && pdf.length > MAX_BYTES) pdf = null;
 
   cache.set(url, pdf);
   if (cache.size > CACHE_SIZE) cache.delete(cache.keys().next().value!);
 
   return pdf;
+}
+
+/** The PDF for the chat, or null when it can't be read or is too long to send. */
+export async function fetchPaperPdf(url: string | null): Promise<Buffer | null> {
+  const pdf = await downloadPaperPdf(url);
+  return pdf && countPdfPages(pdf) <= MAX_PAGES ? pdf : null;
 }

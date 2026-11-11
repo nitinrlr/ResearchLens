@@ -5,10 +5,10 @@ import { createPortal } from "react-dom";
 import { Sparkles } from "lucide-react";
 import { Button } from "@radix-ui/themes";
 
+import { cleanQuote } from "@/lib/chat-request";
+
 /** Sent on window with the highlighted text; the paper chat listens for it. */
 export const ASK_AI_EVENT = "researchlens:ask-ai";
-
-const MAX_QUOTE_LENGTH = 4_000;
 
 /**
  * Shows a small "Ask AI" button above text highlighted inside it. Clicking it
@@ -28,7 +28,7 @@ export default function AskAiSelection({ children }: { children: React.ReactNode
     }
 
     const rect = current.getRangeAt(0).getBoundingClientRect();
-    setSelection({ text: text.slice(0, MAX_QUOTE_LENGTH), x: rect.left + rect.width / 2, y: rect.top });
+    setSelection({ text: cleanQuote(text), x: rect.left + rect.width / 2, y: rect.top });
   }
 
   // The button is fixed in place, so hide it once the page moves or the

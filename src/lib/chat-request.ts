@@ -24,7 +24,21 @@ function optionalString(value: unknown, maxLength: number) {
   return value.trim() || null;
 }
 
+/**
+ * Joins a highlighted passage into one paragraph. Text selected in a PDF keeps
+ * its line breaks, including words hyphenated across two lines.
+ */
+export function cleanQuote(text: string) {
+  return text
+    .replace(/(\w)-[ \t]*\n\s*(?=[a-z])/g, "$1")
+    .replace(/-[ \t]*\n\s*/g, "-")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, MAX_QUOTE_LENGTH);
+}
+
 /** Checks the request body. Returns null when it isn't a valid chat request. */
+
 export function parseChatRequest(body: unknown): ChatRequest | null {
   if (typeof body !== "object" || body === null) return null;
   const input = body as Record<string, unknown>;

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildSystemInstruction, buildUserText, parseChatRequest } from "./chat-request";
+import { buildSystemInstruction, buildUserText, cleanQuote, parseChatRequest } from "./chat-request";
 
 describe("parseChatRequest", () => {
   it("accepts a typed question", () => {
@@ -61,5 +61,19 @@ describe("buildSystemInstruction", () => {
 
     expect(system).toContain("use only the paper");
     expect(system).toContain("general computer science knowledge");
+  });
+});
+
+describe("cleanQuote", () => {
+  it("joins PDF lines and words split across them", () => {
+    expect(cleanQuote("  training on code is a use-\nful practice to\nimprove the  model\n")).toBe(
+      "training on code is a useful practice to improve the model"
+    );
+  });
+
+  it("keeps hyphens before numbers and capitals, and inside lines", () => {
+    expect(cleanQuote("GPT-\n4 and Pre-\nTraining are state-of-the-art")).toBe(
+      "GPT-4 and Pre-Training are state-of-the-art"
+    );
   });
 });

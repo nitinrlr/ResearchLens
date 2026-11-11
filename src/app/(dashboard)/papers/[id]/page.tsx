@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   Flex,
-  Grid,
   Heading,
   Inset,
   Text,
@@ -16,6 +15,7 @@ import AskAiSelection from "@/components/ask-ai-selection";
 import CollectionPicker from "@/components/collection-picker";
 import LightTheme from "@/components/light-theme";
 import PaperChat from "@/components/paper-chat";
+import PaperReader from "@/components/paper-reader";
 import RecordPaperRead from "@/components/record-paper-read";
 
 type Props = {
@@ -152,33 +152,17 @@ export default async function PaperDetailsPage({ params }: Props) {
                   </section>
                 </Card>
 
-                <Grid
-                  columns={{ initial: "1", md: "3" }}
-                  gap="4"
-                  mb="6"
-                >
+                {/* On the dark glass, not in cards, so they read as one strip. */}
+                <dl className="mb-6 grid grid-cols-3 divide-x divide-white/25 text-center">
                   {stats.map((stat) => (
-                    <Card
-                      key={stat.label}
-                      size="3"
-                    >
-                      <Text
-                        as="p"
-                        size="2"
-                        color="gray"
-                      >
-                        {stat.label}
-                      </Text>
-                      <Text
-                        as="p"
-                        weight="medium"
-                        mt="1"
-                      >
+                    <div key={stat.label} className="px-2 py-1">
+                      <dt className="text-sm text-mist">{stat.label}</dt>
+                      <dd className="mt-1 font-display text-2xl font-bold tracking-tight text-[#dfe7ff] sm:text-4xl">
                         {stat.value}
-                      </Text>
-                    </Card>
+                      </dd>
+                    </div>
                   ))}
-                </Grid>
+                </dl>
 
                 {paper.pdfUrl ? (
                   <Card
@@ -205,8 +189,8 @@ export default async function PaperDetailsPage({ params }: Props) {
                             color="gray"
                             mt="1"
                           >
-                            Embedded from the open-access PDF link provided by OpenAlex.
-                            If the publisher blocks embedding, open the PDF in a new tab.
+                            Highlight any passage to ask Lens about it. If the PDF
+                            doesn&apos;t load, open it in a new tab.
                           </Text>
                         </div>
 
@@ -246,10 +230,10 @@ export default async function PaperDetailsPage({ params }: Props) {
                         clip="padding-box"
                         mt="4"
                       >
-                        <iframe
-                          src={paper.pdfUrl}
-                          title={`PDF for ${paper.title}`}
-                          className="block h-[75vh] w-full border-t border-line bg-canvas"
+                        <PaperReader
+                          paperId={paper.id}
+                          pdfUrl={paper.pdfUrl}
+                          title={paper.title}
                         />
                       </Inset>
                     </section>
