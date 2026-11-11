@@ -13,7 +13,6 @@ import {
 import { getPaperById } from "@/services/paper.service";
 import AskAiSelection from "@/components/ask-ai-selection";
 import CollectionPicker from "@/components/collection-picker";
-import LightTheme from "@/components/light-theme";
 import PaperChat from "@/components/paper-chat";
 import PaperReader from "@/components/paper-reader";
 import RecordPaperRead from "@/components/record-paper-read";
@@ -125,11 +124,11 @@ export default async function PaperDetailsPage({ params }: Props) {
           </section>
 
           <section className="glass-panel">
-            <LightTheme>
               <div>
                 <Card
                   asChild
                   size="3"
+                  className="solid-glass"
                   mb="6"
                 >
                   <section>
@@ -168,6 +167,7 @@ export default async function PaperDetailsPage({ params }: Props) {
                   <Card
                     asChild
                     size="3"
+                    className="solid-glass"
                   >
                     <section>
                       <Flex
@@ -242,6 +242,7 @@ export default async function PaperDetailsPage({ params }: Props) {
                   <Card
                     asChild
                     size="3"
+                    className="solid-glass"
                   >
                     <section>
                       <Heading
@@ -276,7 +277,6 @@ export default async function PaperDetailsPage({ params }: Props) {
                   </Card>
                 )}
               </div>
-            </LightTheme>
           </section>
         </div>
 

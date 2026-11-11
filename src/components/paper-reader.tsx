@@ -11,7 +11,7 @@ import { pdfViewerSource } from "@/lib/pdf-viewer";
 const PdfViewer = dynamic(() => import("@/components/pdf-viewer"), {
   ssr: false,
   loading: () => (
-    <Text as="p" size="2" color="gray" className="h-[75vh] border-t border-line bg-subtle p-6 text-center">
+    <Text as="p" size="2" color="gray" className="h-[75vh] border-t border-line bg-black/25 p-6 text-center">
       Loading PDF…
     </Text>
   ),

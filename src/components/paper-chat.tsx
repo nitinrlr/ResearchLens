@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MessageCircle, Send, Sparkles, X } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageCircle, Send, Sparkles, X } from "lucide-react";
 import { Button, IconButton, Text, TextArea } from "@radix-ui/themes";
 
 import { ASK_AI_EVENT } from "@/components/ask-ai-selection";
@@ -33,6 +33,8 @@ export default function PaperChat({ paperId }: { paperId: string }) {
   const [pending, setPending] = useState(false);
   // On phones the chat opens as a full-screen panel.
   const [open, setOpen] = useState(false);
+  // On wide screens it can fold up to just its heading.
+  const [collapsed, setCollapsed] = useState(false);
 
   const conversation = useRef({ previousId: null as string | null, paperAttached: false, paperUnavailable: false });
   const scroller = useRef<HTMLDivElement>(null);
@@ -42,6 +44,7 @@ export default function PaperChat({ paperId }: { paperId: string }) {
     function onAskAi(event: Event) {
       setQuote((event as CustomEvent<string>).detail);
       setOpen(true);
+      setCollapsed(false);
       textarea.current?.focus();
     }
 
@@ -144,93 +147,112 @@ export default function PaperChat({ paperId }: { paperId: string }) {
 
       <aside
         aria-label="Ask Lens"
-        className={`glass-panel flex flex-col gap-3 max-lg:fixed max-lg:inset-3 max-lg:z-40 lg:sticky lg:top-3 lg:h-[calc(100svh-1.5rem)] ${
-          open ? "" : "max-lg:hidden"
-        }`}
+        className={`glass-panel flex flex-col gap-3 max-lg:fixed max-lg:inset-3 max-lg:z-40 lg:sticky lg:top-3 lg:overflow-hidden lg:transition-[height] lg:duration-300 lg:ease-out motion-reduce:transition-none ${
+          // 5.5rem fits the heading row and the panel's padding.
+          collapsed ? "lg:h-[5.5rem]" : "lg:h-[calc(100svh-1.5rem)]"
+        } ${open ? "" : "max-lg:hidden"}`}
       >
         <div className="flex items-center justify-between gap-2">
           <Text as="p" weight="medium" className="flex items-center gap-2">
             <Sparkles size={16} className="text-accent" />
             Questions? Ask Lens!
           </Text>
+          <IconButton
+            variant="ghost"
+            color="gray"
+            aria-label={collapsed ? "Show chat" : "Hide chat"}
+            aria-expanded={!collapsed}
+            onClick={() => setCollapsed(!collapsed)}
+            className="max-lg:hidden"
+          >
+            {collapsed ? <ChevronDown size={18} /> : <ChevronUp size={18} />}
+          </IconButton>
           <IconButton variant="ghost" color="gray" aria-label="Close chat" onClick={() => setOpen(false)} className="lg:hidden">
             <X size={18} />
           </IconButton>
         </div>
 
-        <div ref={scroller} aria-live="polite" className="-mx-1 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-1">
-          {messages.length === 0 ? (
-            <div className="flex flex-col gap-2">
-              <Text size="2" color="gray">
-                Ask anything about this paper, or highlight text in the abstract or PDF and choose Ask Lens.
-              </Text>
-              {(Object.keys(CHAT_STARTERS) as ChatStarter[]).map((starter) => (
-                <Button key={starter} variant="soft" color="gray" className="justify-start" onClick={() => send("", starter)}>
-                  {CHAT_STARTERS[starter].label}
-                </Button>
-              ))}
-            </div>
-          ) : (
-            messages.map((message, index) => (
-              <div
-                key={index}
-                className={
-                  message.role === "user"
-                    ? "ml-6 self-end rounded-xl bg-accent px-3 py-2 text-sm text-white"
-                    : `mr-2 whitespace-pre-wrap text-sm leading-relaxed ${message.error ? "text-danger" : "text-ink"}`
-                }
-              >
-                {message.quote && (
-                  <p className="mb-1.5 line-clamp-3 border-l-2 border-white/60 pl-2 italic opacity-90">{message.quote}</p>
-                )}
-                {message.role === "user" ? (
-                  message.text
-                ) : message.text ? (
-                  <RevealText text={message.text.replaceAll("**", "")} onGrow={followAnswer} />
-                ) : (
-                  pending && index === messages.length - 1 && <span className="animate-pulse text-ink-muted">Reading the paper…</span>
-                )}
+        {/* Fades out while the panel folds up; inert keeps its buttons out of reach. */}
+        <div
+          inert={collapsed}
+          className={`flex min-h-0 flex-1 flex-col gap-3 transition-opacity duration-200 motion-reduce:transition-none ${
+            collapsed ? "lg:opacity-0" : ""
+          }`}
+        >
+          <div ref={scroller} aria-live="polite" className="-mx-1 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-1">
+            {messages.length === 0 ? (
+              <div className="flex flex-col gap-2">
+                <Text size="2" color="gray">
+                  Ask anything about this paper, or highlight text in the abstract or PDF and choose Ask Lens.
+                </Text>
+                {(Object.keys(CHAT_STARTERS) as ChatStarter[]).map((starter) => (
+                  <Button key={starter} variant="soft" color="gray" className="justify-start" onClick={() => send("", starter)}>
+                    {CHAT_STARTERS[starter].label}
+                  </Button>
+                ))}
               </div>
-            ))
+            ) : (
+              messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={
+                    message.role === "user"
+                      ? "ml-6 self-end rounded-xl bg-accent px-3 py-2 text-sm text-white"
+                      : `mr-2 whitespace-pre-wrap text-sm leading-relaxed ${message.error ? "text-danger" : "text-ink"}`
+                  }
+                >
+                  {message.quote && (
+                    <p className="mb-1.5 line-clamp-3 border-l-2 border-white/60 pl-2 italic opacity-90">{message.quote}</p>
+                  )}
+                  {message.role === "user" ? (
+                    message.text
+                  ) : message.text ? (
+                    <RevealText text={message.text.replaceAll("**", "")} onGrow={followAnswer} />
+                  ) : (
+                    pending && index === messages.length - 1 && <span className="animate-pulse text-ink-muted">Reading the paper…</span>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {conversation.current.paperUnavailable && (
+            <Text size="1" color="gray">
+              This paper&apos;s PDF couldn&apos;t be read (the publisher may block it, or it&apos;s very long), so answers come from the abstract.
+            </Text>
           )}
-        </div>
 
-        {conversation.current.paperUnavailable && (
-          <Text size="1" color="gray">
-            This paper&apos;s PDF couldn&apos;t be read (the publisher may block it, or it&apos;s very long), so answers come from the abstract.
-          </Text>
-        )}
+          <form onSubmit={submit} className="flex flex-col gap-2">
+            {quote && (
+              <div className="flex items-start gap-2 rounded-lg bg-white/10 p-2 text-xs">
+                <p className="line-clamp-3 flex-1 italic">{quote}</p>
+                <IconButton type="button" size="1" variant="ghost" color="gray" aria-label="Remove quote" onClick={() => setQuote(null)}>
+                  <X size={14} />
+                </IconButton>
+              </div>
+            )}
 
-        <form onSubmit={submit} className="flex flex-col gap-2">
-          {quote && (
-            <div className="flex items-start gap-2 rounded-lg bg-white/10 p-2 text-xs">
-              <p className="line-clamp-3 flex-1 italic">{quote}</p>
-              <IconButton type="button" size="1" variant="ghost" color="gray" aria-label="Remove quote" onClick={() => setQuote(null)}>
-                <X size={14} />
+            {/* Stretch keeps the send button the same height as the question box. */}
+            <div className="flex items-stretch gap-2">
+              <TextArea
+                ref={textarea}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) submit(event);
+                }}
+                placeholder={quote ? "Ask about this passage…" : "Ask a question…"}
+                aria-label="Your question"
+                maxLength={2000}
+                rows={2}
+                className="flex-1"
+              />
+              <IconButton type="submit" size="3" aria-label="Send" loading={pending} disabled={!input.trim() && !quote} className="h-auto">
+                <Send size={18} />
               </IconButton>
             </div>
-          )}
-
-          {/* Stretch keeps the send button the same height as the question box. */}
-          <div className="flex items-stretch gap-2">
-            <TextArea
-              ref={textarea}
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) submit(event);
-              }}
-              placeholder={quote ? "Ask about this passage…" : "Ask a question…"}
-              aria-label="Your question"
-              maxLength={2000}
-              rows={2}
-              className="flex-1"
-            />
-            <IconButton type="submit" size="3" aria-label="Send" loading={pending} disabled={!input.trim() && !quote} className="h-auto">
-              <Send size={18} />
-            </IconButton>
-          </div>
-        </form>
+          </form>
+        </div>
       </aside>
     </>
   );

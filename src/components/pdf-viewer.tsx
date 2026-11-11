@@ -124,8 +124,8 @@ export default function PdfViewer({ file, onError }: { file: string; onError: ()
   const zoomIndex = ZOOM_LEVELS.indexOf(zoom);
 
   return (
-    <div className="flex h-[75vh] flex-col border-t border-line bg-subtle">
-      <div className="flex items-center justify-between gap-3 border-b border-line bg-canvas px-3 py-2">
+    <div className="flex h-[75vh] flex-col border-t border-line bg-black/25">
+      <div className="flex items-center justify-between gap-3 border-b border-line px-3 py-2">
         <form onSubmit={submitPage} className="flex items-center gap-1.5">
           <IconButton type="button" size="1" variant="ghost" color="gray" aria-label="Previous page" disabled={page <= 1} onClick={() => goToPage(page - 1)}>
             <ChevronUp size={16} />
@@ -139,7 +139,7 @@ export default function PdfViewer({ file, onError }: { file: string; onError: ()
             onBlur={() => setPageInput(String(page))}
             inputMode="numeric"
             aria-label="Page number"
-            className="ml-1 w-10 rounded border border-line bg-canvas px-1 py-0.5 text-center text-sm text-ink"
+            className="ml-1 w-10 rounded border border-line bg-transparent px-1 py-0.5 text-center text-sm text-ink"
           />
           <Text size="2" color="gray">
             of {shapes?.length ?? "…"}

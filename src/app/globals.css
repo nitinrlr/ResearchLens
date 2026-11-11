@@ -73,6 +73,20 @@
   }
 }
 
+/* Radix cards as darker, mostly solid glass, for reading on the paper page. */
+.solid-glass {
+  --card-background-color: rgb(10 18 50 / 0.82);
+}
+
+.solid-glass::before {
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+}
+
+.solid-glass::after {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
+}
+
 /* Paper cards as full-width rows. On phones they stay stacked. */
 @media (min-width: 48rem) {
   [data-view="list"] .paper-card {
