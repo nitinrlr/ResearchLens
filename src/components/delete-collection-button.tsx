@@ -63,7 +63,7 @@ export default function DeleteCollectionButton({
         </AlertDialog.Title>
 
         <AlertDialog.Description size="2">
-          The papers in it stay in ResearchLens and in any other collections
+          The papers in it stay in any other collections
           they&apos;re in. This can&apos;t be undone.
         </AlertDialog.Description>
 

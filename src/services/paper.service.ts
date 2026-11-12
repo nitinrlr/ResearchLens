@@ -124,7 +124,7 @@ function mapPaper(paper: PaperWithRelations) {
  * A page past the end is clamped to the last page, and the returned `page` says
  * which page was actually loaded so the caller can fix the URL.
  */
-export async function getPapersPage(query = "", page = 1) {
+export async function getPapersPage(query = "", page = 1, topic = "") {
   const hasQuery = query.trim() !== "";
   const searchQuery = toSearchQuery(query);
 
@@ -133,8 +133,22 @@ export async function getPapersPage(query = "", page = 1) {
     return { papers: [], total: 0, page: 1, totalPages: 1 };
   }
 
-  const filter = searchQuery
-    ? Prisma.sql`WHERE "searchVector" @@ to_tsquery('english', ${searchQuery})`
+  const conditions: Prisma.Sql[] = [];
+
+  if (searchQuery) {
+    conditions.push(Prisma.sql`"searchVector" @@ to_tsquery('english', ${searchQuery})`);
+  }
+
+  if (topic) {
+    conditions.push(Prisma.sql`id IN (
+      SELECT pt."paperId" FROM "PaperTopic" pt
+      JOIN "Topic" t ON t.id = pt."topicId"
+      WHERE t.name = ${topic}
+    )`);
+  }
+
+  const filter = conditions.length > 0
+    ? Prisma.sql`WHERE ${Prisma.join(conditions, " AND ")}`
     : Prisma.empty;
 
   // Counting first lets us clamp the page before querying, so an out-of-range
@@ -170,6 +184,29 @@ export async function getPapersPage(query = "", page = 1) {
     page: currentPage,
     totalPages,
   };
+}
+
+// Counting topics across every paper takes about a second, and the answer only
+// changes after an import, so it's kept in memory for a day.
+const POPULAR_TOPICS_TTL_MS = 24 * 60 * 60 * 1000;
+let popularTopics: { names: string[]; expires: number } | null = null;
+
+/** The topics with the most papers, most popular first. */
+export async function getPopularTopics(limit = 24) {
+  if (popularTopics && popularTopics.expires > Date.now() && popularTopics.names.length >= limit) {
+    return popularTopics.names.slice(0, limit);
+  }
+
+  const rows = await prisma.$queryRaw<{ name: string }[]>`
+    SELECT t.name FROM "PaperTopic" pt
+    JOIN "Topic" t ON t.id = pt."topicId"
+    GROUP BY t.name
+    ORDER BY count(*) DESC, t.name
+    LIMIT ${limit}
+  `;
+
+  popularTopics = { names: rows.map((row) => row.name), expires: Date.now() + POPULAR_TOPICS_TTL_MS };
+  return popularTopics.names;
 }
 
 // Wrapped in React's cache() so the page and its generateMetadata share one

@@ -119,6 +119,8 @@ model Collection {
   /// Every user gets exactly one default collection ("Saved") at sign-up.
   /// It is the target of the bookmark button and cannot be deleted.
   isDefault   Boolean  @default(false)
+  /// A key from COLLECTION_COLORS in src/lib/collection-colors.ts.
+  color       String   @default("darkBlue")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

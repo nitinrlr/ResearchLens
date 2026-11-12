@@ -87,6 +87,19 @@
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
 }
 
+/* Collection cards tinted with their color (set as --tint), still see-through. */
+.tinted-card {
+  --card-background-color: color-mix(in srgb, var(--tint) 30%, rgb(10 18 50 / 0.7));
+}
+
+.tinted-card:hover {
+  --card-background-color: color-mix(in srgb, var(--tint) 40%, rgb(10 18 50 / 0.7));
+}
+
+.tinted-card::after {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tint) 45%, transparent);
+}
+
 /* Paper cards as full-width rows. On phones they stay stacked. */
 @media (min-width: 48rem) {
   [data-view="list"] .paper-card {
@@ -108,6 +121,52 @@
   [data-view="list"] .paper-card-meta {
     margin: 0;
     padding: 0;
+  }
+}
+
+/* Explore's drifting topic rows. The track holds the row twice, so moving it
+   by half its width lands exactly where it started. */
+.topic-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 2rem, black calc(100% - 2rem), transparent);
+  mask-image: linear-gradient(to right, transparent, black 2rem, black calc(100% - 2rem), transparent);
+}
+
+.topic-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-left var(--marquee-duration, 90s) linear infinite;
+}
+
+.topic-marquee-track[data-direction="right"] {
+  animation-name: marquee-right;
+}
+
+.topic-marquee:hover .topic-marquee-track,
+.topic-marquee:focus-within .topic-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-left {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+}
+
+/* Without motion the rows hold still and scroll sideways instead. */
+@media (prefers-reduced-motion: reduce) {
+  .topic-marquee {
+    overflow-x: auto;
+  }
+
+  .topic-marquee-track {
+    animation: none;
   }
 }
 

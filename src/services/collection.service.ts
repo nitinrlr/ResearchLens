@@ -55,17 +55,28 @@ export async function getDefaultCollectionId(userId: string) {
   return created.id;
 }
 
-/** Every collection owned by the signed-in user, default one first. */
-export async function getCollections() {
+/**
+ * Every collection owned by the signed-in user, default one first. With a
+ * query, only those whose title or description contains it.
+ */
+export async function getCollections(query = "") {
   const userId = await getCurrentUserId();
 
   if (!userId) {
     return [];
   }
 
+  const search = query.trim();
+
   const collections = await prisma.collection.findMany({
     where: {
       userId,
+      ...(search && {
+        OR: [
+          { title: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+        ],
+      }),
     },
 
     orderBy: [
@@ -87,6 +98,7 @@ export async function getCollections() {
     title: collection.title,
     description: collection.description,
     isDefault: collection.isDefault,
+    color: collection.color,
     paperCount: collection._count.collectionPapers,
   }));
 }

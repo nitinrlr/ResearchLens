@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Text } from "@radix-ui/themes";
+import { Heading, Text } from "@radix-ui/themes";
 
 import EmptyState from "@/components/empty-state";
-import PageHeader from "@/components/page-header";
 import Pagination from "@/components/pagination";
 import PaperCard from "@/components/papercard";
 import PaperList from "@/components/paper-list";
 import SearchField from "@/components/search-field";
+import TopicMarquee from "@/components/topic-marquee";
+import { filterParams } from "@/lib/explore-filters";
 import { PAGE_SIZE, pageHref, parsePage } from "@/lib/pagination";
 import { PAPER_VIEW_COOKIE, parsePaperView } from "@/lib/paper-view";
-import { getPapersPage } from "@/services/paper.service";
+import { getPapersPage, getPopularTopics } from "@/services/paper.service";
 
 export const metadata: Metadata = {
   title: "Explore",
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
 type Props = {
   searchParams: Promise<{
     q?: string;
+    topic?: string;
     page?: string;
   }>;
 };
@@ -27,15 +29,16 @@ type Props = {
 export default async function ExplorePage({ searchParams }: Props) {
   const params = await searchParams;
   const query = params.q ?? "";
+  const topic = params.topic ?? "";
   const requestedPage = parsePage(params.page);
 
-  const { papers, total, page, totalPages } = await getPapersPage(
-    query,
-    requestedPage
-  );
+  const [{ papers, total, page, totalPages }, topics] = await Promise.all([
+    getPapersPage(query, requestedPage, topic),
+    getPopularTopics(),
+  ]);
 
   // Only search params worth carrying from page to page.
-  const linkParams: Record<string, string> = query ? { q: query } : {};
+  const linkParams = filterParams({ query, topic });
 
   // ?page=40 on a 17-page list, or an old link after the results shrank: send
   // the visitor to the last real page so the URL matches what they see.
@@ -53,12 +56,34 @@ export default async function ExplorePage({ searchParams }: Props) {
         id="papers"
         className="glass-panel scroll-mt-3"
       >
-        <PageHeader title="Explore Papers" />
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
+          <Heading
+            as="h1"
+            size="8"
+            className="shrink-0"
+          >
+            Explore Papers
+          </Heading>
+
+          <TopicMarquee
+            topics={topics}
+            activeTopic={topic}
+            query={query}
+          />
+        </div>
 
         <form
           action="/explore"
           className="mt-6"
         >
+          {/* A new search keeps the picked topic. */}
+          {topic && (
+            <input
+              type="hidden"
+              name="topic"
+              value={topic}
+            />
+          )}
           <SearchField
             defaultValue={query}
             placeholder="Search by title, author, or topic..."
@@ -71,7 +96,11 @@ export default async function ExplorePage({ searchParams }: Props) {
         {papers.length === 0 ? (
           <EmptyState
             title="No papers found"
-            description="Try searching for another title, author, or topic."
+            description={
+              topic
+                ? "Try another search, or click the highlighted topic to clear it."
+                : "Try searching for another title, author, or topic."
+            }
           />
         ) : (
           <>
@@ -90,6 +119,7 @@ export default async function ExplorePage({ searchParams }: Props) {
                       {" "}for &ldquo;{query}&rdquo;
                     </>
                   )}
+                  {topic && <> in {topic}</>}
                 </Text>
               }
             >
