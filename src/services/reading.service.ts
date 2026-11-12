@@ -50,6 +50,9 @@ export async function getContinueReading(query = "") {
       paper: {
         include: {
           paperAuthors: {
+            orderBy: {
+              authorOrder: "asc",
+            },
             include: {
               author: true,
             },

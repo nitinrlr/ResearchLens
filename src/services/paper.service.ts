@@ -41,6 +41,9 @@ function paperInclude(userId: string | null) {
     },
 
     paperAuthors: {
+      orderBy: {
+        authorOrder: "asc" as const,
+      },
       include: {
         author: true,
       },

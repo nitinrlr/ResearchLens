@@ -137,6 +137,9 @@ export const getCollectionById = cache(async (collectionId: string) => {
           paper: {
             include: {
               paperAuthors: {
+                orderBy: {
+                  authorOrder: "asc",
+                },
                 include: {
                   author: true,
                 },

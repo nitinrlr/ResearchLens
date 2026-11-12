@@ -7,6 +7,7 @@ import FallingPapers from "@/components/landing/falling-papers";
 import FeatureReveal from "@/components/landing/feature-reveal";
 import FlutedBackground from "@/components/fluted-background";
 import GlassNav from "@/components/landing/glass-nav";
+import PaperMarquee from "@/components/landing/paper-marquee";
 import SmoothScroll from "@/components/landing/smooth-scroll";
 import "@/components/landing/landing.css";
 
@@ -22,6 +23,13 @@ const SAMPLE_PAPERS = [
   { title: "Deep Residual Learning for Image Recognition", author: "Kaiming He", topics: ["Advanced Neural Network Applications", "Domain Adaptation and Few-Shot Learning"], year: 2016, readingTime: 35 },
   { title: "Neural Machine Translation by Jointly Learning to Align and Translate", author: "Dzmitry Bahdanau", topics: ["Natural Language Processing Techniques", "Speech Recognition and Synthesis"], year: 2014, readingTime: 30 },
   { title: "Playing Atari with Deep Reinforcement Learning", author: "Volodymyr Mnih", topics: ["Reinforcement Learning in Robotics", "Artificial Intelligence in Games"], year: 2013, readingTime: 30 },
+  { title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding", author: "Jacob Devlin", topics: ["Logic, Reasoning, and Knowledge", "Topic Modeling"], year: 2018, readingTime: 30 },
+  { title: "Generative Adversarial Networks", author: "Ian Goodfellow", topics: ["Generative Adversarial Networks and Image Synthesis", "Topic Modeling"], year: 2014, readingTime: 30 },
+  { title: "ImageNet Classification with Deep Convolutional Neural Networks", author: "Alex Krizhevsky", topics: ["Domain Adaptation and Few-Shot Learning", "Advanced Image and Video Retrieval Techniques"], year: 2017, readingTime: 30 },
+  { title: "Adam: A Method for Stochastic Optimization", author: "D.P. Kingma", topics: ["Advanced Optimization Algorithms Research", "Advanced Bandit Algorithms Research"], year: 2015, readingTime: 30 },
+  { title: "U-Net: Convolutional Networks for Biomedical Image Segmentation", author: "Olaf Ronneberger", topics: ["Medical Image Segmentation Techniques", "Cell Image Analysis Techniques"], year: 2015, readingTime: 30 },
+  { title: "You Only Look Once: Unified, Real-Time Object Detection", author: "Joseph Redmon", topics: ["Advanced Image and Video Retrieval Techniques", "Visual Attention and Saliency Detection"], year: 2016, readingTime: 40 },
+  { title: "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift", author: "Sergey Ioffe", topics: ["Domain Adaptation and Few-Shot Learning", "Stochastic Gradient Optimization Techniques"], year: 2015, readingTime: 30 },
 ];
 
 export default function LandingPage() {
@@ -78,32 +86,38 @@ export default function LandingPage() {
               A few of the papers inside
             </Heading>
 
-            <div className="mt-6 grid gap-3 md:grid-cols-3">
-              {SAMPLE_PAPERS.map((paper) => (
-                <Card key={paper.title} asChild size="3" className="flex flex-col">
-                  <article>
-                    <Heading as="h3" size="4" weight="medium">{paper.title}</Heading>
-                    <Text as="p" size="2" color="gray" mt="2">{paper.author} et al.</Text>
+            {/* Runs to the sheet's edges, fading out at both sides. */}
+            <div className="-mx-6 mt-6 sm:-mx-8">
+              <PaperMarquee>
+                {SAMPLE_PAPERS.map((paper) => (
+                  // Padding rather than a gap, so both copies of the row line up when it loops.
+                  <div key={paper.title} className="w-[19rem] shrink-0 pr-3 sm:w-[22rem]">
+                    <Card asChild size="3" className="flex h-full flex-col">
+                      <article>
+                        <Heading as="h3" size="4" weight="medium">{paper.title}</Heading>
+                        <Text as="p" size="2" color="gray" mt="2">{paper.author} et al.</Text>
 
-                    <Flex wrap="wrap" gap="2" mt="3">
-                      {paper.topics.map((topic) => (
-                        <Badge key={topic} size="1" radius="full" color="gray">{topic}</Badge>
-                      ))}
-                    </Flex>
+                        <Flex wrap="wrap" gap="2" mt="3">
+                          {paper.topics.map((topic) => (
+                            <Badge key={topic} size="1" radius="full" color="gray">{topic}</Badge>
+                          ))}
+                        </Flex>
 
-                    <Flex justify="between" gap="4" pt="4" className="mt-auto">
-                      <Text size="2" color="gray" className="flex items-center gap-2">
-                        <Calendar size={16} />
-                        {paper.year}
-                      </Text>
-                      <Text size="2" color="gray" className="flex items-center gap-2">
-                        <Clock3 size={16} />
-                        {paper.readingTime} min
-                      </Text>
-                    </Flex>
-                  </article>
-                </Card>
-              ))}
+                        <Flex justify="between" gap="4" pt="4" className="mt-auto">
+                          <Text size="2" color="gray" className="flex items-center gap-2">
+                            <Calendar size={16} />
+                            {paper.year}
+                          </Text>
+                          <Text size="2" color="gray" className="flex items-center gap-2">
+                            <Clock3 size={16} />
+                            {paper.readingTime} min
+                          </Text>
+                        </Flex>
+                      </article>
+                    </Card>
+                  </div>
+                ))}
+              </PaperMarquee>
             </div>
           </section>
 

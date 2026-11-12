@@ -48,3 +48,18 @@
     animation: none;
   }
 }
+
+/* The "papers inside" row, faded at both edges. */
+.paper-marquee {
+  overflow: hidden;
+  padding-block: 0.25rem;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
+/* Without motion the row holds still and scrolls sideways instead. */
+@media (prefers-reduced-motion: reduce) {
+  .paper-marquee {
+    overflow-x: auto;
+  }
+}
