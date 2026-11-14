@@ -22,7 +22,7 @@ Last updated: 2026-11-11
 **Gaps**
 
 - Goals is a static stub; Settings is a placeholder
-- Difficulty is a placeholder: OpenAlex has no difficulty data, so every paper shows 1/5
+- Difficulty and reading time are being filled in; unrated papers show a dash
 - Not deployed
 - README lists the OpenAI API, which isn't in the project yet
 
@@ -66,7 +66,7 @@ In order of difficulty; each builds on the one before.
 - [x] **13. Paper chat.** Built with Gemini's free tier: full paper for typed questions, abstract plus the passage for "Ask AI" on highlighted abstract text, 30 messages a day, and saved starter answers. About 64% of PDFs can be read; the rest fall back to the abstract. Highlighting text in the PDF works too, through our React-PDF viewer.
   Original plan: A chat panel beside the PDF that answers questions from the paper, and says when something isn't in it. Starter buttons such as "Explain this simply" replace AI summaries, and their answers are saved per paper so common requests only run once. First test how many PDF links can actually be read, and fall back to the abstract when one can't. Signed-in users only, with a daily message limit. Chats stay in the browser at first. The provider is still open, Gemini's free tier is the likely start.
 - [ ] **14. Semantic search.** Embeddings stored with pgvector on Neon.
-- [ ] **15. Difficulty and reading time.** Estimate difficulty from each abstract. Reading time needs a real page count from the PDF.
+- [ ] **15. Difficulty and reading time.** In progress: page counts come from OpenAlex page ranges and the PDFs (`count-pages`); difficulty is rated by Gemini from each abstract, a little each day on the free tier (`rate-difficulty`). Reading time is page count × 1.5–5.1 minutes per page, by difficulty.
 - [ ] **16. Paper comparison.** Reads the two papers directly.
 - [ ] **17. Build Goals.** Replace the placeholder page. The `Goal` and `GoalTopic` tables already exist.
 

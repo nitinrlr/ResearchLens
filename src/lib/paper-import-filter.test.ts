@@ -13,7 +13,7 @@ function paper(overrides: Partial<SearchPaper> = {}): SearchPaper {
     publishedDate: new Date("2014-01-01"),
     paperUrl: "https://example.com/1",
     pdfUrl: "https://example.com/1.pdf",
-    readingTime: 30,
+    pageCount: 10,
     authors: [{ openAlexId: "A1", name: "Kyunghyun Cho", institution: null }],
     topics: [{ name: "Topic Modeling" }],
     ...overrides,

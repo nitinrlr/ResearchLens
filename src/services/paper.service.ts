@@ -236,6 +236,7 @@ export const getPaperById = cache(async (id: string) => {
     publishedDate: paper.publishedDate,
     readingTime: paper.readingTime,
     difficulty: paper.difficulty,
+    difficultyReason: paper.difficultyReason,
     paperUrl: paper.paperUrl,
     pdfUrl: paper.pdfUrl,
     saved: paper.collectionPapers.length > 0,

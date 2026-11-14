@@ -21,8 +21,8 @@ export interface SearchPaper {
 
   pdfUrl: string | null;
 
-  /** Minutes, estimated from the page count. Null when OpenAlex has no page range. */
-  readingTime: number | null;
+  /** From OpenAlex's page range. Null when it has none. */
+  pageCount: number | null;
 
   authors: SearchAuthor[];
 

@@ -15,6 +15,7 @@ import AskAiSelection from "@/components/ask-ai-selection";
 import CollectionPicker from "@/components/collection-picker";
 import PaperChat from "@/components/paper-chat";
 import PaperReader from "@/components/paper-reader";
+import { formatDifficulty, formatReadingTime } from "@/lib/reading-time";
 import RecordPaperRead from "@/components/record-paper-read";
 
 type Props = {
@@ -48,11 +49,11 @@ export default async function PaperDetailsPage({ params }: Props) {
     },
     {
       label: "Difficulty",
-      value: `${paper.difficulty}/5`,
+      value: formatDifficulty(paper.difficulty),
     },
     {
       label: "Reading Time",
-      value: `${paper.readingTime} min`,
+      value: formatReadingTime(paper.readingTime),
     },
   ];
 
@@ -152,7 +153,7 @@ export default async function PaperDetailsPage({ params }: Props) {
                 </Card>
 
                 {/* On the dark glass, not in cards, so they read as one strip. */}
-                <dl className="mb-6 grid grid-cols-3 divide-x divide-white/25 text-center">
+                <dl className={`grid grid-cols-3 divide-x divide-white/25 text-center ${paper.difficultyReason ? "mb-3" : "mb-6"}`}>
                   {stats.map((stat) => (
                     <div key={stat.label} className="px-2 py-1">
                       <dt className="text-sm text-mist">{stat.label}</dt>
@@ -162,6 +163,12 @@ export default async function PaperDetailsPage({ params }: Props) {
                     </div>
                   ))}
                 </dl>
+
+                {paper.difficultyReason && (
+                  <p className="mb-6 text-center text-sm text-mist">
+                    {paper.difficultyReason}
+                  </p>
+                )}
 
                 {paper.pdfUrl ? (
                   <Card

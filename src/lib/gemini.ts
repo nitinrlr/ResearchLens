@@ -155,3 +155,67 @@ export async function* streamChat(request: {
 
   throw new ModelsBusyError("Every model was busy");
 }
+
+/** The daily free-tier quota for this model is used up. */
+export class DailyQuotaError extends Error {}
+
+/** Too many requests this minute; waiting a little fixes it. */
+export class RateLimitError extends Error {}
+
+const GENERATE_TIMEOUT_MS = 90_000;
+
+/**
+ * One prompt to one model, returning the whole reply. For scripts: no model
+ * fallback, and quota errors are thrown as their own types so a long job can
+ * pause or stop instead of failing.
+ */
+export async function generateText(request: { model: string; system: string; text: string }) {
+  const key = process.env.GEMINI_API_KEY;
+
+  if (!key) {
+    throw new Error("GEMINI_API_KEY is not set");
+  }
+
+  const response = await fetch(ENDPOINT, {
+    method: "POST",
+    signal: AbortSignal.timeout(GENERATE_TIMEOUT_MS),
+    headers: {
+      "x-goog-api-key": key,
+      "Content-Type": "application/json",
+      "Api-Revision": API_REVISION,
+    },
+    body: JSON.stringify({
+      model: request.model,
+      stream: true,
+      system_instruction: request.system,
+      generation_config: { thinking_level: "low", max_output_tokens: 8192 },
+      input: [{ type: "user_input", content: [{ type: "text", text: request.text }] }],
+    }),
+  });
+
+  if (response.status === 429) {
+    const body = await response.text();
+    throw /per\s*day|daily/i.test(body)
+      ? new DailyQuotaError(body.slice(0, 300))
+      : new RateLimitError(body.slice(0, 300));
+  }
+
+  if (!response.ok || !response.body) {
+    const body = (await response.text()).slice(0, 300);
+    throw response.status >= 500 ? new ModelsBusyError(body) : new RequestError(`Gemini returned ${response.status}: ${body}`);
+  }
+
+  let text = "";
+
+  for await (const event of readEvents(response.body)) {
+    if (event.error) {
+      throw new Error(event.error.message ?? "Gemini stream error");
+    }
+
+    if (event.event_type === "step.delta" && event.delta?.type === "text" && event.delta.text) {
+      text += event.delta.text;
+    }
+  }
+
+  return text;
+}

@@ -27,7 +27,7 @@ export function countPdfPages(buffer: Buffer) {
   return buffer.toString("latin1").match(/\/Type\s*\/Page(?!s)/g)?.length ?? 0;
 }
 
-async function download(url: string) {
+async function download(url: string, maxBytes: number) {
   const response = await fetch(url, {
     redirect: "follow",
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
@@ -37,7 +37,7 @@ async function download(url: string) {
   if (!response.ok) return null;
 
   const length = Number(response.headers.get("content-length") ?? 0);
-  if (length > MAX_BYTES) return null;
+  if (length > maxBytes) return null;
 
   const buffer = Buffer.from(await response.arrayBuffer());
   const type = response.headers.get("content-type") ?? "";
@@ -45,17 +45,23 @@ async function download(url: string) {
   return { buffer, finalUrl: response.url, isHtml: type.includes("html") };
 }
 
-async function fetchPdf(url: string): Promise<Buffer | null> {
-  const first = await download(url);
+/**
+ * Downloads a PDF, following a publisher page's citation_pdf_url tag when the
+ * link leads to HTML. Returns null if it isn't a PDF or is over maxBytes.
+ */
+export async function fetchPdf(url: string, maxBytes = MAX_BYTES): Promise<Buffer | null> {
+  const first = await download(url, maxBytes);
   if (!first) return null;
 
-  if (isPdf(first.buffer)) return first.buffer;
+  if (isPdf(first.buffer)) return first.buffer.length <= maxBytes ? first.buffer : null;
 
   // A publisher page instead of the PDF: follow its citation_pdf_url tag.
   const tagged = first.isHtml ? findCitationPdfUrl(first.buffer.toString("utf8"), first.finalUrl) : null;
-  const second = tagged ? await download(tagged) : null;
+  const second = tagged ? await download(tagged, maxBytes) : null;
+  const pdf = second && isPdf(second.buffer) ? second.buffer : null;
 
-  return second && isPdf(second.buffer) ? second.buffer : null;
+  // Without a Content-Length header, the size is only known after downloading.
+  return pdf && pdf.length <= maxBytes ? pdf : null;
 }
 
 /**

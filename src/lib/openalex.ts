@@ -6,9 +6,6 @@ const BASE_URL = "https://api.openalex.org";
 // for "transformer" also returns electrical engineering papers.
 const COMPUTER_SCIENCE_FIELD_ID = 17;
 
-// Dense academic prose reads at roughly 4 minutes per page.
-const MINUTES_PER_PAGE = 4;
-
 // Page ranges outside this are almost always bad metadata, not a real paper.
 const MAX_PLAUSIBLE_PAGES = 150;
 
@@ -96,7 +93,8 @@ function rebuildAbstract(index: Record<string, number[]> | null) {
   return text || null;
 }
 
-function estimateReadingTime(biblio: OpenAlexWork["biblio"]) {
+/** Pages from OpenAlex's page range, or null when it's missing or implausible. */
+export function pageCountFromBiblio(biblio: OpenAlexWork["biblio"]) {
   const first = Number.parseInt(biblio?.first_page ?? "", 10);
   const last = Number.parseInt(biblio?.last_page ?? "", 10);
 
@@ -107,13 +105,7 @@ function estimateReadingTime(biblio: OpenAlexWork["biblio"]) {
 
   const pages = last - first + 1;
 
-  if (pages < 1 || pages > MAX_PLAUSIBLE_PAGES) {
-    return null;
-  }
-
-  // Round to the nearest 5 minutes; a precise-looking "43 min" would overstate
-  // how good this estimate is.
-  return Math.max(5, Math.round((pages * MINUTES_PER_PAGE) / 5) * 5);
+  return pages >= 1 && pages <= MAX_PLAUSIBLE_PAGES ? pages : null;
 }
 
 function isRetryable(status: number) {
@@ -250,7 +242,7 @@ export async function fetchMostCitedPage(
 
       pdfUrl: choosePdfUrl(paper),
 
-      readingTime: estimateReadingTime(paper.biblio),
+      pageCount: pageCountFromBiblio(paper.biblio),
 
       authors: paper.authorships
         .filter((authorship) => authorship.author.id)
@@ -274,4 +266,42 @@ export async function fetchMostCitedPage(
     papers,
     nextCursor: data.results.length > 0 ? data.meta.next_cursor : null,
   };
+}
+
+/** OpenAlex accepts up to 100 values in one "or" filter. */
+export const PAGE_RANGE_BATCH_SIZE = 100;
+
+/**
+ * Page counts for up to 100 works, keyed by OpenAlex id. Works without a
+ * usable page range are left out.
+ */
+export async function fetchPageCounts(openAlexIds: string[]) {
+  const ids = openAlexIds.map((id) => id.replace("https://openalex.org/", ""));
+  const params = new URLSearchParams({
+    filter: `openalex:${ids.join("|")}`,
+    select: "id,biblio",
+    per_page: String(PAGE_RANGE_BATCH_SIZE),
+  });
+
+  const apiKey = process.env.OPENALEX_API_KEY;
+
+  if (apiKey) {
+    params.set("api_key", apiKey);
+  }
+
+  const response = await fetchWithRetry(`${BASE_URL}/works?${params}`);
+
+  if (!response.ok) {
+    throw new Error(`OpenAlex returned ${response.status}`);
+  }
+
+  const data = (await response.json()) as { results: Pick<OpenAlexWork, "id" | "biblio">[] };
+  const pages = new Map<string, number>();
+
+  for (const work of data.results) {
+    const count = pageCountFromBiblio(work.biblio);
+    if (count) pages.set(work.id, count);
+  }
+
+  return pages;
 }

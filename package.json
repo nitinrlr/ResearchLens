@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest",
-    "import:papers": "tsx src/scripts/import-papers.ts"
+    "import:papers": "tsx src/scripts/import-papers.ts",
+    "count:pages": "tsx src/scripts/count-pages.ts",
+    "rate:difficulty": "tsx src/scripts/rate-difficulty.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

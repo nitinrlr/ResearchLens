@@ -26,3 +26,23 @@ To browse the result:
 ```bash
 npx prisma studio
 ```
+
+## count-pages
+
+Fills in each paper's page count. It first reads OpenAlex's page ranges (about 3 minutes for 50,000 papers), then downloads the PDFs of papers without one and counts their pages with PDF.js. arXiv asks for one request every 3 seconds, so a full run takes a few hours; it can be stopped and run again, and skips papers it has already tried.
+
+```bash
+npm run count:pages
+npm run count:pages -- --pdfs-only --limit 200
+```
+
+## rate-difficulty
+
+Rates each paper's difficulty from 1 to 5 with Gemini, from its title, topics and abstract, and saves a one-line reason. Twenty papers go in each request, newest first. It stops after `--max-requests` (250 by default) or when the day's free-tier quota runs out, so run it once a day until every paper is rated.
+
+```bash
+npm run rate:difficulty
+npm run rate:difficulty -- --dry-run --limit 20
+```
+
+Reading time is filled in by whichever script finishes a paper second: page count × minutes per page for its difficulty (see `src/lib/reading-time.ts`).

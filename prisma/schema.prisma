@@ -49,8 +49,16 @@ model Paper {
   title            String
   abstract         String
   publishedDate    DateTime
-  difficulty       Int
-  readingTime      Int
+  /// 1-5, rated from the abstract by src/scripts/rate-difficulty.ts. Null until rated.
+  difficulty       Int?
+  /// One short line on the background the paper assumes.
+  difficultyReason String?
+  /// From OpenAlex's page range or the PDF itself (src/scripts/count-pages.ts).
+  pageCount        Int?
+  /// When count-pages.ts last tried this paper's PDF, so failures aren't retried every run.
+  pagesCheckedAt   DateTime?
+  /// Minutes: pageCount times the minutes per page for its difficulty. Null until both are known.
+  readingTime      Int?
   paperUrl         String            @unique
   pdfUrl           String?
   thumbnailUrl     String?

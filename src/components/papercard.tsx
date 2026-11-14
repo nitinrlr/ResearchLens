@@ -3,14 +3,15 @@ import { Calendar, Clock3, Star } from "lucide-react";
 import { Badge, Card, Flex, Heading, Text } from "@radix-ui/themes";
 
 import CollectionPicker from "@/components/collection-picker";
+import { formatDifficulty, formatReadingTime } from "@/lib/reading-time";
 
 type PaperCardProps = {
   paper: {
     id: string;
     title: string;
     publishedDate: Date | string;
-    readingTime: number;
-    difficulty: number;
+    readingTime: number | null;
+    difficulty: number | null;
     saved: boolean;
     authors: string[];
     topics: string[];
@@ -127,7 +128,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
                 as="p"
                 size="2"
               >
-                {paper.difficulty}/5
+                {formatDifficulty(paper.difficulty)}
               </Text>
             </div>
           </Flex>
@@ -146,7 +147,7 @@ export default function PaperCard({ paper }: PaperCardProps) {
                 as="p"
                 size="2"
               >
-                {paper.readingTime} min
+                {formatReadingTime(paper.readingTime)}
               </Text>
             </div>
           </Flex>

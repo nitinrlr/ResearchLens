@@ -1,13 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { SearchPaper } from "@/types/paper";
 
-// OpenAlex has no difficulty data, so every paper starts at the same value
-// until something better (e.g. an AI estimate) replaces it.
-const DEFAULT_DIFFICULTY = 1;
-
-// Used when OpenAlex has no page range to estimate from.
-const DEFAULT_READING_TIME = 30;
-
 // Saving a full page of papers can take longer than Prisma's 5-second default.
 const TRANSACTION_TIMEOUT_MS = 120_000;
 
@@ -51,8 +44,8 @@ export async function savePapers(papers: SearchPaper[]) {
           publishedDate: paper.publishedDate,
           paperUrl: paper.paperUrl,
           pdfUrl: paper.pdfUrl,
-          readingTime: paper.readingTime ?? DEFAULT_READING_TIME,
-          difficulty: DEFAULT_DIFFICULTY,
+          // Difficulty and reading time come later, from rate-difficulty.ts.
+          pageCount: paper.pageCount,
         })),
         skipDuplicates: true,
         select: { id: true, externalId: true },
