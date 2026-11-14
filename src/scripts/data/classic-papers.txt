@@ -1,0 +1,11 @@
+# Landmark papers the most-cited import missed, for the skill trees.
+# npm run import:papers -- --ids-file src/scripts/data/classic-papers.txt
+#
+# Many other classics (LSTM, Dropout, Raft, GFS, Dynamo, t-SNE, Dijkstra) have
+# no open PDF on OpenAlex, so the importer can't take them yet.
+W2736601468  Proximal Policy Optimization Algorithms (2017)
+W3177813494  Evaluating Large Language Models Trained on Code (2021)
+W3036167779  Denoising Diffusion Probabilistic Models (2020)
+W4385318467  3D Gaussian Splatting for Real-Time Radiance Field Rendering (2023)
+W2745034467  The QUIC Transport Protocol: Design and Internet-Scale Deployment (2017)
+W2173213060  MapReduce: simplified data processing on large clusters (2008)

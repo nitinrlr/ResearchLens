@@ -94,7 +94,7 @@ function rebuildAbstract(index: Record<string, number[]> | null) {
 }
 
 /** Pages from OpenAlex's page range, or null when it's missing or implausible. */
-export function pageCountFromBiblio(biblio: OpenAlexWork["biblio"]) {
+function pageCountFromBiblio(biblio: OpenAlexWork["biblio"]) {
   const first = Number.parseInt(biblio?.first_page ?? "", 10);
   const last = Number.parseInt(biblio?.last_page ?? "", 10);
 
@@ -134,7 +134,27 @@ async function fetchWithRetry(url: string) {
   }
 }
 
-const ARXIV_PDF = /^https?:\/\/(www\.|export\.)?arxiv\.org\/pdf\//;
+/** One request to OpenAlex's works endpoint, with the API key if there is one. */
+async function getWorks<T>(params: URLSearchParams): Promise<T> {
+  // Read at call time, not module load, so scripts that load .env after
+  // importing this file still pick the key up.
+  const apiKey = process.env.OPENALEX_API_KEY;
+
+  if (apiKey) {
+    params.set("api_key", apiKey);
+  }
+
+  const response = await fetchWithRetry(`${BASE_URL}/works?${params}`);
+
+  if (!response.ok) {
+    throw new Error(`OpenAlex returned ${response.status}`);
+  }
+
+  // Postgres rejects the null character, which turns up in some source text.
+  return JSON.parse((await response.text()).replaceAll("\\u0000", "")) as T;
+}
+
+const ARXIV_PDF =/^https?:\/\/(www\.|export\.)?arxiv\.org\/pdf\//;
 
 // Publishers whose open PDFs reliably download, so their final version wins
 // over an arXiv preprint.
@@ -171,21 +191,58 @@ function cleanTitle(title: string) {
     .trim();
 }
 
+/** OpenAlex's Computer Science subfields, for importing one area at a time. */
+export const SUBFIELDS = {
+  artificialIntelligence: 1702,
+  theory: 1703,
+  graphics: 1704,
+  networks: 1705,
+  applications: 1706,
+  computerVision: 1707,
+  hardware: 1708,
+  humanComputerInteraction: 1709,
+  informationSystems: 1710,
+  signalProcessing: 1711,
+  software: 1712,
+} as const;
+
+export type WorksQuery = {
+  /** Only papers whose main topic is in one of these subfields. */
+  subfields?: number[];
+  /** An OpenAlex work type, such as "review" for surveys and tutorials. */
+  type?: string;
+  /** Exactly these works (at most 100), whatever their field. */
+  ids?: string[];
+};
+
+/** The OpenAlex filter for a query: open-access English CS papers unless ids are given. */
+export function worksFilter({ subfields, type, ids }: WorksQuery = {}) {
+  if (ids) {
+    return `openalex:${ids.map((id) => id.replace("https://openalex.org/", "")).join("|")}`;
+  }
+
+  return [
+    subfields?.length
+      ? `primary_topic.subfield.id:${subfields.join("|")}`
+      : `primary_topic.field.id:${COMPUTER_SCIENCE_FIELD_ID}`,
+    "has_abstract:true",
+    "is_oa:true",
+    "is_retracted:false",
+    "language:en",
+    ...(type ? [`type:${type}`] : []),
+  ].join(",");
+}
+
 /**
  * One page of open-access Computer Science papers, most-cited first. Pass "*"
  * for the first page, then the returned cursor. It's null after the last page.
  */
 export async function fetchMostCitedPage(
-  cursor: string
+  cursor: string,
+  query: WorksQuery = {}
 ): Promise<{ papers: SearchPaper[]; nextCursor: string | null }> {
   const params = new URLSearchParams({
-    filter: [
-      `primary_topic.field.id:${COMPUTER_SCIENCE_FIELD_ID}`,
-      "has_abstract:true",
-      "is_oa:true",
-      "is_retracted:false",
-      "language:en",
-    ].join(","),
+    filter: worksFilter(query),
     sort: "cited_by_count:desc",
     per_page: String(PER_PAGE),
     cursor,
@@ -205,23 +262,7 @@ export async function fetchMostCitedPage(
     ].join(","),
   });
 
-  // Read at call time, not module load, so scripts that load .env after
-  // importing this file still pick the key up.
-  const apiKey = process.env.OPENALEX_API_KEY;
-
-  if (apiKey) {
-    params.set("api_key", apiKey);
-  }
-
-  const response = await fetchWithRetry(`${BASE_URL}/works?${params}`);
-
-  if (!response.ok) {
-    throw new Error(`OpenAlex returned ${response.status}`);
-  }
-
-  // Postgres rejects the null character, which turns up in some source text.
-  const body = (await response.text()).replaceAll("\\u0000", "");
-  const data = JSON.parse(body) as OpenAlexWorksResponse;
+  const data = await getWorks<OpenAlexWorksResponse>(params);
 
   const papers = data.results
     .filter((paper) => paper.title)
@@ -276,26 +317,13 @@ export const PAGE_RANGE_BATCH_SIZE = 100;
  * usable page range are left out.
  */
 export async function fetchPageCounts(openAlexIds: string[]) {
-  const ids = openAlexIds.map((id) => id.replace("https://openalex.org/", ""));
-  const params = new URLSearchParams({
-    filter: `openalex:${ids.join("|")}`,
-    select: "id,biblio",
-    per_page: String(PAGE_RANGE_BATCH_SIZE),
-  });
-
-  const apiKey = process.env.OPENALEX_API_KEY;
-
-  if (apiKey) {
-    params.set("api_key", apiKey);
-  }
-
-  const response = await fetchWithRetry(`${BASE_URL}/works?${params}`);
-
-  if (!response.ok) {
-    throw new Error(`OpenAlex returned ${response.status}`);
-  }
-
-  const data = (await response.json()) as { results: Pick<OpenAlexWork, "id" | "biblio">[] };
+  const data = await getWorks<{ results: Pick<OpenAlexWork, "id" | "biblio">[] }>(
+    new URLSearchParams({
+      filter: worksFilter({ ids: openAlexIds }),
+      select: "id,biblio",
+      per_page: String(PAGE_RANGE_BATCH_SIZE),
+    })
+  );
   const pages = new Map<string, number>();
 
   for (const work of data.results) {
@@ -304,4 +332,35 @@ export async function fetchPageCounts(openAlexIds: string[]) {
   }
 
   return pages;
+}
+
+export type WorkFacts = {
+  citations: number;
+  type: string;
+  /** The subfield of each of the paper's topics. */
+  subfields: number[];
+};
+
+/** Citation count, type and topic subfields for up to 100 works, keyed by OpenAlex id. */
+export async function fetchWorkFacts(openAlexIds: string[]) {
+  const data = await getWorks<{
+    results: { id: string; cited_by_count: number; type: string; topics: { subfield: { id: string } }[] }[];
+  }>(
+    new URLSearchParams({
+      filter: worksFilter({ ids: openAlexIds }),
+      select: "id,cited_by_count,type,topics",
+      per_page: String(PAGE_RANGE_BATCH_SIZE),
+    })
+  );
+
+  return new Map<string, WorkFacts>(
+    data.results.map((work) => [
+      work.id,
+      {
+        citations: work.cited_by_count,
+        type: work.type,
+        subfields: work.topics.map((topic) => Number(topic.subfield.id.split("/").pop())),
+      },
+    ])
+  );
 }

@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest",
     "import:papers": "tsx src/scripts/import-papers.ts",
+    "trim:papers": "tsx src/scripts/trim-papers.ts",
     "count:pages": "tsx src/scripts/count-pages.ts",
     "rate:difficulty": "tsx src/scripts/rate-difficulty.ts"
   },

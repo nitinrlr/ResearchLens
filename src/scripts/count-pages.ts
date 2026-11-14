@@ -16,6 +16,19 @@ const MAX_PDF_BYTES = 100 * 1024 * 1024;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// The first Ctrl+C lets the papers in progress finish and be saved, so the
+// next run carries on from there. A second one quits straight away.
+let stopping = false;
+
+process.on("SIGINT", () => {
+  if (stopping) {
+    process.exit(130);
+  }
+
+  stopping = true;
+  console.log("\nStopping after the papers in progress. Press Ctrl+C again to quit now.");
+});
+
 type Paper = { id: string; pdfUrl: string | null; difficulty: number | null };
 
 async function savePageCount(paper: Paper, pageCount: number | null) {
@@ -38,7 +51,7 @@ async function fromOpenAlex() {
 
   let found = 0;
 
-  for (let start = 0; start < papers.length; start += PAGE_RANGE_BATCH_SIZE) {
+  for (let start = 0; start < papers.length && !stopping; start += PAGE_RANGE_BATCH_SIZE) {
     const batch = papers.slice(start, start + PAGE_RANGE_BATCH_SIZE);
     const pages = await fetchPageCounts(batch.map((paper) => paper.externalId!));
 
@@ -112,6 +125,7 @@ async function fromPdfs(limit: number) {
 
   const arxivWorker = async () => {
     for (const paper of arxiv) {
+      if (stopping) return;
       const started = Date.now();
       await check(paper, paper.pdfUrl!.replace(ARXIV_HOST, "https://export.arxiv.org/"));
       await sleep(Math.max(0, ARXIV_DELAY_MS - (Date.now() - started)));
@@ -120,7 +134,7 @@ async function fromPdfs(limit: number) {
 
   const queue = [...others];
   const otherWorker = async () => {
-    for (let paper = queue.shift(); paper; paper = queue.shift()) {
+    for (let paper = queue.shift(); paper && !stopping; paper = queue.shift()) {
       await check(paper, paper.pdfUrl!);
     }
   };
@@ -138,7 +152,13 @@ async function main() {
     await fromOpenAlex();
   }
 
-  await fromPdfs(limit ?? 100_000);
+  if (!stopping) {
+    await fromPdfs(limit ?? 100_000);
+  }
+
+  if (stopping) {
+    console.log("\nStopped early. Run the same command again to carry on.");
+  }
 
   const [{ missing }] = await prisma.$queryRaw<[{ missing: number }]>`
     SELECT count(*)::int AS missing FROM "Paper" WHERE "pageCount" IS NULL

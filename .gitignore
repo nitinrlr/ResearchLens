@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 .vite/
 
 /src/generated/prisma
+
+# Lists of papers removed by trim-papers.ts
+/backups

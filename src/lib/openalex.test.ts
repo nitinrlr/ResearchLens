@@ -1,6 +1,24 @@
 import { describe, expect, it } from "vitest";
 
-import { choosePdfUrl } from "./openalex";
+import { choosePdfUrl, worksFilter } from "./openalex";
+
+describe("worksFilter", () => {
+  it("defaults to open-access English Computer Science papers", () => {
+    expect(worksFilter()).toBe(
+      "primary_topic.field.id:17,has_abstract:true,is_oa:true,is_retracted:false,language:en"
+    );
+  });
+
+  it("narrows to subfields and a work type", () => {
+    expect(worksFilter({ subfields: [1703, 1709], type: "review" })).toBe(
+      "primary_topic.subfield.id:1703|1709,has_abstract:true,is_oa:true,is_retracted:false,language:en,type:review"
+    );
+  });
+
+  it("asks for exact works by id, ignoring the other filters", () => {
+    expect(worksFilter({ ids: ["https://openalex.org/W1", "W2"], type: "review" })).toBe("openalex:W1|W2");
+  });
+});
 
 const publisher = {
   best_oa_location: { landing_page_url: null, pdf_url: "https://dl.acm.org/doi/pdf/10.1145/1" },
