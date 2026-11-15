@@ -16,6 +16,20 @@ const MAX_PDF_BYTES = 100 * 1024 * 1024;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Node's built-in fetch (undici) can throw an AssertionError from inside its
+// HTTP parser when a server closes the connection oddly mid-response. It's
+// raised outside the request, so no try/catch sees it and the whole run would
+// stop. The request still times out, so that paper just counts as a failure.
+process.on("uncaughtException", (error: NodeJS.ErrnoException) => {
+  if (error.code === "ERR_ASSERTION" && error.stack?.includes("undici")) {
+    console.warn("  A server sent a broken response; skipping that paper.");
+    return;
+  }
+
+  console.error(error);
+  process.exit(1);
+});
+
 // The first Ctrl+C lets the papers in progress finish and be saved, so the
 // next run carries on from there. A second one quits straight away.
 let stopping = false;

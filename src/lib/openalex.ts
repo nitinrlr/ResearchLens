@@ -6,7 +6,10 @@ const BASE_URL = "https://api.openalex.org";
 // for "transformer" also returns electrical engineering papers.
 const COMPUTER_SCIENCE_FIELD_ID = 17;
 
-// Page ranges outside this are almost always bad metadata, not a real paper.
+// Page ranges outside these are almost always bad metadata, not a real paper.
+// Many journals list an article number as both first and last page ("1"-"1"),
+// and a sample of those papers' PDFs ran 4 to 47 pages, so 1-2 is not trusted.
+const MIN_PLAUSIBLE_PAGES = 3;
 const MAX_PLAUSIBLE_PAGES = 150;
 
 // OpenAlex occasionally answers 429 or a 5xx (we have seen 504s) and succeeds
@@ -94,7 +97,7 @@ function rebuildAbstract(index: Record<string, number[]> | null) {
 }
 
 /** Pages from OpenAlex's page range, or null when it's missing or implausible. */
-function pageCountFromBiblio(biblio: OpenAlexWork["biblio"]) {
+export function pageCountFromBiblio(biblio: OpenAlexWork["biblio"]) {
   const first = Number.parseInt(biblio?.first_page ?? "", 10);
   const last = Number.parseInt(biblio?.last_page ?? "", 10);
 
@@ -105,7 +108,7 @@ function pageCountFromBiblio(biblio: OpenAlexWork["biblio"]) {
 
   const pages = last - first + 1;
 
-  return pages >= 1 && pages <= MAX_PLAUSIBLE_PAGES ? pages : null;
+  return pages >= MIN_PLAUSIBLE_PAGES && pages <= MAX_PLAUSIBLE_PAGES ? pages : null;
 }
 
 function isRetryable(status: number) {

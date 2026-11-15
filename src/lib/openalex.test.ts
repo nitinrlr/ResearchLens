@@ -1,6 +1,23 @@
 import { describe, expect, it } from "vitest";
 
-import { choosePdfUrl, worksFilter } from "./openalex";
+import { choosePdfUrl, pageCountFromBiblio, worksFilter } from "./openalex";
+
+describe("pageCountFromBiblio", () => {
+  it("counts the pages in a range", () => {
+    expect(pageCountFromBiblio({ first_page: "1", last_page: "12" })).toBe(12);
+  });
+
+  it("distrusts 1-2 page ranges, which are usually an article number", () => {
+    expect(pageCountFromBiblio({ first_page: "1", last_page: "1" })).toBeNull();
+    expect(pageCountFromBiblio({ first_page: "100", last_page: "101" })).toBeNull();
+  });
+
+  it("ignores missing, non-numeric or huge ranges", () => {
+    expect(pageCountFromBiblio(null)).toBeNull();
+    expect(pageCountFromBiblio({ first_page: "e1003", last_page: "e1010" })).toBeNull();
+    expect(pageCountFromBiblio({ first_page: "1", last_page: "900" })).toBeNull();
+  });
+});
 
 describe("worksFilter", () => {
   it("defaults to open-access English Computer Science papers", () => {
