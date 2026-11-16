@@ -209,3 +209,14 @@ model PaperChatAnswer {
 
   @@id([paperId, starter])
 }
+
+/// Sent from the landing page's Contact menu. Read them with `npx prisma studio`.
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String?
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+}

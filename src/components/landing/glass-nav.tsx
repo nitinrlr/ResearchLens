@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import ContactMenu from "@/components/landing/contact-menu";
+
 export default function GlassNav() {
   return (
     <>
@@ -13,10 +15,11 @@ export default function GlassNav() {
       </svg>
 
       <header className="fixed inset-x-3 top-3 z-50 mx-auto max-w-5xl sm:inset-x-6">
-        <nav className="glass-pill flex items-center justify-between gap-2 whitespace-nowrap py-1.5 pl-4 pr-1.5 text-white sm:gap-4 sm:py-2 sm:pl-5 sm:pr-2">
-          <Link href="#top" className="flex items-center gap-2.5 font-display text-base font-bold tracking-tight">
+        <nav className="glass-pill flex items-center justify-between gap-2 whitespace-nowrap py-1.5 pl-3 pr-1 text-white sm:gap-4 sm:py-2 sm:pl-5 sm:pr-2">
+          <Link href="#top" className="flex items-center gap-2 font-display text-sm font-bold tracking-tight sm:gap-2.5 sm:text-base">
             <span className="block size-4 rounded-[5px] bg-accent" />
-            <span className="max-[359px]:sr-only">ResearchLens</span>
+            {/* Below 375px there's only room for the logo next to the three buttons. */}
+            <span className="max-[374px]:sr-only">ResearchLens</span>
           </Link>
 
           <div className="hidden items-center gap-7 text-sm md:flex">
@@ -24,11 +27,12 @@ export default function GlassNav() {
             <a href="#papers" className="transition hover:text-sky">Papers</a>
           </div>
 
-          <div className="flex items-center gap-1">
-            <Link href="/login" className="rounded-full px-2.5 py-2 text-sm transition hover:text-sky sm:px-3.5">
+          <div className="flex items-center gap-0.5 sm:gap-1">
+            <ContactMenu />
+            <Link href="/login" className="rounded-full px-2 py-2 text-sm transition hover:text-sky sm:px-3.5">
               Sign in
             </Link>
-            <Link href="/register" className="rounded-full bg-white px-3.5 py-2 text-sm font-medium text-night transition hover:bg-mist sm:px-4">
+            <Link href="/register" className="rounded-full bg-white px-3 py-2 text-sm font-medium text-night transition hover:bg-mist sm:px-4">
               Start reading
             </Link>
           </div>

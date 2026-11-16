@@ -49,6 +49,25 @@
   }
 }
 
+/* The Contact dropdown drops in from just under the nav. */
+.contact-pop[data-state="open"] {
+  transform-origin: var(--radix-popover-content-transform-origin);
+  animation: contact-pop 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes contact-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-pop[data-state="open"] {
+    animation: none;
+  }
+}
+
 /* The "papers inside" row, faded at both edges. */
 .paper-marquee {
   overflow: hidden;
