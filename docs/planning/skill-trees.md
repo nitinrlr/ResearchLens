@@ -384,7 +384,7 @@ Topics: Distributed systems and fault tolerance, Distributed and Parallel Comput
 4. Containers: *Borg, Omega, and Kubernetes* (2016)
 
 **Modern backends**
-1. Microservices: *Microservices* (2015)
+1. Microservices: *Microservices* (2014, an interview with James Lewis)
 2. Serverless: *What serverless computing is and should become* (2021)
 3. Load balancing: *Load balancing in cloud computing: A big picture* (2018)
 4. Gossip: *Gossip-based aggregation in large dynamic networks* (2005)
@@ -458,7 +458,7 @@ Topics: Mobile and Web Applications, Caching and Content Delivery, Web Data Mini
 6. Dependencies: *Thou Shalt Not Depend on Me: Analysing the Use of Outdated JavaScript Libraries on the Web* (2017)
 
 **APIs and backend**
-1. Microservices: *Microservices* (2015)
+1. Microservices: *Microservices* (2014, an interview with James Lewis)
 2. Serverless: *What serverless computing is and should become* (2021)
 3. Scaling: *Auto-Scaling Web Applications in Clouds* (2018)
 4. Testing: *Invariant-Based Automatic Testing of Modern Web Applications* (2011)
@@ -691,8 +691,7 @@ Topics: Data Visualization and Analytics, Computer Graphics and Visualization Te
 
 **Foundations**
 1. Encoding data: *Automating the design of graphical presentations of relational information* (1986)
-2. The field: *Information visualization* (1998)
-3. Visual analytics: *Visual analytics* (2010)
+2. Visual analytics: *Visual analytics* (2010)
 
 **Grammars and tools**
 1. From queries to charts: *Polaris* (2008)

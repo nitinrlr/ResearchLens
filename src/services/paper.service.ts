@@ -217,13 +217,21 @@ export async function getPopularTopics(limit = 24) {
 export const getPaperById = cache(async (id: string) => {
   const userId = await getCurrentUserId();
 
-  const paper = await prisma.paper.findUnique({
-    where: {
-      id,
-    },
+  const [paper, history] = await Promise.all([
+    prisma.paper.findUnique({
+      where: {
+        id,
+      },
 
-    include: paperInclude(userId),
-  });
+      include: paperInclude(userId),
+    }),
+    userId
+      ? prisma.readingHistory.findUnique({
+          where: { userId_paperId: { userId, paperId: id } },
+          select: { readingStatus: true },
+        })
+      : null,
+  ]);
 
   if (!paper) {
     return null;
@@ -240,6 +248,7 @@ export const getPaperById = cache(async (id: string) => {
     paperUrl: paper.paperUrl,
     pdfUrl: paper.pdfUrl,
     saved: paper.collectionPapers.length > 0,
+    finished: history?.readingStatus === "COMPLETED",
 
     authors: paper.paperAuthors.map((pa) => pa.author.name),
 

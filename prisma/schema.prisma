@@ -23,12 +23,6 @@ enum ReadingStatus {
   COMPLETED
 }
 
-enum GoalStatus {
-  ACTIVE
-  COMPLETED
-  ARCHIVED
-}
-
 model User {
   id              String           @id @default(uuid())
   name            String
@@ -77,17 +71,19 @@ model Paper {
   @@index([searchVector], type: Gin)
 }
 
+/// A role the user follows on the Goals page.
 model Goal {
-  id          String     @id @default(uuid())
-  userId      String
-  title       String
-  description String?
-  status      GoalStatus @default(ACTIVE)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  /// The skill tree this goal follows, an id from src/lib/skill-trees.
+  treeId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goalTopics GoalTopic[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, treeId])
 }
 
 model Topic {
@@ -95,18 +91,7 @@ model Topic {
   name        String  @unique
   description String?
 
-  goalTopics  GoalTopic[]
   paperTopics PaperTopic[]
-}
-
-model GoalTopic {
-  goalId  String
-  topicId String
-
-  goal  Goal  @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
-
-  @@id([goalId, topicId])
 }
 
 model PaperTopic {

@@ -1,6 +1,22 @@
 import { describe, expect, it } from "vitest";
 
-import { readingTimeFor } from "./reading-time";
+import { formatReadingTime, readingTimeFor } from "./reading-time";
+
+describe("formatReadingTime", () => {
+  it("shows minutes under an hour, then hours and minutes", () => {
+    expect(formatReadingTime(35)).toBe("35 min");
+    expect(formatReadingTime(90)).toBe("1 h 30 min");
+    expect(formatReadingTime(120)).toBe("2 h");
+  });
+
+  it("rounds to whole hours past ten hours", () => {
+    expect(formatReadingTime(1778)).toBe("30 h");
+  });
+
+  it("shows a dash while unknown", () => {
+    expect(formatReadingTime(null)).toBe("—");
+  });
+});
 
 describe("readingTimeFor", () => {
   it("uses the minutes per page for the paper's difficulty", () => {

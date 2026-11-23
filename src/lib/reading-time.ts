@@ -7,9 +7,19 @@ export const MINUTES_PER_PAGE: Record<number, number> = {
   5: 5.1,
 };
 
-/** "35 min", or a dash while the reading time isn't known yet. */
+/**
+ * "35 min", "1 h 30 min", or whole hours ("30 h") past ten hours, where the
+ * minutes stop mattering (some entries are whole books). A dash while unknown.
+ */
 export function formatReadingTime(minutes: number | null) {
-  return minutes ? `${minutes} min` : "—";
+  if (!minutes) return "—";
+  if (minutes < 60) return `${minutes} min`;
+  if (minutes >= 600) return `${Math.round(minutes / 60)} h`;
+
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+
+  return rest ? `${hours} h ${rest} min` : `${hours} h`;
 }
 
 /** "3/5", or a dash while the paper isn't rated yet. */

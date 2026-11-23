@@ -13,6 +13,7 @@ import {
 import { getPaperById } from "@/services/paper.service";
 import AskAiSelection from "@/components/ask-ai-selection";
 import CollectionPicker from "@/components/collection-picker";
+import FinishedToggle from "@/components/finished-toggle";
 import PaperChat from "@/components/paper-chat";
 import PaperReader from "@/components/paper-reader";
 import { formatDifficulty, formatReadingTime } from "@/lib/reading-time";
@@ -98,11 +99,20 @@ export default async function PaperDetailsPage({ params }: Props) {
                   </Text>
                 </div>
 
-                <CollectionPicker
-                  paperId={paper.id}
-                  initialSaved={paper.saved}
-                  variant="button"
-                />
+                <Flex
+                  gap="2"
+                  wrap="wrap"
+                >
+                  <CollectionPicker
+                    paperId={paper.id}
+                    initialSaved={paper.saved}
+                    variant="button"
+                  />
+                  <FinishedToggle
+                    paperId={paper.id}
+                    initialFinished={paper.finished}
+                  />
+                </Flex>
               </Flex>
 
               <Flex

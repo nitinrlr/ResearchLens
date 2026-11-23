@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import { COLLECTION_COLORS } from "@/lib/collection-colors";
+import { formatReadingTime } from "@/lib/reading-time";
 
 gsap.registerPlugin(useGSAP);
 
@@ -38,9 +39,9 @@ const SOLID = "rounded-xl bg-[rgb(10_18_50/0.82)] ring-1 ring-white/10";
 
 type MockPaper = { title: string; author: string; topics: string[]; year: number; difficulty: number; minutes: number };
 
-// Real papers. Reading times follow the app's formula: pages × minutes per page for the difficulty.
-const RESNET: MockPaper = { title: "Deep Residual Learning for Image Recognition", author: "Kaiming He", topics: ["Advanced Neural Network Applications"], year: 2016, difficulty: 3, minutes: 40 };
-const VIT: MockPaper = { title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale", author: "Alexey Dosovitskiy", topics: ["Domain Adaptation and Few-Shot Learning"], year: 2020, difficulty: 4, minutes: 90 };
+// Real papers, with their difficulty and reading time from the library.
+const RESNET: MockPaper = { title: "Deep Residual Learning for Image Recognition", author: "Kaiming He", topics: ["Advanced Neural Network Applications"], year: 2016, difficulty: 3, minutes: 30 };
+const VIT: MockPaper = { title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale", author: "Alexey Dosovitskiy", topics: ["Domain Adaptation and Few-Shot Learning"], year: 2020, difficulty: 3, minutes: 73 };
 const ATARI: MockPaper = { title: "Playing Atari with Deep Reinforcement Learning", author: "Volodymyr Mnih", topics: ["Reinforcement Learning in Robotics"], year: 2013, difficulty: 3, minutes: 30 };
 const BAHDANAU: MockPaper = { title: "Neural Machine Translation by Jointly Learning to Align and Translate", author: "Dzmitry Bahdanau", topics: ["Natural Language Processing Techniques"], year: 2014, difficulty: 3, minutes: 50 };
 
@@ -76,7 +77,7 @@ function PaperCardMock({ paper }: { paper: MockPaper }) {
             <Clock3 size={12} />
             <span>
               Reading Time
-              <span className="block text-[11px] text-white">{paper.minutes} min</span>
+              <span className="block text-[11px] text-white">{formatReadingTime(paper.minutes)}</span>
             </span>
           </span>
         </span>

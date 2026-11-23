@@ -66,9 +66,9 @@ In order of difficulty; each builds on the one before.
 - [x] **13. Paper chat.** Built with Gemini's free tier: full paper for typed questions, abstract plus the passage for "Ask AI" on highlighted abstract text, 30 messages a day, and saved starter answers. About 64% of PDFs can be read; the rest fall back to the abstract. Highlighting text in the PDF works too, through our React-PDF viewer.
   Original plan: A chat panel beside the PDF that answers questions from the paper, and says when something isn't in it. Starter buttons such as "Explain this simply" replace AI summaries, and their answers are saved per paper so common requests only run once. First test how many PDF links can actually be read, and fall back to the abstract when one can't. Signed-in users only, with a daily message limit. Chats stay in the browser at first. The provider is still open, Gemini's free tier is the likely start.
 - [ ] **14. Semantic search.** Embeddings stored with pgvector on Neon.
-- [ ] **15. Difficulty and reading time.** In progress: page counts come from OpenAlex page ranges and the PDFs (`count-pages`); difficulty is rated by Gemini from each abstract, a little each day on the free tier (`rate-difficulty`). Reading time is page count × 1.5–5.1 minutes per page, by difficulty.
+- [x] **15. Difficulty and reading time.** Done 2026-11-23. All 50,000 papers have a Gemini difficulty rating from their abstract, with a one-line reason (`rate-difficulty`). 43,140 have a page count, from OpenAlex page ranges or the PDF itself (`count-pages`), and so a reading time: page count × 1.5–5.1 minutes per page, by difficulty. The other 6,860 are behind publishers that block downloads and show "—".
 - [ ] **16. Paper comparison.** Reads the two papers directly.
-- [ ] **17. Build Goals.** Replace the placeholder page. The `Goal` and `GoalTopic` tables already exist.
+- [ ] **17. Build Goals.** In progress: Goals lists the roles and each role has a skill tree page (`/goals/[treeId]`). Students follow a role and mark papers finished, which moves their progress. Three roles are live (Machine Learning Engineer, Web Developer, Data Visualization Engineer), in `src/lib/skill-trees/`; the other drafts are in `docs/planning/skill-trees.md`.
 
 ## Phase 5: Ship v1
 

@@ -94,9 +94,7 @@ async function main() {
     DELETE FROM "Author" a WHERE NOT EXISTS (SELECT 1 FROM "PaperAuthor" pa WHERE pa."authorId" = a.id)
   `;
   const topics = await prisma.$executeRaw`
-    DELETE FROM "Topic" t
-    WHERE NOT EXISTS (SELECT 1 FROM "PaperTopic" pt WHERE pt."topicId" = t.id)
-      AND NOT EXISTS (SELECT 1 FROM "GoalTopic" gt WHERE gt."topicId" = t.id)
+    DELETE FROM "Topic" t WHERE NOT EXISTS (SELECT 1 FROM "PaperTopic" pt WHERE pt."topicId" = t.id)
   `;
 
   console.log(`\nAlso removed ${authors} authors and ${topics} topics left with no papers.`);

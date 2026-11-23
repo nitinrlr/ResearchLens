@@ -9,6 +9,7 @@ import FlutedBackground from "@/components/fluted-background";
 import GlassNav from "@/components/landing/glass-nav";
 import PaperMarquee from "@/components/landing/paper-marquee";
 import SmoothScroll from "@/components/landing/smooth-scroll";
+import { formatReadingTime } from "@/lib/reading-time";
 import "@/components/landing/landing.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -18,18 +19,18 @@ const instrumentSerif = Instrument_Serif({
   style: ["normal", "italic"],
 });
 
-// Real papers, hardcoded so this page never waits on the database.
+// Real papers and their real reading times, hardcoded so this page never waits on the database.
 const SAMPLE_PAPERS = [
-  { title: "Deep Residual Learning for Image Recognition", author: "Kaiming He", topics: ["Advanced Neural Network Applications", "Domain Adaptation and Few-Shot Learning"], year: 2016, readingTime: 35 },
-  { title: "Neural Machine Translation by Jointly Learning to Align and Translate", author: "Dzmitry Bahdanau", topics: ["Natural Language Processing Techniques", "Speech Recognition and Synthesis"], year: 2014, readingTime: 30 },
+  { title: "Deep Residual Learning for Image Recognition", author: "Kaiming He", topics: ["Advanced Neural Network Applications", "Domain Adaptation and Few-Shot Learning"], year: 2016, readingTime: 30 },
+  { title: "Neural Machine Translation by Jointly Learning to Align and Translate", author: "Dzmitry Bahdanau", topics: ["Natural Language Processing Techniques", "Speech Recognition and Synthesis"], year: 2014, readingTime: 50 },
   { title: "Playing Atari with Deep Reinforcement Learning", author: "Volodymyr Mnih", topics: ["Reinforcement Learning in Robotics", "Artificial Intelligence in Games"], year: 2013, readingTime: 30 },
-  { title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding", author: "Jacob Devlin", topics: ["Logic, Reasoning, and Knowledge", "Topic Modeling"], year: 2018, readingTime: 30 },
+  { title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding", author: "Jacob Devlin", topics: ["Logic, Reasoning, and Knowledge", "Topic Modeling"], year: 2018, readingTime: 53 },
   { title: "Generative Adversarial Networks", author: "Ian Goodfellow", topics: ["Generative Adversarial Networks and Image Synthesis", "Topic Modeling"], year: 2014, readingTime: 30 },
-  { title: "ImageNet Classification with Deep Convolutional Neural Networks", author: "Alex Krizhevsky", topics: ["Domain Adaptation and Few-Shot Learning", "Advanced Image and Video Retrieval Techniques"], year: 2017, readingTime: 30 },
-  { title: "Adam: A Method for Stochastic Optimization", author: "D.P. Kingma", topics: ["Advanced Optimization Algorithms Research", "Advanced Bandit Algorithms Research"], year: 2015, readingTime: 30 },
-  { title: "U-Net: Convolutional Networks for Biomedical Image Segmentation", author: "Olaf Ronneberger", topics: ["Medical Image Segmentation Techniques", "Cell Image Analysis Techniques"], year: 2015, readingTime: 30 },
-  { title: "You Only Look Once: Unified, Real-Time Object Detection", author: "Joseph Redmon", topics: ["Advanced Image and Video Retrieval Techniques", "Visual Attention and Saliency Detection"], year: 2016, readingTime: 40 },
-  { title: "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift", author: "Sergey Ioffe", topics: ["Domain Adaptation and Few-Shot Learning", "Stochastic Gradient Optimization Techniques"], year: 2015, readingTime: 30 },
+  { title: "ImageNet Classification with Deep Convolutional Neural Networks", author: "Alex Krizhevsky", topics: ["Domain Adaptation and Few-Shot Learning", "Advanced Image and Video Retrieval Techniques"], year: 2017, readingTime: 18 },
+  { title: "Adam: A Method for Stochastic Optimization", author: "D.P. Kingma", topics: ["Advanced Optimization Algorithms Research", "Advanced Bandit Algorithms Research"], year: 2015, readingTime: 50 },
+  { title: "U-Net: Convolutional Networks for Biomedical Image Segmentation", author: "Olaf Ronneberger", topics: ["Medical Image Segmentation Techniques", "Cell Image Analysis Techniques"], year: 2015, readingTime: 26 },
+  { title: "You Only Look Once: Unified, Real-Time Object Detection", author: "Joseph Redmon", topics: ["Advanced Image and Video Retrieval Techniques", "Visual Attention and Saliency Detection"], year: 2016, readingTime: 25 },
+  { title: "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift", author: "Sergey Ioffe", topics: ["Domain Adaptation and Few-Shot Learning", "Stochastic Gradient Optimization Techniques"], year: 2015, readingTime: 36 },
 ];
 
 export default function LandingPage() {
@@ -110,7 +111,7 @@ export default function LandingPage() {
                           </Text>
                           <Text size="2" color="gray" className="flex items-center gap-2">
                             <Clock3 size={16} />
-                            {paper.readingTime} min
+                            {formatReadingTime(paper.readingTime)}
                           </Text>
                         </Flex>
                       </article>
