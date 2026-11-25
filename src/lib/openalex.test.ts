@@ -1,6 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { choosePdfUrl, pageCountFromBiblio, worksFilter } from "./openalex";
+import { choosePdfUrl, fullOpenAlexId, pageCountFromBiblio, shortOpenAlexId, worksFilter } from "./openalex";
+
+describe("OpenAlex ids", () => {
+  it("converts between the short and full forms", () => {
+    expect(shortOpenAlexId("https://openalex.org/W1")).toBe("W1");
+    expect(shortOpenAlexId("W1")).toBe("W1");
+    expect(fullOpenAlexId("W1")).toBe("https://openalex.org/W1");
+    expect(fullOpenAlexId("https://openalex.org/W1")).toBe("https://openalex.org/W1");
+  });
+});
 
 describe("pageCountFromBiblio", () => {
   it("counts the pages in a range", () => {

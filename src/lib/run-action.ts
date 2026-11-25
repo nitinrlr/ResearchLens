@@ -1,6 +1,6 @@
 import { unstable_rethrow } from "next/navigation";
 
-import type { ActionResult } from "@/actions/collections";
+import type { ActionResult } from "@/lib/action-result";
 
 const UNEXPECTED_MESSAGE =
   "Something went wrong. Check your connection and try again.";

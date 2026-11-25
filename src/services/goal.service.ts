@@ -1,10 +1,9 @@
+import { fullOpenAlexId, shortOpenAlexId } from "@/lib/openalex";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
 import { SKILL_TREES } from "@/lib/skill-trees";
 import type { SkillTree } from "@/lib/skill-trees";
 import { treePaperIds, treeProgress } from "@/lib/skill-trees/progress";
-
-const OPENALEX = "https://openalex.org/";
 
 /** OpenAlex ids ("W123") of the papers this user has marked finished, out of `paperIds`. */
 async function finishedOpenAlexIds(userId: string | null, paperIds: string[]) {
@@ -14,12 +13,12 @@ async function finishedOpenAlexIds(userId: string | null, paperIds: string[]) {
     where: {
       userId,
       readingStatus: "COMPLETED",
-      paper: { externalId: { in: paperIds.map((id) => OPENALEX + id) } },
+      paper: { externalId: { in: paperIds.map(fullOpenAlexId) } },
     },
     select: { paper: { select: { externalId: true } } },
   });
 
-  return new Set(rows.map((row) => row.paper.externalId!.replace(OPENALEX, "")));
+  return new Set(rows.map((row) => shortOpenAlexId(row.paper.externalId!)));
 }
 
 /** Every role, with the signed-in user's progress on the ones they follow. */
@@ -53,7 +52,7 @@ export async function getGoalTree(tree: SkillTree) {
 
   const [papers, finished, goal] = await Promise.all([
     prisma.paper.findMany({
-      where: { externalId: { in: ids.map((id) => OPENALEX + id) } },
+      where: { externalId: { in: ids.map(fullOpenAlexId) } },
       select: {
         id: true,
         externalId: true,
@@ -70,7 +69,7 @@ export async function getGoalTree(tree: SkillTree) {
 
   const byOpenAlexId = new Map(
     papers.map((paper) => [
-      paper.externalId!.replace(OPENALEX, ""),
+      shortOpenAlexId(paper.externalId!),
       {
         id: paper.id,
         title: paper.title,
@@ -78,7 +77,7 @@ export async function getGoalTree(tree: SkillTree) {
         author: paper.paperAuthors[0]?.author.name ?? null,
         difficulty: paper.difficulty,
         readingTime: paper.readingTime,
-        finished: finished.has(paper.externalId!.replace(OPENALEX, "")),
+        finished: finished.has(shortOpenAlexId(paper.externalId!)),
       },
     ])
   );

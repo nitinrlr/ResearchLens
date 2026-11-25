@@ -194,6 +194,18 @@ function cleanTitle(title: string) {
     .trim();
 }
 
+const WORK_URL = "https://openalex.org/";
+
+/** "W2194775991" from Paper.externalId's "https://openalex.org/W2194775991". Short ids pass through. */
+export function shortOpenAlexId(id: string) {
+  return id.replace(WORK_URL, "");
+}
+
+/** The full URL form stored in Paper.externalId. */
+export function fullOpenAlexId(id: string) {
+  return WORK_URL + shortOpenAlexId(id);
+}
+
 /** OpenAlex's Computer Science subfields, for importing one area at a time. */
 export const SUBFIELDS = {
   artificialIntelligence: 1702,
@@ -221,7 +233,7 @@ export type WorksQuery = {
 /** The OpenAlex filter for a query: open-access English CS papers unless ids are given. */
 export function worksFilter({ subfields, type, ids }: WorksQuery = {}) {
   if (ids) {
-    return `openalex:${ids.map((id) => id.replace("https://openalex.org/", "")).join("|")}`;
+    return `openalex:${ids.map(shortOpenAlexId).join("|")}`;
   }
 
   return [

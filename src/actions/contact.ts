@@ -1,6 +1,6 @@
 "use server";
 
-import type { ActionResult } from "@/actions/collections";
+import type { ActionResult } from "@/lib/action-result";
 import { isLikelyBot, readContactForm } from "@/lib/contact-form";
 import { prisma } from "@/lib/prisma";
 

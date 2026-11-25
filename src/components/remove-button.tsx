@@ -3,7 +3,7 @@
 import { useFormStatus } from "react-dom";
 import { Button } from "@radix-ui/themes";
 
-import type { ActionResult } from "@/actions/collections";
+import type { ActionResult } from "@/lib/action-result";
 import { useToast } from "@/components/toast";
 import { runAction } from "@/lib/run-action";
 

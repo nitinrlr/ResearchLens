@@ -1,6 +1,6 @@
 # ResearchLens Roadmap
 
-Last updated: 2026-11-11
+Last updated: 2026-11-24
 
 ## Goal
 
@@ -11,20 +11,21 @@ Last updated: 2026-11-11
 **Built**
 
 - Register, login and logout, with the user id stored in the session and a profile menu
-- Explore, which searches title, abstract, author and topic
-- Paper detail page with our own PDF viewer (React-PDF): selectable text, zoom and page jumps, falling back to the publisher's viewer when a PDF can't be downloaded
+- Explore, which searches title, abstract, author and topic, with drifting topic pills to filter by
+- Paper detail page with our own PDF viewer (React-PDF), the Lens chat, and "Mark as finished"
+- Difficulty (1–5, with a reason) and reading time for the papers, filled in by the scripts in `src/scripts/`
 - Continue Reading, which tracks papers automatically when you open them
-- Collections: a default "Saved" collection plus custom ones you can create and delete, and remove papers from
-- Animated landing page that sends signed-in users to `/explore`, and a metallic glass design across the app
-- OpenAlex import script: the 50,000 most-cited English open-access CS papers
-- Vitest tests for the collection ownership checks, Server Actions and pagination
+- Collections: a default "Saved" collection plus custom ones with a color, which you can edit and delete
+- Goals: role skill trees, with progress from the papers you've finished
+- Animated landing page with a Contact form, and a metallic glass design across the app
+- A library of 50,000 open-access CS papers from OpenAlex, rebalanced toward beginner-friendly areas
+- Vitest tests for the Server Actions, ownership checks, imports, chat, skill trees and more
 
 **Gaps**
 
-- Goals is a static stub; Settings is a placeholder
-- Difficulty and reading time are being filled in; unrated papers show a dash
+- Settings is a placeholder
 - Not deployed
-- README lists the OpenAI API, which isn't in the project yet
+- No rate limits on login, register or the AI endpoints
 
 ## Phase 1: Make what exists real
 
@@ -68,10 +69,10 @@ In order of difficulty; each builds on the one before.
 - [ ] **14. Semantic search.** Embeddings stored with pgvector on Neon.
 - [x] **15. Difficulty and reading time.** Done 2026-11-23. All 50,000 papers have a Gemini difficulty rating from their abstract, with a one-line reason (`rate-difficulty`). 43,140 have a page count, from OpenAlex page ranges or the PDF itself (`count-pages`), and so a reading time: page count × 1.5–5.1 minutes per page, by difficulty. The other 6,860 are behind publishers that block downloads and show "—".
 - [ ] **16. Paper comparison.** Reads the two papers directly.
-- [ ] **17. Build Goals.** In progress: Goals lists the roles and each role has a skill tree page (`/goals/[treeId]`). Students follow a role and mark papers finished, which moves their progress. Three roles are live (Machine Learning Engineer, Web Developer, Data Visualization Engineer), in `src/lib/skill-trees/`; the other drafts are in `docs/planning/skill-trees.md`.
+- [ ] **17. Build Goals.** In progress: Goals lists the roles and each role has a skill tree page (`/goals/[treeId]`). Students follow a role and mark papers finished, which moves their progress. Four roles are live (Software Engineer, Web Developer, Machine Learning Engineer, Data Visualization Engineer), in `src/lib/skill-trees/`; the other drafts are in `docs/planning/skill-trees.md`.
 
 ## Phase 5: Ship v1
 
 - [ ] **18. Deploy to Vercel.** Set `DATABASE_URL`, `AUTH_SECRET`, `OPENALEX_API_KEY` and the AI provider's key, run `prisma migrate deploy` during the build, fix the SSL-mode warning in the connection string, and add a link-preview image and `metadataBase` once the domain is known.
 - [ ] **19. Rate-limit login and register.** Include the AI endpoints, since each call costs money.
-- [ ] **20. Make the docs match reality.** Fix the README's stack list.
+- [x] **20. Make the docs match reality.** Done 2026-11-24: the README lists the real features and stack and how to run the app, and `.env.example` names the variables it needs. Check again before launch.

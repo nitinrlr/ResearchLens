@@ -6,7 +6,7 @@ import PaperCard from "@/components/papercard";
 import RemoveButton from "@/components/remove-button";
 import SearchField from "@/components/search-field";
 import { getContinueReading } from "@/services/reading.service";
-import { removeFromReadingAction } from "@/actions/collections";
+import { removeFromReadingAction } from "@/actions/reading";
 
 export const metadata: Metadata = {
   title: "Continue Reading",

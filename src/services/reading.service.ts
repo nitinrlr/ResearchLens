@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
-import { searchWhere } from "@/services/paper.service";
+import { paperCardInclude, searchWhere, toPaperCard } from "@/services/paper.service";
 
 /**
  * Records that the signed-in user opened a paper.
@@ -48,45 +48,13 @@ export async function getContinueReading(query = "") {
 
     include: {
       paper: {
-        include: {
-          paperAuthors: {
-            orderBy: {
-              authorOrder: "asc",
-            },
-            include: {
-              author: true,
-            },
-          },
-          paperTopics: {
-            include: {
-              topic: true,
-            },
-          },
-          // Saved means "in any of this user's collections".
-          collectionPapers: {
-            where: {
-              collection: {
-                userId,
-              },
-            },
-            select: {
-              collectionId: true,
-            },
-          },
-        },
+        include: paperCardInclude(userId),
       },
     },
   });
 
   return entries.map((entry) => ({
-    id: entry.paper.id,
-    title: entry.paper.title,
-    publishedDate: entry.paper.publishedDate,
-    readingTime: entry.paper.readingTime,
-    difficulty: entry.paper.difficulty,
-    saved: entry.paper.collectionPapers.length > 0,
-    authors: entry.paper.paperAuthors.map((pa) => pa.author.name),
-    topics: entry.paper.paperTopics.map((pt) => pt.topic.name),
+    ...toPaperCard(entry.paper),
     lastReadAt: entry.lastReadAt,
   }));
 }

@@ -2,6 +2,7 @@ import { cache } from "react";
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
+import { paperCardInclude, toPaperCard } from "@/services/paper.service";
 
 export const DEFAULT_COLLECTION_TITLE = "Saved";
 export const DEFAULT_COLLECTION_DESCRIPTION =
@@ -135,21 +136,7 @@ export const getCollectionById = cache(async (collectionId: string) => {
 
         include: {
           paper: {
-            include: {
-              paperAuthors: {
-                orderBy: {
-                  authorOrder: "asc",
-                },
-                include: {
-                  author: true,
-                },
-              },
-              paperTopics: {
-                include: {
-                  topic: true,
-                },
-              },
-            },
+            include: paperCardInclude(userId),
           },
         },
       },
@@ -166,17 +153,7 @@ export const getCollectionById = cache(async (collectionId: string) => {
     description: collection.description,
     isDefault: collection.isDefault,
 
-    papers: collection.collectionPapers.map(({ paper }) => ({
-      id: paper.id,
-      title: paper.title,
-      publishedDate: paper.publishedDate,
-      readingTime: paper.readingTime,
-      difficulty: paper.difficulty,
-      // It is in this collection, so it is saved.
-      saved: true,
-      authors: paper.paperAuthors.map((pa) => pa.author.name),
-      topics: paper.paperTopics.map((pt) => pt.topic.name),
-    })),
+    papers: collection.collectionPapers.map(({ paper }) => toPaperCard(paper)),
   };
 });
 

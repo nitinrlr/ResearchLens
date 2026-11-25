@@ -26,7 +26,7 @@ type PaperWithRelations = Prisma.PaperGetPayload<{
  * A paper counts as saved when it is in any of the user's collections, so the
  * bookmark is filled whether it went into "Saved" or a collection of their own.
  */
-function paperInclude(userId: string | null) {
+export function paperCardInclude(userId: string | null) {
   return {
     collectionPapers: {
       where: userId
@@ -107,7 +107,8 @@ export function searchWhere(query: string): Prisma.PaperWhereInput {
   };
 }
 
-function mapPaper(paper: PaperWithRelations) {
+/** The fields a PaperCard shows, from a paper loaded with paperCardInclude(). */
+export function toPaperCard(paper: PaperWithRelations) {
   return {
     id: paper.id,
     title: paper.title,
@@ -177,12 +178,12 @@ export async function getPapersPage(query = "", page = 1, topic = "") {
 
   const found = await prisma.paper.findMany({
     where: { id: { in: rows.map((row) => row.id) } },
-    include: paperInclude(userId),
+    include: paperCardInclude(userId),
   });
   const byId = new Map(found.map((paper) => [paper.id, paper]));
 
   return {
-    papers: rows.map((row) => mapPaper(byId.get(row.id)!)),
+    papers: rows.map((row) => toPaperCard(byId.get(row.id)!)),
     total,
     page: currentPage,
     totalPages,
@@ -223,7 +224,7 @@ export const getPaperById = cache(async (id: string) => {
         id,
       },
 
-      include: paperInclude(userId),
+      include: paperCardInclude(userId),
     }),
     userId
       ? prisma.readingHistory.findUnique({

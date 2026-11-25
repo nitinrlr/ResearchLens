@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { CircleCheck, Circle } from "lucide-react";
 import { Button } from "@radix-ui/themes";
 
-import { setPaperFinishedAction } from "@/actions/goals";
+import { setPaperFinishedAction } from "@/actions/reading";
 import { useToast } from "@/components/toast";
 import { runAction } from "@/lib/run-action";
 

@@ -53,7 +53,7 @@ export async function savePapers(papers: SearchPaper[]) {
 
       await tx.author.createMany({ data: allAuthors, skipDuplicates: true });
       await tx.topic.createMany({
-        data: allTopics.map((topic) => ({ name: topic.name, description: "" })),
+        data: allTopics.map((topic) => ({ name: topic.name })),
         skipDuplicates: true,
       });
 

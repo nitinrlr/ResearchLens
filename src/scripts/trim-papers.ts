@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 
-import { fetchWorkFacts, PAGE_RANGE_BATCH_SIZE, type WorkFacts } from "@/lib/openalex";
+import { fetchWorkFacts, fullOpenAlexId, PAGE_RANGE_BATCH_SIZE, shortOpenAlexId, type WorkFacts } from "@/lib/openalex";
 import { pickPapersToTrim } from "@/lib/paper-trim";
 import { prisma } from "@/lib/prisma";
 
@@ -19,7 +19,7 @@ async function main() {
   const count = Number(args.find((arg) => /^\d+$/.test(arg)));
   const dryRun = args.includes("--dry-run");
   const keepFile = args.includes("--keep-file") ? args[args.indexOf("--keep-file") + 1] : undefined;
-  const keepIds = new Set(keepFile ? readIdsFile(keepFile).map((id) => `https://openalex.org/${id}`) : []);
+  const keepIds = new Set(keepFile ? readIdsFile(keepFile).map(fullOpenAlexId) : []);
 
   if (!Number.isInteger(count) || count < 1) {
     throw new Error("Expected how many papers to remove, like `npm run trim:papers -- 10000 --dry-run`");
@@ -64,7 +64,7 @@ async function main() {
   );
   const byId = new Map(papers.map((paper) => [paper.id, paper]));
   const lines = picked.map(
-    (paper) => `${byId.get(paper.id)!.externalId!.replace("https://openalex.org/", "")}\t${paper.facts.citations}\t${byId.get(paper.id)!.title}`
+    (paper) => `${shortOpenAlexId(byId.get(paper.id)!.externalId!)}\t${paper.facts.citations}\t${byId.get(paper.id)!.title}`
   );
 
   console.log(

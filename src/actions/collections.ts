@@ -3,34 +3,20 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { failed, SIGNED_OUT } from "@/lib/action-result";
+import type { ActionResult } from "@/lib/action-result";
 import { DEFAULT_COLLECTION_COLOR, isCollectionColor } from "@/lib/collection-colors";
 import type { CollectionColor } from "@/lib/collection-colors";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/session";
 import { assertOwnedCollection } from "@/services/collection.service";
 
-/** null when the action worked, otherwise a message to show the user. */
-export type ActionResult = { error: string } | null;
-
 const MAX_TITLE_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 300;
-
-const SIGNED_OUT: ActionResult = {
-  error: "You've been signed out. Sign in again to keep going.",
-};
 
 const COLLECTION_GONE: ActionResult = {
   error: "That collection no longer exists. Refresh the page.",
 };
-
-/** Logs the real error for us and returns a plain one for the user. */
-function failed(what: string, error: unknown): ActionResult {
-  console.error(`Couldn't ${what}:`, error);
-
-  return {
-    error: `Couldn't ${what}. Try again.`,
-  };
-}
 
 /** Reads the collection form, or returns the message for what's wrong with it. */
 function readCollectionForm(
@@ -62,9 +48,6 @@ function readCollectionForm(
 /*
   Server Actions are reachable by direct POST, not just through our forms, so
   each one re-checks who is signed in and whether they own the target row.
-
-  They return an ActionResult rather than throwing. A thrown error would swap
-  the whole page for the error page, which is too much for a failed click.
 */
 
 export async function createCollectionAction(
@@ -215,34 +198,6 @@ export async function removePaperFromCollectionAction(
 
   revalidatePath(`/collections/${collectionId}`);
   revalidatePath("/collections");
-
-  return null;
-}
-
-/** Drops a paper off the Continue Reading list without touching collections. */
-export async function removeFromReadingAction(
-  formData: FormData
-): Promise<ActionResult> {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    return SIGNED_OUT;
-  }
-
-  const paperId = String(formData.get("paperId") ?? "");
-
-  try {
-    await prisma.readingHistory.deleteMany({
-      where: {
-        userId,
-        paperId,
-      },
-    });
-  } catch (error) {
-    return failed("remove the paper", error);
-  }
-
-  revalidatePath("/reading");
 
   return null;
 }

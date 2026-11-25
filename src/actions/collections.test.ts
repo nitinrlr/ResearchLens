@@ -3,10 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createCollectionAction,
   deleteCollectionAction,
-  removeFromReadingAction,
   removePaperFromCollectionAction,
   updateCollectionAction,
 } from "@/actions/collections";
+import { removeFromReadingAction } from "@/actions/reading";
 
 const db = vi.hoisted(() => ({
   collection: {
